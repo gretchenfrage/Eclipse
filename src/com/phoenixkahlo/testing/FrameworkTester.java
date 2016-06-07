@@ -1,9 +1,12 @@
 package com.phoenixkahlo.testing;
 
+import java.util.function.Supplier;
+
 public class FrameworkTester {
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
-		System.out.println(byte[].class == byte[].class);
+		Supplier<Exception> supplier = Exception::new;
 	}
 
 }
