@@ -9,10 +9,6 @@ import com.phoenixkahlo.networkingcore.FieldEncoder;
 import com.phoenixkahlo.networkingcore.UnionDecoder;
 import com.phoenixkahlo.networkingcore.UnionEncoder;
 
-
-
-
-
 public class SerializationTester {
 
 	public static void main(String[] args) throws Exception {

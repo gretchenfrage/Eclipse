@@ -81,22 +81,36 @@ public class SerializationUtils {
 	}
 	
 	public static void writeByteArray(byte[] array, OutputStream out) throws IOException {
-		out.write(intToBytes(array.length));
-		out.write(array);
+		if (array == null) {
+			out.write(intToBytes(-1));
+		} else {
+			out.write(intToBytes(array.length));
+			out.write(array);
+		}
 	}
 	
 	public static byte[] readByteArray(InputStream in) throws IOException {
-		byte[] arr = new byte[readInt(in)];
-		in.read(arr);
-		return arr;
+		int length = readInt(in);
+		if (length < 0) {
+			return null;
+		} else {
+			byte[] arr = new byte[length];
+			in.read(arr);
+			return arr;
+		}
 	}
 	
 	public static void writeString(String string, OutputStream out) throws IOException {
-		writeByteArray(stringToBytes(string), out);
+		if (string == null)
+			out.write(intToBytes(-1));
+		else
+			writeByteArray(stringToBytes(string), out);
 	}
 	
 	public static String readString(InputStream in) throws IOException {
-		return bytesToString(readByteArray(in));
+		byte[] bytes = readByteArray(in);
+		if (bytes == null) return null;
+		return bytesToString(bytes);
 	}
 	
 	public static void writeInt(int n, OutputStream out) throws IOException {

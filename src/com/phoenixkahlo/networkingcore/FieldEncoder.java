@@ -50,7 +50,8 @@ public class FieldEncoder implements EncodingProtocol {
 		for (Field field : clazz.getDeclaredFields()) {
 			field.setAccessible(true);
 			try {
-				if (!Modifier.isTransient(field.getModifiers()))
+				int mods = field.getModifiers();
+				if (!Modifier.isTransient(mods) && !Modifier.isStatic(mods))
 					SerializationUtils.writeAny(field.get(obj), out, subEncoder);
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();

@@ -36,7 +36,8 @@ public class FieldDecoder implements DecodingProtocol {
 			Object obj = supplier.get();
 			for (Field field : fields) {
 				try {
-					if (!Modifier.isTransient(field.getModifiers()))
+					int mods = field.getModifiers();
+					if (!Modifier.isTransient(mods) && !Modifier.isStatic(mods))
 						field.set(obj, SerializationUtils.readType(field.getType(), in, subDecoder));
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
