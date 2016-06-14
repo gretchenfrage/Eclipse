@@ -5,7 +5,9 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.phoenixkahlo.utils.ListUtils;
 
@@ -33,20 +35,24 @@ public class FieldEncoder implements EncodingProtocol {
 		return obj.getClass() == clazz;
 	}
 	
+	// Protects against FieldEncoders getting into infinite loops with circular references
+	private static Map<Thread, List<Object>> encoded = new HashMap<Thread, List<Object>>();
+	
 	@Override
 	public void encode(Object obj, OutputStream out) throws IOException, IllegalArgumentException {
 		SerializationUtils.writeBoolean(obj == null, out);
-		if (obj != null)
-			encode(obj, out, new ArrayList<Object>());
-	}
-	
-	private void encode(Object obj, OutputStream out, List<Object> encoded) throws IOException,
-			IllegalArgumentException {
-		if (ListUtils.identityContains(encoded, obj))
+		if (obj == null)
+			return;
+		if (!canEncode(obj)) throw new IllegalArgumentException();
+		Thread thread = Thread.currentThread();
+		boolean head = false;
+		if (!encoded.containsKey(thread)) {
+			encoded.put(thread, new ArrayList<Object>());
+			head = true;
+		}
+		if (!head && ListUtils.identityContains(encoded.get(thread), obj))
 			throw new IllegalArgumentException("circular references");
-		if (!canEncode(obj))
-			throw new IllegalArgumentException("unencodable object");
-		encoded.add(obj);
+		encoded.get(thread).add(obj);
 		for (Field field : clazz.getDeclaredFields()) {
 			field.setAccessible(true);
 			try {
@@ -57,6 +63,8 @@ public class FieldEncoder implements EncodingProtocol {
 				e.printStackTrace();
 			}
 		}
+		if (head)
+			encoded.remove(thread);
 	}
 	
 }
