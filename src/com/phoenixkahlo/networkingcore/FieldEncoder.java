@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.phoenixkahlo.utils.ListUtils;
-
 /**
  * Encodes an object by its fields in order of declaration.
  * Begins with boolean to signify if null.
@@ -50,7 +48,7 @@ public class FieldEncoder implements EncodingProtocol {
 			encoded.put(thread, new ArrayList<Object>());
 			head = true;
 		}
-		if (!head && ListUtils.identityContains(encoded.get(thread), obj))
+		if (!head && identityContains(encoded.get(thread), obj))
 			throw new IllegalArgumentException("circular references");
 		encoded.get(thread).add(obj);
 		for (Field field : clazz.getDeclaredFields()) {
@@ -65,6 +63,12 @@ public class FieldEncoder implements EncodingProtocol {
 		}
 		if (head)
 			encoded.remove(thread);
+	}
+	
+	private static boolean identityContains(List<?> list, Object obj) {
+		for (Object item : list)
+			if (item == obj) return true;
+		return false;
 	}
 	
 }
