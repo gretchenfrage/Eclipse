@@ -10,7 +10,7 @@ public class PrimitiveEncoder implements EncodingProtocol {
 	/**
 	 * @param type the class of box, not the primitive class
 	 */
-	public PrimitiveEncoder(Class<? extends Number> type) {
+	public PrimitiveEncoder(Class<Number> type) {
 		this.type = type;
 	}
 		
