@@ -52,7 +52,9 @@ public class SerializationUtils {
 	 */
 	public static void writeAny(Object obj, OutputStream out, EncodingProtocol encoder)
 			throws IOException, IllegalArgumentException {
-		if (obj instanceof Short)
+		if (encoder != null && encoder.canEncode(obj))
+			encoder.encode(obj, out);
+		else if (obj instanceof Short)
 			writeShort((Short) obj, out);
 		else if (obj instanceof Integer)
 			writeInt((Integer) obj, out);
@@ -74,10 +76,8 @@ public class SerializationUtils {
 			writeString((String) obj, out);
 		else if (obj instanceof Enum)
 			writeInt(((Enum<?>) obj).ordinal(), out);
-		else if (encoder != null && encoder.canEncode(obj))
-			encoder.encode(obj, out);
 		else
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("cannot encode " + obj);
 	}
 	
 	public static void writeByteArray(byte[] array, OutputStream out) throws IOException {
