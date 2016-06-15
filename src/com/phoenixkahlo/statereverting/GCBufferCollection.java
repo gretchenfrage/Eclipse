@@ -14,6 +14,8 @@ import java.util.Map;
  */
 public class GCBufferCollection implements BufferCollection {
 
+	private static final int DEFAULT_BUFFER_SIZE = 1000;
+	
 	private Map<Object, ByteArrayOutputStream> buffers = new HashMap<Object, ByteArrayOutputStream>();
 	private List<Object> orderedKeys = new ArrayList<Object>();
 	private int maxItems;
@@ -25,7 +27,7 @@ public class GCBufferCollection implements BufferCollection {
 	}
 	
 	public GCBufferCollection(int maxItems) {
-		this(maxItems, 1000);
+		this(maxItems, DEFAULT_BUFFER_SIZE);
 	}
 	
 	@Override
