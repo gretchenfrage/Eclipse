@@ -7,11 +7,13 @@ import java.util.List;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.World;
 
+import com.phoenixkahlo.networkingcore.FieldDecoder;
+
 public class GameState {
 
-	private World world = new World();
+	private transient World world = new World();
 	private List<Entity> entities = new ArrayList<Entity>();
-	private int index; // Iterates forward
+	private transient int index; // Iterates forward
 	
 	public void addEntity(Entity entity) {
 		entities.add(entity);
@@ -30,6 +32,17 @@ public class GameState {
 	
 	public List<Entity> getEntities() {
 		return Collections.unmodifiableList(entities);
+	}
+	
+	/**
+	 * Gives the world any bodies the entities provide
+	 */
+	@FieldDecoder.DecodingFinisher
+	public void finishDecoding() {
+		for (Entity entity : entities) {
+			Body body = entity.toBody();
+			if (body != null) world.addBody(body);
+		}
 	}
 	
 }
