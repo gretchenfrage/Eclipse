@@ -1,5 +1,6 @@
 package com.phoenixkahlo.eclipse.gamestate;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,10 +8,15 @@ import java.util.List;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.World;
 
-import com.phoenixkahlo.networkingcore.FieldDecoder;
+import com.phoenixkahlo.networking.FieldDecoder;
 
+/**
+ * The state of the game at an instance in time. Can be incremented.
+ */
 public class GameState {
 
+	public static final double SECONDS_PER_TICK = 1D / 60;
+	
 	private transient World world = new World();
 	private List<Entity> entities = new ArrayList<Entity>();
 	private transient int index; // Iterates forward
@@ -34,11 +40,26 @@ public class GameState {
 		return Collections.unmodifiableList(entities);
 	}
 	
+	public void tick() {
+		index = 0;
+		while (index < entities.size()) {
+			entities.get(index).preTick();
+			index++;
+		}
+		world.update(SECONDS_PER_TICK);
+		index = 0;
+		while (index < entities.size()) {
+			entities.get(index).postTick();
+			index++;
+		}
+	}
+	
 	/**
 	 * Gives the world any bodies the entities provide
 	 */
 	@FieldDecoder.DecodingFinisher
-	public void finishDecoding() {
+	public void finishDecoding(InputStream in) {
+		world.removeAllBodies();
 		for (Entity entity : entities) {
 			Body body = entity.toBody();
 			if (body != null) world.addBody(body);

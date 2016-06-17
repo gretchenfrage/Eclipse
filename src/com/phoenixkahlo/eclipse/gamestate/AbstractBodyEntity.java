@@ -1,7 +1,7 @@
 package com.phoenixkahlo.eclipse.gamestate;
 
-import static com.phoenixkahlo.networkingcore.SerializationUtils.readDouble;
-import static com.phoenixkahlo.networkingcore.SerializationUtils.writeDouble;
+import static com.phoenixkahlo.networking.SerializationUtils.readDouble;
+import static com.phoenixkahlo.networking.SerializationUtils.writeDouble;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,8 +9,8 @@ import java.io.OutputStream;
 
 import org.dyn4j.dynamics.Body;
 
-import com.phoenixkahlo.networkingcore.FieldDecoder;
-import com.phoenixkahlo.networkingcore.FieldEncoder;
+import com.phoenixkahlo.networking.FieldDecoder;
+import com.phoenixkahlo.networking.FieldEncoder;
 
 /**
  * Base class for entities with bodies.
