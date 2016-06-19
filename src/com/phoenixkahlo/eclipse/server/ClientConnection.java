@@ -38,7 +38,8 @@ public class ClientConnection {
 		
 		// Setup receiver
 		FunctionReceiver receiver = new FunctionReceiver(in, EclipseCoderFactory.makeDecoder());
-		receiver.registerFunction(ServerFunction.INIT_CLIENT.ordinal(), function);
+		receiver.registerFunction(ServerFunction.INIT_CLIENT.ordinal(),
+				);
 	}
 	
 	public void start() {
