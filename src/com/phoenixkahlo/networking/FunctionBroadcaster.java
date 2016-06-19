@@ -31,6 +31,13 @@ public class FunctionBroadcaster {
 	}
 	
 	/**
+	 * Register a function with the token and the header being the ordinal of the token.
+	 */
+	public void registerFunctionEnum(Enum<?> token) {
+		registerFunction(token.ordinal(), token);
+	}
+	
+	/**
 	 * @return the randomly generated header
 	 */
 	public int registerFunction(Object token) {

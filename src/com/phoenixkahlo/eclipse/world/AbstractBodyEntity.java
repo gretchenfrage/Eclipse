@@ -1,4 +1,4 @@
-package com.phoenixkahlo.eclipse.gamestate;
+package com.phoenixkahlo.eclipse.world;
 
 import static com.phoenixkahlo.networking.SerializationUtils.readDouble;
 import static com.phoenixkahlo.networking.SerializationUtils.writeDouble;
@@ -6,8 +6,10 @@ import static com.phoenixkahlo.networking.SerializationUtils.writeDouble;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Random;
 
 import org.dyn4j.dynamics.Body;
+import org.dyn4j.dynamics.BodyFixture;
 
 import com.phoenixkahlo.networking.FieldDecoder;
 import com.phoenixkahlo.networking.FieldEncoder;
@@ -15,17 +17,33 @@ import com.phoenixkahlo.networking.FieldEncoder;
 /**
  * Base class for entities with bodies.
  */
-public abstract class AbstractBodyEntity implements Entity {
+public abstract class AbstractBodyEntity extends EntityAdapter {
 
-	private transient Body body;
+	protected static final Random RANDOM = new Random();
 	
-	public AbstractBodyEntity(Body body) {
-		this.body = body;
+	private transient Body body = new Body();
+	private int id;
+	
+	public AbstractBodyEntity(int id) {
+		this.id = id;
+	}
+	
+	public AbstractBodyEntity() {
+		this(RANDOM.nextInt());
 	}
 
+	protected void addBodyFixture(BodyFixture fixture) {
+		body.addFixture(fixture);
+	}
+	
 	@Override
-	public Body toBody() {
+	public Body getBody() {
 		return body;
+	}
+	
+	@Override
+	public int getID() {
+		return id;
 	}
 	
 	@FieldEncoder.EncodingFinisher

@@ -26,7 +26,7 @@ public class FunctionReceiver {
 	public void registerFunction(int header, Function function) {
 		functions.put(header, function);
 	}
-
+	
 	/**
 	 * @return the randomly generated header
 	 */

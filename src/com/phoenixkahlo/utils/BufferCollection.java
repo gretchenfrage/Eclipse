@@ -16,7 +16,7 @@ public interface BufferCollection {
 	OutputStream startBuffer(Object key);
 	
 	/**
-	 * Nullable. 
+	 * Nullable if buffer has been discarded. 
 	 * Stream expected to be closed when done.
 	 */
 	InputStream readBuffer(Object key);

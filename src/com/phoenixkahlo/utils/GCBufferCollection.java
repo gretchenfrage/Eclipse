@@ -11,6 +11,7 @@ import java.util.Map;
 
 /**
  * Old buffers are discarded to the garbage collector.
+ * Buffers are stored in byte arrays, really not a very efficient implementation.
  */
 public class GCBufferCollection implements BufferCollection {
 

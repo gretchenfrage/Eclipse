@@ -6,6 +6,8 @@ public class FrameworkTester {
 		/*for (Field field : HashMap.class.getDeclaredFields()) {
 			System.out.println(field);
 		}*/
+		byte b = 1;
+		System.out.println(b << 10);
 	}
 
 }
