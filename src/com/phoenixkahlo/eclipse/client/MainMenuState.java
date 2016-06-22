@@ -1,4 +1,4 @@
-package com.phoenixkahlo.eclipse;
+package com.phoenixkahlo.eclipse.client;
 
 import java.net.Socket;
 
@@ -33,7 +33,6 @@ public class MainMenuState extends BasicGameState {
 	
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
-		
 		ImageResource.init();
 		
 		background = ImageResource.STARS_1.image();

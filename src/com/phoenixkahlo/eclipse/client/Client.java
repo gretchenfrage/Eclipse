@@ -1,4 +1,4 @@
-package com.phoenixkahlo.eclipse;
+package com.phoenixkahlo.eclipse.client;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
@@ -8,19 +8,19 @@ import org.newdawn.slick.state.StateBasedGame;
 /**
  * The game.
  */
-public class Eclipse extends StateBasedGame {
+public class Client extends StateBasedGame {
 
 	public static void main(String[] args) {
-		new Eclipse().start();
+		new Client().start();
 	}
 	
-	public Eclipse() {
+	public Client() {
 		super("Eclipse");
 	}
 	
 	public void start() {
 		try {
-			AppGameContainer container = new AppGameContainer(this, 1500, 900, false);
+			AppGameContainer container = new AppGameContainer(this, 1000, 900, false);
 			container.setTargetFrameRate(60);
 			container.setMinimumLogicUpdateInterval(1000 / 60);
 			container.setMaximumLogicUpdateInterval(1000 / 60);

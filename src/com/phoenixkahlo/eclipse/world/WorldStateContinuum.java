@@ -33,11 +33,8 @@ public class WorldStateContinuum {
 	private int time; // Time in ticks. Between calls to tick(), time is the time of the next tick.
 	private EncodingProtocol encoder;
 	private DecodingProtocol decoder;
-	/*
-	 * Events to be imposed on the game state at certain periods in time.
-	 */
-	private Map<Integer, List<Consumer<WorldState>>> events = 
-			new HashMap<Integer, List<Consumer<WorldState>>>();
+	// Events to be imposed on the game state at certain periods in time.
+	private Map<Integer, List<Consumer<WorldState>>> events = new HashMap<Integer, List<Consumer<WorldState>>>();
 	
 	public WorldStateContinuum() {
 		state = new WorldState();
@@ -114,7 +111,7 @@ public class WorldStateContinuum {
 		this.state = state;
 	}
 	
-	public static EncodingProtocol makeEncoder() {
+	private static EncodingProtocol makeEncoder() {
 		UnionEncoder union = new UnionEncoder();
 		union.registerProtocol(CodableType.ARRAYLIST.ordinal(), new ArrayListEncoder(union));
 		// Encoders must be registered here for each class of entity
@@ -125,7 +122,7 @@ public class WorldStateContinuum {
 	/**
 	 * Imposes the gamestate data on the old gamestate to avoid object creation
 	 */
-	public static DecodingProtocol makeDecoder(WorldState imposeOn) {
+	private static DecodingProtocol makeDecoder(WorldState imposeOn) {
 		UnionDecoder union = new UnionDecoder();
 		union.registerProtocol(CodableType.ARRAYLIST.ordinal(), new ArrayListDecoder(union));
 		// Decoders must be registered here for each class of entity

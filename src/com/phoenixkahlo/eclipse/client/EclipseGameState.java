@@ -1,4 +1,4 @@
-package com.phoenixkahlo.eclipse;
+package com.phoenixkahlo.eclipse.client;
 
 /**
  * All the GameStates. GameState IDs derived from the ordinals of these items.

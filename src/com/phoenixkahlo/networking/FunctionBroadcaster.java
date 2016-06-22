@@ -37,6 +37,12 @@ public class FunctionBroadcaster {
 		registerFunction(token.ordinal(), token);
 	}
 	
+	public void registerEnumClass(Class<? extends Enum<?>> clazz) {
+		for (Enum<?> token : clazz.getEnumConstants()) {
+			registerFunctionEnum(token);
+		}
+	}
+	
 	/**
 	 * @return the randomly generated header
 	 */

@@ -2,6 +2,7 @@ package com.phoenixkahlo.networking;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 public class InstanceMethod implements Function {
 
@@ -20,7 +21,7 @@ public class InstanceMethod implements Function {
 		} catch (NoSuchMethodException | SecurityException e) {
 			throw new IllegalArgumentException(e);
 		}
-		if (!method.isAccessible())
+		if (!Modifier.isPublic(method.getModifiers()))
 			throw new IllegalArgumentException(method + " is inaccessible");
 		if (method.getExceptionTypes().length > 0)
 			throw new IllegalArgumentException(method + " throws exceptions");

@@ -1,4 +1,4 @@
-package com.phoenixkahlo.eclipse;
+package com.phoenixkahlo.eclipse.client;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,20 +13,16 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
+import com.phoenixkahlo.eclipse.EclipseCoderFactory;
+import com.phoenixkahlo.eclipse.server.ServerFunction;
 import com.phoenixkahlo.eclipse.world.Entity;
 import com.phoenixkahlo.eclipse.world.Perspective;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
-import com.phoenixkahlo.networking.ArrayListDecoder;
-import com.phoenixkahlo.networking.ArrayListEncoder;
-import com.phoenixkahlo.networking.FieldDecoder;
-import com.phoenixkahlo.networking.FieldEncoder;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
 import com.phoenixkahlo.networking.InstanceMethod;
-import com.phoenixkahlo.networking.UnionDecoder;
-import com.phoenixkahlo.networking.UnionEncoder;
 
 public class ClientConnectionState extends BasicGameState {
 
@@ -48,27 +44,9 @@ public class ClientConnectionState extends BasicGameState {
 			disconnection(e);
 		}
 		
-		/*
-		// Setup encoder
-		UnionEncoder encoder = new UnionEncoder();
-		encoder.registerProtocol(CodableType.ARRAYLIST.ordinal(),
-				new ArrayListEncoder(encoder));
-		encoder.registerProtocol(CodableType.WORLD_STATE.ordinal(),
-				new FieldEncoder(WorldState.class, encoder));
-		
-		// Setup decoder
-		UnionDecoder decoder = new UnionDecoder();
-		decoder.registerProtocol(CodableType.ARRAYLIST.ordinal(),
-				new ArrayListDecoder(decoder));
-		decoder.registerProtocol(CodableType.WORLD_STATE.ordinal(),
-				new FieldDecoder(WorldState.class, WorldState::new, decoder));
-		*/
-		
-		// Setup broadcaster
 		broadcaster = new FunctionBroadcaster(out, EclipseCoderFactory.makeEncoder());
-		broadcaster.registerFunctionEnum(ServerFunction.INIT_CLIENT);
+		broadcaster.registerEnumClass(ServerFunction.class);
 		
-		// Setup receiver
 		FunctionReceiver receiver = new FunctionReceiver(in, EclipseCoderFactory.makeDecoder());
 		receiver.registerFunction(ClientFunction.SET_TIME.ordinal(),
 				new InstanceMethod(continuum, "setTime", int.class));
@@ -79,6 +57,15 @@ public class ClientConnectionState extends BasicGameState {
 		
 		receiverThread = new FunctionReceiverThread(receiver, this::disconnection);
 		receiverThread.start();
+		
+		// Call for setup
+		try {
+			broadcaster.broadcast(ServerFunction.INIT_CLIENT);
+		} catch (IOException e) {
+			disconnection(e);
+		}
+		
+		System.out.println("Connected with " + socket);
 	}
 	
 	/**
@@ -88,6 +75,8 @@ public class ClientConnectionState extends BasicGameState {
 		if (cause != null) {
 			System.out.println("Disconnecting " + this + " because:");
 			cause.printStackTrace(System.out);
+		} else {
+			System.out.println("Disconnecting " + this + ", cause unknown.");
 		}
 	}
 	
@@ -113,6 +102,7 @@ public class ClientConnectionState extends BasicGameState {
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 		if (container.getInput().isKeyPressed(Input.KEY_ESCAPE))
 			container.exit();
+		continuum.tick();
 	}
 
 	@Override

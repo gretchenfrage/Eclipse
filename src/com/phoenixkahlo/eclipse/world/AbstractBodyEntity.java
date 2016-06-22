@@ -29,7 +29,7 @@ public abstract class AbstractBodyEntity extends EntityAdapter {
 	}
 	
 	public AbstractBodyEntity() {
-		this(RANDOM.nextInt());
+		this(RANDOM.nextInt(Integer.MAX_VALUE));
 	}
 
 	protected void addBodyFixture(BodyFixture fixture) {

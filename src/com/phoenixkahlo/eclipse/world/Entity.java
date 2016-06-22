@@ -21,6 +21,9 @@ public interface Entity {
 	 */
 	RenderLayer getRenderLayer();
 	
+	/**
+	 * @return a hopefully unique, non-negative integer.
+	 */
 	int getID();
 	
 }
