@@ -16,6 +16,10 @@ public enum ClientFunction {
 	/**
 	 * argtypes = {int}
 	 */
-	SET_PERSPECTIVE_TO_ENTITY;
+	SET_PERSPECTIVE_TO_ENTITY,
+	/**
+	 * argtypes = {int, Consumer<WorldState>}
+	 */
+	IMPOSE_EVENT;
 	
 }

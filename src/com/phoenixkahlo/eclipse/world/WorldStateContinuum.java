@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.phoenixkahlo.eclipse.CodableType;
+import com.phoenixkahlo.eclipse.world.entity.Ball;
 import com.phoenixkahlo.networking.ArrayListDecoder;
 import com.phoenixkahlo.networking.ArrayListEncoder;
 import com.phoenixkahlo.networking.DecodingProtocol;
@@ -61,25 +62,31 @@ public class WorldStateContinuum {
 		}
 		// Tick
 		state.tick();
-		time++;
 		// Impose events
 		if (events.containsKey(time)) {
 			for (Consumer<WorldState> event : events.get(time)) {
 				event.accept(state);
 			}
 		}
+		// Increment
+		time++;
 	}
 	
 	/**
 	 * @param ifMissing supplies the correct gamestate if it no longer remembers that moment in 
-	 * time by requesting it from the server.
+	 * time by requesting it from the server. Nullable.
+	 * @throws NoSuchFieldException if ifMissing == null and state doesn't exist.
 	 */
-	public void revert(int destTime, Supplier<WorldState> ifMissing) {
+	public void revert(int destTime, Supplier<WorldState> ifMissing) throws NoSuchFieldException {
 		try (InputStream in = buffers.readBuffer(destTime)) {
 			if (in == null)
-				state = ifMissing.get();
+				if (ifMissing == null)
+					throw new NoSuchFieldException();
+				else
+					state = ifMissing.get();
 			else
 				state = (WorldState) decoder.decode(in);
+			time = destTime;
 		} catch (IOException | ProtocolViolationException e) {
 			throw new RuntimeException(e);
 		}
@@ -88,12 +95,13 @@ public class WorldStateContinuum {
 	/**
 	 * Imposes the event in the future, present, or past.
 	 * @param ifMissing see revert.
+	 * @throws NoSuchFieldException see revert.
 	 */
-	public void imposeEvent(Consumer<WorldState> event, int destTime, Supplier<WorldState> ifMissing) {
+	public void imposeEvent(Consumer<WorldState> event, int destTime, Supplier<WorldState> ifMissing) throws NoSuchFieldException {
 		// Add event
-		if (!events.containsKey(time))
-			events.put(time, new ArrayList<Consumer<WorldState>>());
-		events.get(time).add(event);
+		if (!events.containsKey(destTime))
+			events.put(destTime, new ArrayList<Consumer<WorldState>>());
+		events.get(destTime).add(event);
 		if (destTime < time) { // If it was supposed to be imposed in the past
 			// Revert to that time, then tick to the current time, but this time with the event in the map
 			int currentTime = time;
@@ -113,8 +121,9 @@ public class WorldStateContinuum {
 	
 	private static EncodingProtocol makeEncoder() {
 		UnionEncoder union = new UnionEncoder();
-		union.registerProtocol(CodableType.ARRAYLIST.ordinal(), new ArrayListEncoder(union));
+		union.registerProtocol(CodableType.ARRAY_LIST.ordinal(), new ArrayListEncoder(union));
 		// Encoders must be registered here for each class of entity
+		union.registerProtocol(CodableType.BALL.ordinal(), new FieldEncoder(Ball.class, union));
 		
 		return new FieldEncoder(WorldState.class, union);
 	}
@@ -124,8 +133,10 @@ public class WorldStateContinuum {
 	 */
 	private static DecodingProtocol makeDecoder(WorldState imposeOn) {
 		UnionDecoder union = new UnionDecoder();
-		union.registerProtocol(CodableType.ARRAYLIST.ordinal(), new ArrayListDecoder(union));
+		union.registerProtocol(CodableType.ARRAY_LIST.ordinal(), new ArrayListDecoder(union));
 		// Decoders must be registered here for each class of entity
+		union.registerProtocol(CodableType.BALL.ordinal(),
+				new FieldDecoder(Ball.class, Ball::new, union));
 		
 		return new FieldDecoder(WorldState.class, () -> imposeOn, union);
 	}

@@ -1,13 +1,21 @@
 package com.phoenixkahlo.testing.networking;
 
+import java.lang.reflect.Field;
+
 public class FrameworkTester {
 
 	public static void main(String[] args) {
-		/*for (Field field : HashMap.class.getDeclaredFields()) {
+		class Foo {
+			@SuppressWarnings("unused")
+			int a;
+		}
+		class Bar extends Foo {
+			@SuppressWarnings("unused")
+			int b;
+		}
+		for (Field field : Bar.class.getDeclaredFields()) {
 			System.out.println(field);
-		}*/
-		byte b = 1;
-		System.out.println(b << 10);
+		}
 	}
 
 }

@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.phoenixkahlo.utils.ReflectionUtils;
+
 /**
  * Encodes an object by its fields in order of declaration.
  * Begins with boolean to signify if null.
@@ -69,7 +71,7 @@ public class FieldEncoder implements EncodingProtocol {
 			throw new IllegalArgumentException("circular references");
 		encoded.get(thread).add(obj);
 		// Encode fields
-		for (Field field : clazz.getDeclaredFields()) {
+		for (Field field : ReflectionUtils.getAllFields(clazz)/*clazz.getDeclaredFields()*/) {
 			field.setAccessible(true);
 			try {
 				int mods = field.getModifiers();

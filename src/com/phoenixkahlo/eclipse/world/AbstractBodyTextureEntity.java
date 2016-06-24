@@ -10,12 +10,20 @@ public abstract class AbstractBodyTextureEntity extends AbstractBodyEntity {
 	private transient float width;
 	private transient float height;
 	private transient float renderAngle;
+	private transient RenderLayer layer;
 	
-	public AbstractBodyTextureEntity(int id) {
+	public AbstractBodyTextureEntity(int id, RenderLayer layer) {
 		super(id);
+		this.layer = layer;
 	}
 	
-	public AbstractBodyTextureEntity() {}
+	public AbstractBodyTextureEntity(RenderLayer layer) {
+		this.layer = layer;
+	}
+	
+	public AbstractBodyTextureEntity() {
+		this(RenderLayer.PLAYER);
+	}
 	
 	protected void injectTexture(Image image, float width, float height, float renderAngle) {
 		this.image = image;
@@ -41,6 +49,11 @@ public abstract class AbstractBodyTextureEntity extends AbstractBodyEntity {
 				image.getHeight());
 		g.rotate((float) pos.x, (float) pos.y,
 				(float) getBody().getTransform().getRotation() + renderAngle);
-	}	
+	}
+	
+	@Override
+	public RenderLayer getRenderLayer() {
+		return layer;
+	}
 	
 }

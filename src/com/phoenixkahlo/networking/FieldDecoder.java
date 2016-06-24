@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.phoenixkahlo.utils.ReflectionUtils;
+
 /**
  * Decodes an object by its fields in order of declaration.
  * Begins with boolean to signify if null.
@@ -37,7 +39,7 @@ public class FieldDecoder implements DecodingProtocol {
 	public <E> FieldDecoder(Class<E> clazz, Supplier<E> supplier, DecodingProtocol subDecoder) {
 		this.supplier = supplier;
 		this.subDecoder = subDecoder;
-		fields = clazz.getDeclaredFields();
+		fields = ReflectionUtils.getAllFields(clazz);//clazz.getDeclaredFields();
 		for (Field field : fields)
 			field.setAccessible(true);
 		decodingFinishers = new ArrayList<Method>();

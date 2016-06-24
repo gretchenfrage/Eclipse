@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -54,6 +55,8 @@ public class ClientConnectionState extends BasicGameState {
 				new InstanceMethod(continuum, "setWorldState", WorldState.class));
 		receiver.registerFunction(ClientFunction.SET_PERSPECTIVE_TO_ENTITY.ordinal(),
 				new InstanceMethod(this, "setPerspectiveToEntity", int.class));
+		receiver.registerFunction(ClientFunction.IMPOSE_EVENT.ordinal(),
+				new InstanceMethod(this, "imposeEvent", int.class, Consumer.class));
 		
 		receiverThread = new FunctionReceiverThread(receiver, this::disconnection);
 		receiverThread.start();
@@ -97,7 +100,7 @@ public class ClientConnectionState extends BasicGameState {
 			entity.render(g);
 		}
 	}
-
+	
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 		if (container.getInput().isKeyPressed(Input.KEY_ESCAPE))
@@ -116,6 +119,14 @@ public class ClientConnectionState extends BasicGameState {
 	
 	public void setPerspectiveToEntity(int id) {
 		perspective = (Perspective) continuum.getState().getEntity(id);
+	}
+	
+	public void imposeEvent(int time, Consumer<WorldState> event) {
+		try {
+			continuum.imposeEvent(event, time, null);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

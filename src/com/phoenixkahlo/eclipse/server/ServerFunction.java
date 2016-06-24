@@ -10,6 +10,10 @@ public enum ServerFunction {
 	 * to tell the server to initialize the client. 
 	 * argtypes = {}
 	 */
-	INIT_CLIENT;
+	INIT_CLIENT,
+	/**
+	 * argtypes = {int, Consumer<WorldState>}
+	 */
+	IMPOSE_EVENT;
 	
 }

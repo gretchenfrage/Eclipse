@@ -11,7 +11,7 @@ public class TickerThread extends Thread {
 	 * @param nanoDelay time between ticks in nanoseconds.
 	 */
 	public TickerThread(Event event, long nanoDelay) {
-		super("Ticker thread, triggering " + event);
+		super("TickerThread");
 		this.event = event;
 		this.nanoDelay = nanoDelay;
 	}

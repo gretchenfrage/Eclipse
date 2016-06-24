@@ -2,7 +2,11 @@ package com.phoenixkahlo.eclipse;
 
 public enum CodableType {
 
-	ARRAYLIST,
-	WORLD_STATE;
+	ARRAY_LIST,
+	WORLD_STATE,
+	BALL,
+	ENTITY_ADDITION_EVENT,
+	SET_VELOCITY_EVENT,
+	VECTOR_2;
 	
 }

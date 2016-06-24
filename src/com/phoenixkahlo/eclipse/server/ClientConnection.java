@@ -1,13 +1,15 @@
 package com.phoenixkahlo.eclipse.server;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
+import java.util.function.Consumer;
 
 import com.phoenixkahlo.eclipse.ConstructQueueFunctionFactory;
 import com.phoenixkahlo.eclipse.EclipseCoderFactory;
 import com.phoenixkahlo.eclipse.client.ClientFunction;
+import com.phoenixkahlo.eclipse.server.event.ClientDisconnectionEvent;
+import com.phoenixkahlo.eclipse.server.event.ClientInitializationEvent;
+import com.phoenixkahlo.eclipse.server.event.ImposeEventEvent;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
@@ -20,57 +22,41 @@ public class ClientConnection {
 	
 	private int entityID = -1; // Is -1 to represent lack of entity.
 
-	public ClientConnection(Socket socket, Server server) {
+	public ClientConnection(Socket socket, Server server) throws IOException {
 		// Setup network
-		InputStream in = null;
-		OutputStream out = null;
-		try {
-			in = socket.getInputStream();
-			out = socket.getOutputStream();
-		} catch (IOException e) {
-			disconnection(e);
-			return;
-		}
-		
-		broadcaster = new FunctionBroadcaster(out, EclipseCoderFactory.makeEncoder());
+		broadcaster = new FunctionBroadcaster(socket.getOutputStream(), EclipseCoderFactory.makeEncoder());
 		broadcaster.registerEnumClass(ClientFunction.class);
 		
-		FunctionReceiver receiver = new FunctionReceiver(in, EclipseCoderFactory.makeDecoder());
+		FunctionReceiver receiver = new FunctionReceiver(socket.getInputStream(), EclipseCoderFactory.makeDecoder());
 		ConstructQueueFunctionFactory<Server> factory = new ConstructQueueFunctionFactory<Server>(server::queueEvent);
 		
 		receiver.registerFunction(ServerFunction.INIT_CLIENT.ordinal(),
-				factory.create(InitClientEvent.class, new Object[] {this}, ClientConnection.class));
+				factory.create(ClientInitializationEvent.class, new Object[] {this}, ClientConnection.class));
+		receiver.registerFunction(ServerFunction.IMPOSE_EVENT.ordinal(),
+				factory.create(ImposeEventEvent.class, int.class, Consumer.class));
 		
-		receiverThread = new FunctionReceiverThread(receiver, this::disconnection);
-		System.out.println("Connection with " + socket + " created");
+		receiverThread = new FunctionReceiverThread(receiver,
+				(Exception e) -> server.queueEvent(new ClientDisconnectionEvent(this, e.toString())));
 	}
 	
 	public void start() {
 		receiverThread.start();
-		System.out.println("Connection " + this + " started");
 	}
 	
-	private void broadcast(ClientFunction function, Object... args) {
-		System.out.println(this + " trying to broadcast " + function);
-		try {
-			broadcaster.broadcast(function, args);
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			disconnection(e);
-		}
+	public void broadcastSetTime(int time) throws IOException {
+		broadcaster.broadcast(ClientFunction.SET_TIME, time);
 	}
 	
-	public void broadcastSetTime(int time) {
-		broadcast(ClientFunction.SET_TIME, time);
+	public void broadcastSetWorldState(WorldState state) throws IOException {
+		broadcaster.broadcast(ClientFunction.SET_WORLD_STATE, state);
 	}
 	
-	public void broadcastSetWorldState(WorldState state) {
-		broadcast(ClientFunction.SET_WORLD_STATE, state);
+	public void broadcastSetPerspectiveToEntity(int id) throws IOException {
+		broadcaster.broadcast(ClientFunction.SET_PERSPECTIVE_TO_ENTITY, id);
 	}
 	
-	public void broadcastSetPerspectiveToEntity(int id) {
-		broadcast(ClientFunction.SET_PERSPECTIVE_TO_ENTITY, id);
+	public void broadcastImposeEvent(int time, Consumer<WorldState> event) throws IOException {
+		broadcaster.broadcast(ClientFunction.IMPOSE_EVENT, time, event);
 	}
 	
 	public int getEntityID() {
@@ -81,14 +67,7 @@ public class ClientConnection {
 		this.entityID = entityID;
 	}
 	
-	/**
-	 * @param cause nullable.
-	 */
-	private void disconnection(Exception cause) {
-		if (cause != null) {
-			System.out.println("Disconnecting " + this + " because:");
-			cause.printStackTrace(System.out);
-		}
+	public void disconnected(String cause) {
 	}
 	
 }
