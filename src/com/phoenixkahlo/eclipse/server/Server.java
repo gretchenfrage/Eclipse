@@ -91,4 +91,8 @@ public class Server {
 		}
 	}
 	
+	public void imposeEvent(Consumer<WorldState> event) {
+		imposeEvent(continuum.getTime(), event);
+	}
+	
 }

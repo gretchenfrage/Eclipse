@@ -12,6 +12,7 @@ import com.phoenixkahlo.eclipse.server.event.ClientDisconnectionEvent;
 import com.phoenixkahlo.eclipse.server.event.ClientInitializationEvent;
 import com.phoenixkahlo.eclipse.server.event.ImposeEventEvent;
 import com.phoenixkahlo.eclipse.world.WorldState;
+import com.phoenixkahlo.eclipse.world.event.EntityDeletionEvent;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
@@ -23,11 +24,13 @@ public class ClientConnection {
 	
 	private FunctionBroadcaster broadcaster;
 	private FunctionReceiverThread receiverThread;
+	private Server server;
 	
 	private int entityID = -1; // Is -1 to represent lack of entity.
 
 	public ClientConnection(Socket socket, Server server) throws IOException {
 		this.address = socket.getInetAddress().toString();
+		this.server = server;
 		
 		// Setup network
 		broadcaster = new FunctionBroadcaster(socket.getOutputStream(), EclipseCoderFactory.makeEncoder());
@@ -80,6 +83,8 @@ public class ClientConnection {
 	
 	public void disconnected(String cause) {
 		receiverThread.terminate();
+		if (entityID != -1)
+			server.imposeEvent(new EntityDeletionEvent(entityID));
 	}
 	
 	@Override

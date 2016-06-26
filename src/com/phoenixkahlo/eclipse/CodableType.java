@@ -9,6 +9,7 @@ public enum CodableType {
 	SET_VELOCITY_EVENT,
 	VECTOR_2,
 	PLAYER,
-	BYTE_ARRAY;
+	BYTE_ARRAY,
+	ENTITY_DELETION_EVENT;
 	
 }

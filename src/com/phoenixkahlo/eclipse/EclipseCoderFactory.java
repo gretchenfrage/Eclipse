@@ -6,6 +6,7 @@ import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.entity.Ball;
 import com.phoenixkahlo.eclipse.world.entity.Player;
 import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
+import com.phoenixkahlo.eclipse.world.event.EntityDeletionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetVelocityEvent;
 import com.phoenixkahlo.networking.ArrayDecoder;
 import com.phoenixkahlo.networking.ArrayEncoder;
@@ -40,6 +41,8 @@ public class EclipseCoderFactory {
 				new FieldEncoder(Player.class, encoder));
 		encoder.registerProtocol(CodableType.BYTE_ARRAY.ordinal(),
 				new ArrayEncoder(byte.class));
+		encoder.registerProtocol(CodableType.ENTITY_DELETION_EVENT.ordinal(),
+				new FieldEncoder(EntityDeletionEvent.class, encoder));
 		return encoder;
 	}
 	
@@ -61,6 +64,8 @@ public class EclipseCoderFactory {
 				new FieldDecoder(Player.class, Player::new, decoder));
 		decoder.registerProtocol(CodableType.BYTE_ARRAY.ordinal(),
 				new ArrayDecoder(byte.class));
+		decoder.registerProtocol(CodableType.ENTITY_DELETION_EVENT.ordinal(),
+				new FieldDecoder(EntityDeletionEvent.class, EntityDeletionEvent::new, decoder));
 		return decoder;
 	}
 	

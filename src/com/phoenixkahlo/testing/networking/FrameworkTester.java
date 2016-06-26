@@ -1,12 +1,14 @@
 package com.phoenixkahlo.testing.networking;
 
-import com.phoenixkahlo.networking.SerializationUtils;
+import org.dyn4j.dynamics.Body;
+import org.dyn4j.geometry.Circle;
 
 public class FrameworkTester {
 
 	public static void main(String[] args) {
-		System.out.println(SerializationUtils.bytesToInt(new byte[] {0, 0, 0, 0}));
-		System.out.println(SerializationUtils.bytesToInt(new byte[] {-1, -1, -1, -1}));
+		Body body = new Body();
+		body.addFixture(new Circle(10));
+		System.out.println(body.getMass().getMass());
 	}
 
 }
