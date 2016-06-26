@@ -1,6 +1,7 @@
 package com.phoenixkahlo.eclipse.server;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.util.function.Consumer;
 
@@ -14,11 +15,12 @@ import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
+import com.phoenixkahlo.utils.DisconnectionDetectionInputStream;
 
 public class ClientConnection {
 
 	private FunctionBroadcaster broadcaster;
-	private Thread receiverThread;
+	private FunctionReceiverThread receiverThread;
 	
 	private int entityID = -1; // Is -1 to represent lack of entity.
 
@@ -26,8 +28,11 @@ public class ClientConnection {
 		// Setup network
 		broadcaster = new FunctionBroadcaster(socket.getOutputStream(), EclipseCoderFactory.makeEncoder());
 		broadcaster.registerEnumClass(ClientFunction.class);
+
+		InputStream in = socket.getInputStream();
+		in = new DisconnectionDetectionInputStream(in);
 		
-		FunctionReceiver receiver = new FunctionReceiver(socket.getInputStream(), EclipseCoderFactory.makeDecoder());
+		FunctionReceiver receiver = new FunctionReceiver(in, EclipseCoderFactory.makeDecoder());
 		ConstructQueueFunctionFactory<Server> factory = new ConstructQueueFunctionFactory<Server>(server::queueEvent);
 		
 		receiver.registerFunction(ServerFunction.INIT_CLIENT.ordinal(),
@@ -51,10 +56,6 @@ public class ClientConnection {
 		broadcaster.broadcast(ClientFunction.SET_WORLD_STATE, state);
 	}
 	
-	public void broadcastSetPerspectiveToEntity(int id) throws IOException {
-		broadcaster.broadcast(ClientFunction.SET_PERSPECTIVE_TO_ENTITY, id);
-	}
-	
 	public void broadcastImposeEvent(int time, Consumer<WorldState> event) throws IOException {
 		broadcaster.broadcast(ClientFunction.IMPOSE_EVENT, time, event);
 	}
@@ -68,6 +69,7 @@ public class ClientConnection {
 	}
 	
 	public void disconnected(String cause) {
+		receiverThread.terminate();
 	}
 	
 }

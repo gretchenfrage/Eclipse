@@ -59,12 +59,13 @@ public class Server {
 	public void addClient(ClientConnection client) {
 		clients.add(client);
 		client.start();
+		System.out.println(client + " connected");
 	}
 	
 	public void disconnectClient(ClientConnection client, String cause) {
-		System.out.println("Disconnecting " + client);
 		clients.remove(client);
 		client.disconnected(cause);
+		System.out.println(client + " disconnected because: " + cause);
 	}
 	
 	public void disconnectClient(ClientConnection client, Exception cause) {

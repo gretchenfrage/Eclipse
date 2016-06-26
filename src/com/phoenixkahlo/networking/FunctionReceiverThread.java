@@ -31,4 +31,8 @@ public class FunctionReceiverThread extends Thread {
 		}
 	}
 	
+	public void terminate() {
+		receiver.close();
+	}
+	
 }

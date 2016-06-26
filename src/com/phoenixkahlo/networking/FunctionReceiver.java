@@ -51,4 +51,12 @@ public class FunctionReceiver {
 		function.invoke(args);
 	}
 	
+	public void close() {
+		try {
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

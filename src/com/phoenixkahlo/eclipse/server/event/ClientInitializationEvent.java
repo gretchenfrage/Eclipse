@@ -25,8 +25,6 @@ public class ClientInitializationEvent implements Consumer<Server> {
 		try {
 			connection.broadcastSetTime(server.getContinuum().getTime());
 			connection.broadcastSetWorldState(server.getContinuum().getState());
-			if (connection.getEntityID() >= 0)
-				connection.broadcastSetPerspectiveToEntity(connection.getEntityID());
 		} catch (IOException e) {
 			server.disconnectClient(connection, e.toString());
 		}

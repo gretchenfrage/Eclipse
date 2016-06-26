@@ -1,21 +1,12 @@
 package com.phoenixkahlo.testing.networking;
 
-import java.lang.reflect.Field;
+import com.phoenixkahlo.networking.SerializationUtils;
 
 public class FrameworkTester {
 
 	public static void main(String[] args) {
-		class Foo {
-			@SuppressWarnings("unused")
-			int a;
-		}
-		class Bar extends Foo {
-			@SuppressWarnings("unused")
-			int b;
-		}
-		for (Field field : Bar.class.getDeclaredFields()) {
-			System.out.println(field);
-		}
+		System.out.println(SerializationUtils.bytesToInt(new byte[] {0, 0, 0, 0}));
+		System.out.println(SerializationUtils.bytesToInt(new byte[] {-1, -1, -1, -1}));
 	}
 
 }

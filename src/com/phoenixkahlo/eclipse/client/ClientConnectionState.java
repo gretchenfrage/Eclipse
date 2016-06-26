@@ -53,8 +53,6 @@ public class ClientConnectionState extends BasicGameState {
 				new InstanceMethod(continuum, "setTime", int.class));
 		receiver.registerFunction(ClientFunction.SET_WORLD_STATE.ordinal(),
 				new InstanceMethod(continuum, "setWorldState", WorldState.class));
-		receiver.registerFunction(ClientFunction.SET_PERSPECTIVE_TO_ENTITY.ordinal(),
-				new InstanceMethod(this, "setPerspectiveToEntity", int.class));
 		receiver.registerFunction(ClientFunction.IMPOSE_EVENT.ordinal(),
 				new InstanceMethod(this, "imposeEvent", int.class, Consumer.class));
 		
@@ -116,10 +114,6 @@ public class ClientConnectionState extends BasicGameState {
 	/*
 	 * Network receiving functions:
 	 */
-	
-	public void setPerspectiveToEntity(int id) {
-		perspective = (Perspective) continuum.getState().getEntity(id);
-	}
 	
 	public void imposeEvent(int time, Consumer<WorldState> event) {
 		try {

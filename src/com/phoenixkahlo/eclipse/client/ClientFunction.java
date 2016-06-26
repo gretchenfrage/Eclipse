@@ -6,20 +6,20 @@ package com.phoenixkahlo.eclipse.client;
 public enum ClientFunction {
 
 	/**
-	 * argstypes = {int}
+	 * args = {int time}
 	 */
 	SET_TIME,
 	/**
-	 * argtypes = {WorldState}
+	 * args = {WorldState state}
 	 */
 	SET_WORLD_STATE,
 	/**
-	 * argtypes = {int}
+	 * args = {int time, Consumer<WorldState> event}
 	 */
-	SET_PERSPECTIVE_TO_ENTITY,
+	IMPOSE_EVENT,	
 	/**
-	 * argtypes = {int, Consumer<WorldState>}
+	 * args = {int time, int id}
 	 */
-	IMPOSE_EVENT;
+	IMPOSE_GET_PERSPECTIVE_FROM_ENTITY_EVENT;
 	
 }
