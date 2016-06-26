@@ -22,7 +22,6 @@ public class GetPerspectiveFromEntityEvent implements Consumer<WorldState> {
 
 	@Override
 	public void accept(WorldState state) {
-		System.out.println("GetPerspectiveFromEntityEvent accepted");
 		client.setPerspective(state.getEntity(id).getPerspective());
 	}
 	

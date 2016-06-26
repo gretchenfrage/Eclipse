@@ -11,10 +11,20 @@ public class BasicPerspective implements Perspective {
 	private float scale;
 	private float rotation;
 	
+	public BasicPerspective(float x, float y, float scale, float rotation) {
+		this.x = x;
+		this.y = y;
+		this.scale = scale;
+		this.rotation = rotation;
+	}
+	
+	public BasicPerspective() {
+		this(0, 0, 1, 0);
+	}
+	
 	@Override
 	public void transform(Graphics g, GameContainer container) {
-		System.out.println("transforming");
-		g.translate(-container.getWidth() / 2, -container.getHeight() / 2);
+		g.translate(container.getWidth() / 2, container.getHeight() / 2);
 		g.translate(-x, -y);
 		g.scale(scale, scale);
 		g.rotate(x, y, rotation);
