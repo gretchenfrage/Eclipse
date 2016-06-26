@@ -31,9 +31,13 @@ public class ClientConnectionState extends BasicGameState {
 	private FunctionBroadcaster broadcaster;
 	private Thread receiverThread;
 	private Perspective perspective; // Nullable
+	private Socket socket;
+	private StateBasedGame game;
 	
-	public ClientConnectionState(Socket socket) {
+	public ClientConnectionState(Socket socket, StateBasedGame game) {
 		continuum = new WorldStateContinuum();
+		this.socket = socket;
+		this.game = game;
 		
 		// Setup network
 		InputStream in = null;
@@ -50,11 +54,15 @@ public class ClientConnectionState extends BasicGameState {
 		
 		FunctionReceiver receiver = new FunctionReceiver(in, EclipseCoderFactory.makeDecoder());
 		receiver.registerFunction(ClientFunction.SET_TIME.ordinal(),
-				new InstanceMethod(continuum, "setTime", int.class));
+				new InstanceMethod(this, "setTime", int.class));
 		receiver.registerFunction(ClientFunction.SET_WORLD_STATE.ordinal(),
-				new InstanceMethod(continuum, "setWorldState", WorldState.class));
+				new InstanceMethod(this, "setWorldState", WorldState.class));
 		receiver.registerFunction(ClientFunction.IMPOSE_EVENT.ordinal(),
 				new InstanceMethod(this, "imposeEvent", int.class, Consumer.class));
+		receiver.registerFunction(ClientFunction.IMPOSE_GET_PERSPECTIVE_FROM_ENTITY_EVENT.ordinal(),
+				new InstanceMethod(this, "imposeGetPerspectiveFromEntityEvent", int.class, int.class));
+		
+		assert receiver.areAllOrdinalsRegistered(ClientFunction.class) : "Client function(s) not registered";
 		
 		receiverThread = new FunctionReceiverThread(receiver, this::disconnection);
 		receiverThread.start();
@@ -79,6 +87,12 @@ public class ClientConnectionState extends BasicGameState {
 		} else {
 			System.out.println("Disconnecting " + this + ", cause unknown.");
 		}
+		try {
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		game.enterState(ClientGameState.MAIN_MENU.ordinal());
 	}
 	
 	@Override
@@ -108,12 +122,24 @@ public class ClientConnectionState extends BasicGameState {
 
 	@Override
 	public int getID() {
-		return EclipseGameState.CLIENT_CONNECTION.ordinal();
+		return ClientGameState.CLIENT_CONNECTION.ordinal();
+	}
+	
+	public void setPerspective(Perspective perspective) {
+		this.perspective = perspective;
 	}
 	
 	/*
 	 * Network receiving functions:
 	 */
+	
+	public void setTime(int time) {
+		continuum.setTime(time);
+	}
+	
+	public void setWorldState(WorldState state) {
+		continuum.setWorldState(state);
+	}
 	
 	public void imposeEvent(int time, Consumer<WorldState> event) {
 		try {
@@ -121,6 +147,10 @@ public class ClientConnectionState extends BasicGameState {
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void imposeGetPerspectiveFromEntityEvent(int time, int id) {
+		imposeEvent(time, new GetPerspectiveFromEntityEvent(id, this));
 	}
 	
 }

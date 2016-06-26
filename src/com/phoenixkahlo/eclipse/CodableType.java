@@ -7,6 +7,8 @@ public enum CodableType {
 	BALL,
 	ENTITY_ADDITION_EVENT,
 	SET_VELOCITY_EVENT,
-	VECTOR_2;
+	VECTOR_2,
+	PLAYER,
+	BYTE_ARRAY;
 	
 }

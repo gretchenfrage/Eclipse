@@ -59,4 +59,12 @@ public class FunctionReceiver {
 		}
 	}
 	
+	public boolean areAllOrdinalsRegistered(Class<? extends Enum<?>> clazz) {
+		for (Enum<?> item : clazz.getEnumConstants()) {
+			if (!functions.containsKey(item.ordinal()))
+				return false;
+		}
+		return true;
+	}
+	
 }

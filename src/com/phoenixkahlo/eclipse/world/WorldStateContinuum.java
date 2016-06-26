@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.phoenixkahlo.eclipse.CodableType;
+import com.phoenixkahlo.eclipse.EclipseCoderFactory;
 import com.phoenixkahlo.eclipse.world.entity.Ball;
 import com.phoenixkahlo.networking.ArrayListDecoder;
 import com.phoenixkahlo.networking.ArrayListEncoder;
@@ -120,18 +121,22 @@ public class WorldStateContinuum {
 	}
 	
 	private static EncodingProtocol makeEncoder() {
+		/*
 		UnionEncoder union = new UnionEncoder();
 		union.registerProtocol(CodableType.ARRAY_LIST.ordinal(), new ArrayListEncoder(union));
 		// Encoders must be registered here for each class of entity
 		union.registerProtocol(CodableType.BALL.ordinal(), new FieldEncoder(Ball.class, union));
 		
 		return new FieldEncoder(WorldState.class, union);
+		*/
+		return EclipseCoderFactory.makeEncoder();
 	}
 	
 	/**
 	 * Imposes the gamestate data on the old gamestate to avoid object creation
 	 */
 	private static DecodingProtocol makeDecoder(WorldState imposeOn) {
+		/*
 		UnionDecoder union = new UnionDecoder();
 		union.registerProtocol(CodableType.ARRAY_LIST.ordinal(), new ArrayListDecoder(union));
 		// Decoders must be registered here for each class of entity
@@ -139,6 +144,8 @@ public class WorldStateContinuum {
 				new FieldDecoder(Ball.class, Ball::new, union));
 		
 		return new FieldDecoder(WorldState.class, () -> imposeOn, union);
+		*/
+		return EclipseCoderFactory.makeDecoder();
 	}
 	
 }

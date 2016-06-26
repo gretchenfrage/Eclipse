@@ -71,7 +71,7 @@ public class FieldEncoder implements EncodingProtocol {
 			throw new IllegalArgumentException("circular references");
 		encoded.get(thread).add(obj);
 		// Encode fields
-		for (Field field : ReflectionUtils.getAllFields(clazz)/*clazz.getDeclaredFields()*/) {
+		for (Field field : ReflectionUtils.getAllFields(clazz)) {
 			field.setAccessible(true);
 			try {
 				int mods = field.getModifiers();

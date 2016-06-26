@@ -24,4 +24,9 @@ public abstract class EntityAdapter implements Entity {
 		return null;
 	}
 	
+	@Override
+	public Perspective getPerspective() {
+		return null;
+	}
+	
 }

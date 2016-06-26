@@ -33,8 +33,6 @@ public class SerializationUtils {
 			return readBoolean(in);
 		else if (type == byte.class || type == Byte.class)
 			return (byte) in.read();
-		else if (type == byte[].class)
-			return readByteArray(in);
 		else if (type == String.class)
 			return readString(in);
 		else if (type.isEnum())
@@ -70,8 +68,6 @@ public class SerializationUtils {
 			writeBoolean((Boolean) obj, out);
 		else if (obj instanceof Byte)
 			out.write((Byte) obj);
-		else if (obj instanceof byte[])
-			writeByteArray((byte[]) obj, out);
 		else if (obj instanceof String)
 			writeString((String) obj, out);
 		else if (obj instanceof Enum)

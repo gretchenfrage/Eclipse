@@ -6,16 +6,16 @@ import java.lang.reflect.Array;
 
 public class ArrayEncoder implements EncodingProtocol {
 
-	private Class<?> clazz; // If this encodes int[]s, clazz == int.class
+	private Class<?> itemClass; // If this encodes int[]s, clazz == int.class
 	private EncodingProtocol itemEncoder; // Nullable
 	
-	public ArrayEncoder(Class<?> clazz, EncodingProtocol itemEncoder) {
-		this.clazz = clazz;
+	public ArrayEncoder(Class<?> itemClass, EncodingProtocol itemEncoder) {
+		this.itemClass = itemClass;
 		this.itemEncoder = itemEncoder;
 	}
 	
-	public ArrayEncoder(Class<?> clazz) throws IllegalArgumentException {
-		this(clazz, null);
+	public ArrayEncoder(Class<?> itemClass) throws IllegalArgumentException {
+		this(itemClass, null);
 	}
 	
 	@Override
@@ -23,7 +23,7 @@ public class ArrayEncoder implements EncodingProtocol {
 		if (!obj.getClass().isArray()) return false;		
 		Class<?> objComponentType = obj.getClass().getComponentType();
 		// Next line for if obj is primitive array and clazz is primitive class
-		if (clazz.isAssignableFrom(objComponentType)) return true;
+		if (itemClass.isAssignableFrom(objComponentType)) return true;
 		// Because Object.class.isAssignableFrom(int.class) == false
 		if (objComponentType == short.class)
 			objComponentType = Short.class;
@@ -41,7 +41,7 @@ public class ArrayEncoder implements EncodingProtocol {
 			objComponentType = Byte.class;
 		else if (objComponentType == boolean.class)
 			objComponentType = Boolean.class;
-		return clazz.isAssignableFrom(objComponentType);
+		return itemClass.isAssignableFrom(objComponentType);
 	}
 
 	@Override

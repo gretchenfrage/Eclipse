@@ -10,4 +10,12 @@ public interface Perspective {
 
 	void transform(Graphics g, GameContainer container);
 	
+	double getMinX(GameContainer container);
+	
+	double getMinY(GameContainer container);
+	
+	double getMaxX(GameContainer container);
+	
+	double getMaxY(GameContainer container);
+	
 }

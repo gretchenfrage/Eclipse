@@ -4,8 +4,11 @@ import org.dyn4j.geometry.Vector2;
 
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.entity.Ball;
+import com.phoenixkahlo.eclipse.world.entity.Player;
 import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetVelocityEvent;
+import com.phoenixkahlo.networking.ArrayDecoder;
+import com.phoenixkahlo.networking.ArrayEncoder;
 import com.phoenixkahlo.networking.ArrayListDecoder;
 import com.phoenixkahlo.networking.ArrayListEncoder;
 import com.phoenixkahlo.networking.DecodingProtocol;
@@ -33,6 +36,10 @@ public class EclipseCoderFactory {
 				new FieldEncoder(Vector2.class, encoder));
 		encoder.registerProtocol(CodableType.SET_VELOCITY_EVENT.ordinal(), 
 				new FieldEncoder(SetVelocityEvent.class, encoder));
+		encoder.registerProtocol(CodableType.PLAYER.ordinal(), 
+				new FieldEncoder(Player.class, encoder));
+		encoder.registerProtocol(CodableType.BYTE_ARRAY.ordinal(),
+				new ArrayEncoder(byte.class));
 		return encoder;
 	}
 	
@@ -50,6 +57,10 @@ public class EclipseCoderFactory {
 				new FieldDecoder(Vector2.class, Vector2::new, decoder));
 		decoder.registerProtocol(CodableType.SET_VELOCITY_EVENT.ordinal(),
 				new FieldDecoder(SetVelocityEvent.class, SetVelocityEvent::new, decoder));
+		decoder.registerProtocol(CodableType.PLAYER.ordinal(), 
+				new FieldDecoder(Player.class, Player::new, decoder));
+		decoder.registerProtocol(CodableType.BYTE_ARRAY.ordinal(),
+				new ArrayDecoder(byte.class));
 		return decoder;
 	}
 	

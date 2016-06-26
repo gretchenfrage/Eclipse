@@ -36,7 +36,7 @@ public class Client extends StateBasedGame {
 	public void initStatesList(GameContainer container) throws SlickException {
 		addState(new MainMenuState());
 		
-		enterState(EclipseGameState.MAIN_MENU.ordinal());
+		enterState(ClientGameState.MAIN_MENU.ordinal());
 	}
 
 }

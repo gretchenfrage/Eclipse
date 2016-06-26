@@ -1,24 +1,65 @@
 package com.phoenixkahlo.eclipse.world.event;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.function.Consumer;
 
+import com.phoenixkahlo.eclipse.EclipseCoderFactory;
 import com.phoenixkahlo.eclipse.world.Entity;
 import com.phoenixkahlo.eclipse.world.WorldState;
+import com.phoenixkahlo.networking.DecodingProtocol;
+import com.phoenixkahlo.networking.EncodingProtocol;
+import com.phoenixkahlo.networking.FieldDecoder;
+import com.phoenixkahlo.networking.ProtocolViolationException;
 
+/**
+ * Holds the entity in serialized byte[] form so that it can decode a fresh copy with each
+ * invocation.
+ */
 public class EntityAdditionEvent implements Consumer<WorldState> {
 
-	private Entity entity;
+	private static EncodingProtocol encoder = EclipseCoderFactory.makeEncoder();
+	private static DecodingProtocol decoder = EclipseCoderFactory.makeDecoder();
+	
+	private byte[] entityBytes;
 	
 	public EntityAdditionEvent() {}
 	
 	public EntityAdditionEvent(Entity entity) {
-		this.entity = entity;
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {
+			encoder.encode(entity, out);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		entityBytes = out.toByteArray();
 	}
 	
 	@Override
 	public void accept(WorldState state) {
-		state.addEntity(entity);
+		try {
+			state.addEntity((Entity) decoder.decode(new ByteArrayInputStream(entityBytes)));
+		} catch (IOException | ProtocolViolationException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
+	/**
+	 * Ensures that entityBytes follows protocol.
+	 */
+	@FieldDecoder.DecodingFinisher
+	public void finishDecoding(InputStream in) throws ProtocolViolationException {
+		try {
+			Object obj = decoder.decode(new ByteArrayInputStream(entityBytes));
+			if (!(obj instanceof Entity))
+				throw new ProtocolViolationException("entityBytes doesn't decode to Entity");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (ProtocolViolationException e) {
+			throw e;
+		}
+	}
 
 }

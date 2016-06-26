@@ -82,9 +82,9 @@ public class MainMenuState extends BasicGameState {
 			String address = ipField.getText().split(":")[0];
 			int port = Integer.parseInt(ipField.getText().split(":")[1]);
 			Socket socket = new Socket(address, port);
-			GameState state = new ClientConnectionState(socket);
+			GameState state = new ClientConnectionState(socket, game);
 			game.addState(state);
-			game.enterState(EclipseGameState.CLIENT_CONNECTION.ordinal());
+			game.enterState(ClientGameState.CLIENT_CONNECTION.ordinal());
 		} catch (Exception e) {
 			System.out.println("Failed to connect because of:");
 			e.printStackTrace(System.out);
@@ -93,7 +93,7 @@ public class MainMenuState extends BasicGameState {
 
 	@Override
 	public int getID() {
-		return EclipseGameState.MAIN_MENU.ordinal();
+		return ClientGameState.MAIN_MENU.ordinal();
 	}
 
 }

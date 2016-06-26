@@ -19,12 +19,16 @@ import com.phoenixkahlo.utils.DisconnectionDetectionInputStream;
 
 public class ClientConnection {
 
+	private final String address;
+	
 	private FunctionBroadcaster broadcaster;
 	private FunctionReceiverThread receiverThread;
 	
 	private int entityID = -1; // Is -1 to represent lack of entity.
 
 	public ClientConnection(Socket socket, Server server) throws IOException {
+		this.address = socket.getInetAddress().toString();
+		
 		// Setup network
 		broadcaster = new FunctionBroadcaster(socket.getOutputStream(), EclipseCoderFactory.makeEncoder());
 		broadcaster.registerEnumClass(ClientFunction.class);
@@ -39,6 +43,8 @@ public class ClientConnection {
 				factory.create(ClientInitializationEvent.class, new Object[] {this}, ClientConnection.class));
 		receiver.registerFunction(ServerFunction.IMPOSE_EVENT.ordinal(),
 				factory.create(ImposeEventEvent.class, int.class, Consumer.class));
+		
+		assert receiver.areAllOrdinalsRegistered(ServerFunction.class) : "Server function(s) not registered";
 		
 		receiverThread = new FunctionReceiverThread(receiver,
 				(Exception e) -> server.queueEvent(new ClientDisconnectionEvent(this, e.toString())));
@@ -60,6 +66,10 @@ public class ClientConnection {
 		broadcaster.broadcast(ClientFunction.IMPOSE_EVENT, time, event);
 	}
 	
+	public void broadcastImposeGetPerspectiveFromEntityEvent(int time, int id) throws IOException {
+		broadcaster.broadcast(ClientFunction.IMPOSE_GET_PERSPECTIVE_FROM_ENTITY_EVENT, time, id);
+	}
+	
 	public int getEntityID() {
 		return entityID;
 	}
@@ -70,6 +80,11 @@ public class ClientConnection {
 	
 	public void disconnected(String cause) {
 		receiverThread.terminate();
+	}
+	
+	@Override
+	public String toString() {
+		return "ClientConnection to " + address;
 	}
 	
 }
