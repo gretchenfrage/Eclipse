@@ -5,9 +5,12 @@ import org.dyn4j.geometry.Vector2;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.entity.Ball;
 import com.phoenixkahlo.eclipse.world.entity.Player;
+import com.phoenixkahlo.eclipse.world.entity.SpaceBackground;
 import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
 import com.phoenixkahlo.eclipse.world.event.EntityDeletionEvent;
+import com.phoenixkahlo.eclipse.world.event.SetBackgroundEvent;
 import com.phoenixkahlo.eclipse.world.event.SetVelocityEvent;
+import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
 import com.phoenixkahlo.networking.ArrayDecoder;
 import com.phoenixkahlo.networking.ArrayEncoder;
 import com.phoenixkahlo.networking.ArrayListDecoder;
@@ -43,6 +46,12 @@ public class EclipseCoderFactory {
 				new ArrayEncoder(byte.class));
 		encoder.registerProtocol(CodableType.ENTITY_DELETION_EVENT.ordinal(),
 				new FieldEncoder(EntityDeletionEvent.class, encoder));
+		encoder.registerProtocol(CodableType.SPACE_BACKGROUND.ordinal(),
+				new FieldEncoder(SpaceBackground.class, encoder));
+		encoder.registerProtocol(CodableType.SET_BACKGROUND_EVENT.ordinal(),
+				new FieldEncoder(SetBackgroundEvent.class, encoder));
+		encoder.registerProtocol(CodableType.SET_WALKING_ENTITY_DIRECTION_EVENT.ordinal(),
+				new FieldEncoder(SetWalkingEntityDirectionEvent.class, encoder));
 		return encoder;
 	}
 	
@@ -66,6 +75,12 @@ public class EclipseCoderFactory {
 				new ArrayDecoder(byte.class));
 		decoder.registerProtocol(CodableType.ENTITY_DELETION_EVENT.ordinal(),
 				new FieldDecoder(EntityDeletionEvent.class, EntityDeletionEvent::new, decoder));
+		decoder.registerProtocol(CodableType.SPACE_BACKGROUND.ordinal(),
+				new FieldDecoder(SpaceBackground.class, SpaceBackground::new, decoder));
+		decoder.registerProtocol(CodableType.SET_BACKGROUND_EVENT.ordinal(),
+				new FieldDecoder(SetBackgroundEvent.class, SetBackgroundEvent::new, decoder));
+		decoder.registerProtocol(CodableType.SET_WALKING_ENTITY_DIRECTION_EVENT.ordinal(), 
+				new FieldDecoder(SetWalkingEntityDirectionEvent.class, SetWalkingEntityDirectionEvent::new, decoder));
 		return decoder;
 	}
 	

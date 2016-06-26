@@ -5,7 +5,6 @@ package com.phoenixkahlo.eclipse.world;
  */
 public enum RenderLayer {
 
-	BACKGROUND,
 	SHIP,
 	UNDER_PLAYER,
 	PLAYER,

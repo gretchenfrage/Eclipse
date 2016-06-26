@@ -22,7 +22,6 @@ public class Player extends AbstractWalkingEntity {
 		setWalkSpeed(10);
 		setThrustForce(10);
 		setCanThrust(true);
-		setDirection(new Vector2(1, 1));
 	}
 	
 	@Override
@@ -31,8 +30,6 @@ public class Player extends AbstractWalkingEntity {
 		Vector2 position = getBody().getTransform().getTranslation();
 		perspective.setX((float) position.x);
 		perspective.setY((float) position.y);
-		System.out.println("(" + position.x + ", " + position.y + ")");
-		//System.out.println(getBody().getLinearVelocity());
 	}
 
 	@Override

@@ -20,6 +20,7 @@ public class WorldState {
 	private transient World world = new World();
 	private List<Entity> entities = new ArrayList<Entity>();
 	private transient int index; // Iterates forward
+	private Background background; // Nullable
 	
 	public void addEntity(Entity entity) {
 		entities.add(entity);
@@ -68,6 +69,14 @@ public class WorldState {
 		}
 	}
 	
+	public Background getBackground() {
+		return background;
+	}
+
+	public void setBackground(Background background) {
+		this.background = background;
+	}
+
 	/**
 	 * Gives the world any bodies the entities provide
 	 */

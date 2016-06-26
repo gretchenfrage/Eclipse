@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.Socket;
 import java.util.function.Consumer;
 
+import org.dyn4j.geometry.Vector2;
+
 import com.phoenixkahlo.eclipse.ConstructQueueFunctionFactory;
 import com.phoenixkahlo.eclipse.EclipseCoderFactory;
 import com.phoenixkahlo.eclipse.client.ClientFunction;
@@ -13,9 +15,11 @@ import com.phoenixkahlo.eclipse.server.event.ClientInitializationEvent;
 import com.phoenixkahlo.eclipse.server.event.ImposeEventEvent;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.event.EntityDeletionEvent;
+import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
+import com.phoenixkahlo.networking.InstanceMethod;
 import com.phoenixkahlo.utils.DisconnectionDetectionInputStream;
 
 public class ClientConnection {
@@ -46,6 +50,8 @@ public class ClientConnection {
 				factory.create(ClientInitializationEvent.class, new Object[] {this}, ClientConnection.class));
 		receiver.registerFunction(ServerFunction.IMPOSE_EVENT.ordinal(),
 				factory.create(ImposeEventEvent.class, int.class, Consumer.class));
+		receiver.registerFunction(ServerFunction.SET_DIRECTION.ordinal(),
+				new InstanceMethod(this, "receiveSetDirection", Vector2.class));
 		
 		assert receiver.areAllOrdinalsRegistered(ServerFunction.class) : "Server function(s) not registered";
 		
@@ -90,6 +96,12 @@ public class ClientConnection {
 	@Override
 	public String toString() {
 		return "ClientConnection to " + address;
+	}
+	
+	public void receiveSetDirection(Vector2 direction) {
+		if (entityID != -1)
+			server.queueEvent(new ImposeEventEvent(server.getContinuum().getTime(),
+					new SetWalkingEntityDirectionEvent(entityID, direction)));
 	}
 	
 }

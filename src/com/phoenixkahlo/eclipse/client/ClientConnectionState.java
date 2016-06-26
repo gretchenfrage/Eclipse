@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -16,6 +17,7 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import com.phoenixkahlo.eclipse.EclipseCoderFactory;
 import com.phoenixkahlo.eclipse.server.ServerFunction;
+import com.phoenixkahlo.eclipse.world.Background;
 import com.phoenixkahlo.eclipse.world.Entity;
 import com.phoenixkahlo.eclipse.world.Perspective;
 import com.phoenixkahlo.eclipse.world.WorldState;
@@ -33,6 +35,7 @@ public class ClientConnectionState extends BasicGameState {
 	private Perspective perspective; // Nullable
 	private Socket socket;
 	private StateBasedGame game;
+	private Vector2 cachedDirection = new Vector2(0, 0);
 	
 	public ClientConnectionState(Socket socket, StateBasedGame game) {
 		continuum = new WorldStateContinuum();
@@ -104,6 +107,9 @@ public class ClientConnectionState extends BasicGameState {
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		if (perspective != null)
 			perspective.transform(g, container);
+		Background background = continuum.getState().getBackground();
+		if (background != null)
+			background.render(g, container, perspective);
 		// Sort the entities by their render layer ordinals, then render them.
 		List<Entity> entities = continuum.getState().getEntities();
 		entities.removeIf((Entity entity) -> entity.getRenderLayer() == null);
@@ -117,7 +123,27 @@ public class ClientConnectionState extends BasicGameState {
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 		if (container.getInput().isKeyPressed(Input.KEY_ESCAPE))
 			container.exit();
-		continuum.tick();
+		
+		Input input = container.getInput();
+		
+		Vector2 direction = new Vector2(0, 0);
+		if (input.isKeyDown(Input.KEY_W))
+			direction.y--;
+		if (input.isKeyDown(Input.KEY_S))
+			direction.y++;
+		if (input.isKeyDown(Input.KEY_A))
+			direction.x--;
+		if (input.isKeyDown(Input.KEY_D))
+			direction.x++;
+		try {
+			if (!direction.equals(cachedDirection)) {
+				broadcaster.broadcast(ServerFunction.SET_DIRECTION, direction);
+				cachedDirection = direction;
+			}
+			continuum.tick();
+		} catch (IOException e) {
+			disconnection(e);
+		}
 	}
 
 	@Override

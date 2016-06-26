@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import com.phoenixkahlo.eclipse.server.event.ClientConnectionEvent;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
+import com.phoenixkahlo.eclipse.world.entity.SpaceBackground;
 import com.phoenixkahlo.networking.ClientWaiter;
 
 public class Server {
@@ -45,6 +46,8 @@ public class Server {
 	}
 	
 	public void start() {
+		continuum.getState().setBackground(new SpaceBackground());
+		
 		waiter.start();
 		new TickerThread(this::tick, 1_000_000_000 / 60).start();
 		System.out.println("Server started");

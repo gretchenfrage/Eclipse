@@ -8,12 +8,16 @@ public enum ServerFunction {
 	/**
 	 * When the ClientConnectionState is constructed, it sends this to the server 
 	 * to tell the server to initialize the client. 
-	 * argtypes = {}
+	 * args = {}
 	 */
 	INIT_CLIENT,
 	/**
-	 * argtypes = {int, Consumer<WorldState>}
+	 * args = {int time, Consumer<WorldState> event}
 	 */
-	IMPOSE_EVENT;
+	IMPOSE_EVENT,
+	/**
+	 * args = {Vector2 direction}
+	 */
+	SET_DIRECTION;
 	
 }

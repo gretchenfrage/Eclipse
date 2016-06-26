@@ -2,7 +2,7 @@ package com.phoenixkahlo.eclipse.world;
 
 import org.dyn4j.geometry.Vector2;
 
-public class AbstractWalkingEntity extends AbstractBodyTextureEntity {
+public abstract class AbstractWalkingEntity extends AbstractBodyTextureEntity {
 
 	private transient float walkSpeed = 0;
 	private transient boolean canThrust = false;
