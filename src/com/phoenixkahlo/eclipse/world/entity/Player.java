@@ -5,10 +5,10 @@ import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
 
-import com.phoenixkahlo.eclipse.world.WalkingEntity;
 import com.phoenixkahlo.eclipse.world.BasicPerspective;
 import com.phoenixkahlo.eclipse.world.ImageResource;
 import com.phoenixkahlo.eclipse.world.Perspective;
+import com.phoenixkahlo.eclipse.world.WalkingEntity;
 
 public class Player extends WalkingEntity {
 
@@ -27,7 +27,7 @@ public class Player extends WalkingEntity {
 	@Override
 	public void postTick() {
 		super.postTick();
-		Vector2 position = getBody().getTransform().getTranslation();
+		Vector2 position = getBody().getWorldPoint(new Vector2(0, 0));
 		perspective.setX((float) position.x);
 		perspective.setY((float) position.y);
 	}

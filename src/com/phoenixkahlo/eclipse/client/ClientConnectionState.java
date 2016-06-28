@@ -19,7 +19,6 @@ import org.newdawn.slick.state.StateBasedGame;
 import com.phoenixkahlo.eclipse.EclipseCoderFactory;
 import com.phoenixkahlo.eclipse.QueueFunctionFactory;
 import com.phoenixkahlo.eclipse.client.event.ImposeEventEvent;
-import com.phoenixkahlo.eclipse.client.event.ImposeGetPerspectiveFromEntityEventEvent;
 import com.phoenixkahlo.eclipse.client.event.SetTimeEvent;
 import com.phoenixkahlo.eclipse.client.event.SetWorldStateEvent;
 import com.phoenixkahlo.eclipse.server.ServerFunction;
@@ -37,7 +36,6 @@ public class ClientConnectionState extends BasicGameState {
 	private WorldStateContinuum continuum;
 	private FunctionBroadcaster broadcaster;
 	private Thread receiverThread;
-	private Perspective perspective; // Nullable
 	private Socket socket;
 	private StateBasedGame game;
 	private Vector2 cachedDirection = new Vector2(0, 0);
@@ -62,16 +60,7 @@ public class ClientConnectionState extends BasicGameState {
 		broadcaster.registerEnumClass(ServerFunction.class);
 
 		FunctionReceiver receiver = new FunctionReceiver(in, EclipseCoderFactory.makeDecoder());
-		/*
-		receiver.registerFunction(ClientFunction.SET_TIME.ordinal(),
-				new InstanceMethod(this, "setTime", int.class));
-		receiver.registerFunction(ClientFunction.SET_WORLD_STATE.ordinal(),
-				new InstanceMethod(this, "setWorldState", WorldState.class));
-		receiver.registerFunction(ClientFunction.IMPOSE_EVENT.ordinal(),
-				new InstanceMethod(this, "imposeEvent", int.class, Consumer.class));
-		receiver.registerFunction(ClientFunction.IMPOSE_GET_PERSPECTIVE_FROM_ENTITY_EVENT.ordinal(),
-				new InstanceMethod(this, "imposeGetPerspectiveFromEntityEvent", int.class, int.class));
-		*/
+		
 		QueueFunctionFactory<ClientConnectionState> factory =
 				new QueueFunctionFactory<ClientConnectionState>(this::queueEvent);
 		
@@ -81,8 +70,6 @@ public class ClientConnectionState extends BasicGameState {
 				factory.create(SetWorldStateEvent.class, WorldState.class));
 		receiver.registerFunction(ClientFunction.IMPOSE_EVENT.ordinal(),
 				factory.create(ImposeEventEvent.class, int.class, Consumer.class));
-		receiver.registerFunction(ClientFunction.IMPOSE_GET_PERSPECTIVE_FROM_ENTITY_EVENT.ordinal(), 
-				factory.create(ImposeGetPerspectiveFromEntityEventEvent.class, int.class, int.class));
 		
 		
 		assert receiver.areAllOrdinalsRegistered(ClientFunction.class) : "Client function(s) not registered";
@@ -131,6 +118,7 @@ public class ClientConnectionState extends BasicGameState {
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+		Perspective perspective = continuum.getState().getPerspective();
 		if (perspective != null)
 			perspective.transform(g, container);
 		Background background = continuum.getState().getBackground();
@@ -183,10 +171,6 @@ public class ClientConnectionState extends BasicGameState {
 		return ClientGameState.CLIENT_CONNECTION.ordinal();
 	}
 	
-	public void setPerspective(Perspective perspective) {
-		this.perspective = perspective;
-	}
-
 	public void setTime(int time) {
 		continuum.setTime(time);
 	}
@@ -203,13 +187,4 @@ public class ClientConnectionState extends BasicGameState {
 		}
 	}
 	
-	/*
-	 * Network receiving functions:
-	 */
-	/*
-	
-	public void imposeGetPerspectiveFromEntityEvent(int time, int id) {
-		imposeEvent(time, new GetPerspectiveFromEntityEvent(id, this));
-	}
-	*/
 }

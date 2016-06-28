@@ -74,11 +74,11 @@ public class ClientConnection {
 	public void broadcastImposeEvent(int time, Consumer<WorldState> event) throws IOException {
 		broadcaster.broadcast(ClientFunction.IMPOSE_EVENT, time, event);
 	}
-	
+	/*
 	public void broadcastImposeGetPerspectiveFromEntityEvent(int time, int id) throws IOException {
 		broadcaster.broadcast(ClientFunction.IMPOSE_GET_PERSPECTIVE_FROM_ENTITY_EVENT, time, id);
 	}
-	
+	*/
 	public int getEntityID() {
 		return entityID;
 	}

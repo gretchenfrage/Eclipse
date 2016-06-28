@@ -20,6 +20,9 @@ public class ArrayDecoder implements DecodingProtocol {
 	
 	@Override
 	public Object decode(InputStream in) throws IOException, ProtocolViolationException {
+		boolean isNull = SerializationUtils.readBoolean(in);
+		if (isNull)
+			return null;
 		int length = SerializationUtils.readInt(in);
 		Object arr = Array.newInstance(clazz, length);
 		for (int i = 0; i < length; i++) {

@@ -20,6 +20,8 @@ public class ArrayEncoder implements EncodingProtocol {
 	
 	@Override
 	public boolean canEncode(Object obj) {
+		if (obj == null)
+			return true;
 		if (!obj.getClass().isArray()) return false;		
 		Class<?> objComponentType = obj.getClass().getComponentType();
 		// Next line for if obj is primitive array and clazz is primitive class
@@ -46,6 +48,9 @@ public class ArrayEncoder implements EncodingProtocol {
 
 	@Override
 	public void encode(Object obj, OutputStream out) throws IOException, IllegalArgumentException {
+		SerializationUtils.writeBoolean(obj == null, out);
+		if (obj == null)
+			return;
 		if (!canEncode(obj)) throw new IllegalArgumentException();
 		int length = Array.getLength(obj);
 		SerializationUtils.writeInt(length, out);
