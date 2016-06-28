@@ -19,8 +19,8 @@ public class Player extends AbstractWalkingEntity {
 			injectTexture(ImageResource.BALL_1.image(), 20, 20, 0);
 		addBodyFixture(new BodyFixture(new Circle(10)));
 		getBody().setMass(MassType.NORMAL);
-		setWalkSpeed(10);
-		setThrustForce(10);
+		setWalkSpeed(100);
+		setThrustForce(100);
 		setCanThrust(true);
 	}
 	

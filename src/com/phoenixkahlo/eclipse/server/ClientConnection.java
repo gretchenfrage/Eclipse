@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 import org.dyn4j.geometry.Vector2;
 
-import com.phoenixkahlo.eclipse.ConstructQueueFunctionFactory;
+import com.phoenixkahlo.eclipse.QueueFunctionFactory;
 import com.phoenixkahlo.eclipse.EclipseCoderFactory;
 import com.phoenixkahlo.eclipse.client.ClientFunction;
 import com.phoenixkahlo.eclipse.server.event.ClientDisconnectionEvent;
@@ -44,7 +44,7 @@ public class ClientConnection {
 		in = new DisconnectionDetectionInputStream(in);
 		
 		FunctionReceiver receiver = new FunctionReceiver(in, EclipseCoderFactory.makeDecoder());
-		ConstructQueueFunctionFactory<Server> factory = new ConstructQueueFunctionFactory<Server>(server::queueEvent);
+		QueueFunctionFactory<Server> factory = new QueueFunctionFactory<Server>(server::queueEvent);
 		
 		receiver.registerFunction(ServerFunction.INIT_CLIENT.ordinal(),
 				factory.create(ClientInitializationEvent.class, new Object[] {this}, ClientConnection.class));

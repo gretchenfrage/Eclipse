@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -16,6 +17,11 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import com.phoenixkahlo.eclipse.EclipseCoderFactory;
+import com.phoenixkahlo.eclipse.QueueFunctionFactory;
+import com.phoenixkahlo.eclipse.client.event.ImposeEventEvent;
+import com.phoenixkahlo.eclipse.client.event.ImposeGetPerspectiveFromEntityEventEvent;
+import com.phoenixkahlo.eclipse.client.event.SetTimeEvent;
+import com.phoenixkahlo.eclipse.client.event.SetWorldStateEvent;
 import com.phoenixkahlo.eclipse.server.ServerFunction;
 import com.phoenixkahlo.eclipse.world.Background;
 import com.phoenixkahlo.eclipse.world.Entity;
@@ -25,7 +31,6 @@ import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
-import com.phoenixkahlo.networking.InstanceMethod;
 
 public class ClientConnectionState extends BasicGameState {
 
@@ -36,6 +41,7 @@ public class ClientConnectionState extends BasicGameState {
 	private Socket socket;
 	private StateBasedGame game;
 	private Vector2 cachedDirection = new Vector2(0, 0);
+	private List<Consumer<ClientConnectionState>> eventQueue = new ArrayList<Consumer<ClientConnectionState>>();
 	
 	public ClientConnectionState(Socket socket, StateBasedGame game) {
 		continuum = new WorldStateContinuum();
@@ -54,8 +60,9 @@ public class ClientConnectionState extends BasicGameState {
 		
 		broadcaster = new FunctionBroadcaster(out, EclipseCoderFactory.makeEncoder());
 		broadcaster.registerEnumClass(ServerFunction.class);
-		
+
 		FunctionReceiver receiver = new FunctionReceiver(in, EclipseCoderFactory.makeDecoder());
+		/*
 		receiver.registerFunction(ClientFunction.SET_TIME.ordinal(),
 				new InstanceMethod(this, "setTime", int.class));
 		receiver.registerFunction(ClientFunction.SET_WORLD_STATE.ordinal(),
@@ -64,6 +71,19 @@ public class ClientConnectionState extends BasicGameState {
 				new InstanceMethod(this, "imposeEvent", int.class, Consumer.class));
 		receiver.registerFunction(ClientFunction.IMPOSE_GET_PERSPECTIVE_FROM_ENTITY_EVENT.ordinal(),
 				new InstanceMethod(this, "imposeGetPerspectiveFromEntityEvent", int.class, int.class));
+		*/
+		QueueFunctionFactory<ClientConnectionState> factory =
+				new QueueFunctionFactory<ClientConnectionState>(this::queueEvent);
+		
+		receiver.registerFunction(ClientFunction.SET_TIME.ordinal(), 
+				factory.create(SetTimeEvent.class, int.class));
+		receiver.registerFunction(ClientFunction.SET_WORLD_STATE.ordinal(), 
+				factory.create(SetWorldStateEvent.class, WorldState.class));
+		receiver.registerFunction(ClientFunction.IMPOSE_EVENT.ordinal(),
+				factory.create(ImposeEventEvent.class, int.class, Consumer.class));
+		receiver.registerFunction(ClientFunction.IMPOSE_GET_PERSPECTIVE_FROM_ENTITY_EVENT.ordinal(), 
+				factory.create(ImposeGetPerspectiveFromEntityEventEvent.class, int.class, int.class));
+		
 		
 		assert receiver.areAllOrdinalsRegistered(ClientFunction.class) : "Client function(s) not registered";
 		
@@ -78,6 +98,12 @@ public class ClientConnectionState extends BasicGameState {
 		}
 		
 		System.out.println("Connected with " + socket);
+	}
+	
+	private void queueEvent(Consumer<ClientConnectionState> event) {
+		synchronized (eventQueue) {
+			eventQueue.add(event);
+		}
 	}
 	
 	/**
@@ -124,6 +150,12 @@ public class ClientConnectionState extends BasicGameState {
 		if (container.getInput().isKeyPressed(Input.KEY_ESCAPE))
 			container.exit();
 		
+		synchronized (eventQueue) {
+			while (!eventQueue.isEmpty()) {
+				eventQueue.remove(0).accept(this);
+			}
+		}
+		
 		Input input = container.getInput();
 		
 		Vector2 direction = new Vector2(0, 0);
@@ -154,11 +186,7 @@ public class ClientConnectionState extends BasicGameState {
 	public void setPerspective(Perspective perspective) {
 		this.perspective = perspective;
 	}
-	
-	/*
-	 * Network receiving functions:
-	 */
-	
+
 	public void setTime(int time) {
 		continuum.setTime(time);
 	}
@@ -175,8 +203,13 @@ public class ClientConnectionState extends BasicGameState {
 		}
 	}
 	
+	/*
+	 * Network receiving functions:
+	 */
+	/*
+	
 	public void imposeGetPerspectiveFromEntityEvent(int time, int id) {
 		imposeEvent(time, new GetPerspectiveFromEntityEvent(id, this));
 	}
-	
+	*/
 }

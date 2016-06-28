@@ -12,13 +12,13 @@ import com.phoenixkahlo.utils.ArrayUtils;
 /**
  * A function that constructs a Consumer<E> and queues it.
  */
-public class ConstructQueueFunction<E> implements Function {
+public class QueueFunction<E> implements Function {
 
 	private Constructor<? extends Consumer<E>> constructor;
 	private Consumer<Consumer<E>> queue;
 	private Object[] extraArgs; // Arguments that go to the constructor before the received arguments.
 	
-	public ConstructQueueFunction(Constructor<? extends Consumer<E>> constructor, Consumer<Consumer<E>> queue, Object... extraArgs) {
+	public QueueFunction(Constructor<? extends Consumer<E>> constructor, Consumer<Consumer<E>> queue, Object... extraArgs) {
 		this.constructor = constructor;
 		this.queue = queue;
 		this.extraArgs = extraArgs;
