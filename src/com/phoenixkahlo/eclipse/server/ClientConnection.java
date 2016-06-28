@@ -52,11 +52,12 @@ public class ClientConnection {
 				factory.create(ImposeEventEvent.class, int.class, Consumer.class));
 		receiver.registerFunction(ServerFunction.SET_DIRECTION.ordinal(),
 				new InstanceMethod(this, "setDirection", Vector2.class));
+		receiver.registerFunction(ServerFunction.DISCONNECT.ordinal(),
+				new InstanceMethod(this, "disconnect"));
 		
 		assert receiver.areAllOrdinalsRegistered(ServerFunction.class) : "Server function(s) not registered";
 		
-		receiverThread = new FunctionReceiverThread(receiver,
-				(Exception e) -> server.queueEvent(new ClientDisconnectionEvent(this, e.toString())));
+		receiverThread = new FunctionReceiverThread(receiver, this::disconnect);
 	}
 	
 	public void start() {
@@ -89,6 +90,31 @@ public class ClientConnection {
 	
 	public void setIsInitialized() {
 		isInitialized = true;
+	}
+	
+	/**
+	 * Is receiver thread safe.
+	 * @param cause nullable
+	 */
+	public void disconnect(Exception cause) {
+		if (cause == null)
+			disconnect("Unknown cause");
+		else
+			disconnect(cause.toString());
+	}
+	
+	/**
+	 * Is receiver thread safe.
+	 */
+	public void disconnect(String cause) {
+		server.queueEvent(new ClientDisconnectionEvent(this, cause));
+	}
+	
+	/**
+	 * Is receiver thread safe.
+	 */
+	public void disconnect() {
+		disconnect("Voluntary disconnection");
 	}
 	
 	public void onDisconnection(String cause) {

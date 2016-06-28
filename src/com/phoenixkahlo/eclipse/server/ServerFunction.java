@@ -18,6 +18,10 @@ public enum ServerFunction {
 	/**
 	 * args = {Vector2 direction}
 	 */
-	SET_DIRECTION;
+	SET_DIRECTION,
+	/**
+	 * args = {}
+	 */
+	DISCONNECT;
 	
 }

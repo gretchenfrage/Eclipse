@@ -103,6 +103,7 @@ public class ServerConnection extends BasicGameState {
 			System.out.println("Disconnecting " + this + ", cause unknown.");
 		}
 		try {
+			broadcaster.broadcast(ServerFunction.DISCONNECT);
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();

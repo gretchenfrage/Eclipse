@@ -35,6 +35,7 @@ public class Server {
 				port,
 				Exception::printStackTrace);
 		continuum = new WorldStateContinuum();
+		continuum.getState().setBackground(new SpaceBackground());
 	}
 	
 	public void tick() {
@@ -47,8 +48,6 @@ public class Server {
 	}
 	
 	public void start() {
-		continuum.getState().setBackground(new SpaceBackground());
-		
 		waiter.start();
 		new TickerThread(this::tick, 1_000_000_000 / 60).start();
 		System.out.println("Server started");
@@ -67,6 +66,8 @@ public class Server {
 	}
 	
 	public void disconnectClient(ClientConnection client, String cause) {
+		if (!clients.contains(client))
+			return;
 		clients.remove(client);
 		client.onDisconnection(cause);
 		System.out.println(client + " disconnected because: " + cause);
