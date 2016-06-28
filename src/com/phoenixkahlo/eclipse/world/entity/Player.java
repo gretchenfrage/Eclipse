@@ -5,12 +5,12 @@ import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
 
-import com.phoenixkahlo.eclipse.world.AbstractWalkingEntity;
+import com.phoenixkahlo.eclipse.world.WalkingEntity;
 import com.phoenixkahlo.eclipse.world.BasicPerspective;
 import com.phoenixkahlo.eclipse.world.ImageResource;
 import com.phoenixkahlo.eclipse.world.Perspective;
 
-public class Player extends AbstractWalkingEntity {
+public class Player extends WalkingEntity {
 
 	private transient BasicPerspective perspective = new BasicPerspective();;
 

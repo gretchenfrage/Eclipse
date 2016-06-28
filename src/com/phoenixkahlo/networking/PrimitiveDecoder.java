@@ -7,9 +7,6 @@ public class PrimitiveDecoder implements DecodingProtocol {
 
 	private Class<?> type;
 	
-	/**
-	 * @param type the class of box, not the primitive class
-	 */
 	public PrimitiveDecoder(Class<?> type) {
 		this.type = type;
 	}

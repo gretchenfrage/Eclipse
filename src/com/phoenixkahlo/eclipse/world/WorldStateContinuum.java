@@ -82,7 +82,7 @@ public class WorldStateContinuum {
 		try (InputStream in = buffers.readBuffer(destTime)) {
 			if (in == null)
 				if (ifMissing == null)
-					throw new NoSuchFieldException();
+					throw new NoSuchFieldException("time is " + time + " and cannot revert to " + destTime);
 				else
 					state = ifMissing.get();
 			else

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.World;
+import org.dyn4j.geometry.Vector2;
 
 import com.phoenixkahlo.networking.FieldDecoder;
 
@@ -21,6 +22,10 @@ public class WorldState {
 	private List<Entity> entities = new ArrayList<Entity>();
 	private transient int index; // Iterates forward
 	private Background background; // Nullable
+	
+	public WorldState() {
+		world.setGravity(new Vector2(0, 0));
+	}
 	
 	public void addEntity(Entity entity) {
 		entities.add(entity);

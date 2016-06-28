@@ -3,10 +3,10 @@ package com.phoenixkahlo.eclipse.world.entity;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Circle;
 
-import com.phoenixkahlo.eclipse.world.AbstractBodyTextureEntity;
+import com.phoenixkahlo.eclipse.world.BodyTextureEntity;
 import com.phoenixkahlo.eclipse.world.ImageResource;
 
-public class Ball extends AbstractBodyTextureEntity {
+public class Ball extends BodyTextureEntity {
 
 	public Ball() {
 		addBodyFixture(new BodyFixture(new Circle(50)));

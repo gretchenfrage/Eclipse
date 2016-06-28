@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 import org.dyn4j.geometry.Vector2;
 
-import com.phoenixkahlo.eclipse.world.AbstractWalkingEntity;
+import com.phoenixkahlo.eclipse.world.WalkingEntity;
 import com.phoenixkahlo.eclipse.world.WorldState;
 
 public class SetWalkingEntityDirectionEvent implements Consumer<WorldState> {
@@ -21,7 +21,7 @@ public class SetWalkingEntityDirectionEvent implements Consumer<WorldState> {
 	
 	@Override
 	public void accept(WorldState state) {
-		((AbstractWalkingEntity) state.getEntity(id)).setDirection(direction);
+		((WalkingEntity) state.getEntity(id)).setDirection(direction);
 	}
 
 }

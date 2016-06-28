@@ -15,20 +15,20 @@ import com.phoenixkahlo.networking.FieldDecoder;
 import com.phoenixkahlo.networking.FieldEncoder;
 
 /**
- * Base class for entities with bodies.
+ * An entity with a body.
  */
-public abstract class AbstractBodyEntity extends EntityAdapter {
+public abstract class BodyEntity extends EntityAdapter {
 
 	protected static final Random RANDOM = new Random();
 	
 	private transient Body body = new Body();
 	private int id;
 	
-	public AbstractBodyEntity(int id) {
+	public BodyEntity(int id) {
 		this.id = id;
 	}
 	
-	public AbstractBodyEntity() {
+	public BodyEntity() {
 		this(RANDOM.nextInt(Integer.MAX_VALUE));
 	}
 

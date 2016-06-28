@@ -4,7 +4,10 @@ import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
-public abstract class AbstractBodyTextureEntity extends AbstractBodyEntity {
+/**
+ * A BodyEntity with a texture.
+ */
+public abstract class BodyTextureEntity extends BodyEntity {
 
 	private transient Image image;
 	private transient float width;
@@ -12,16 +15,16 @@ public abstract class AbstractBodyTextureEntity extends AbstractBodyEntity {
 	private transient float renderAngle;
 	private transient RenderLayer layer;
 	
-	public AbstractBodyTextureEntity(int id, RenderLayer layer) {
+	public BodyTextureEntity(int id, RenderLayer layer) {
 		super(id);
 		this.layer = layer;
 	}
 	
-	public AbstractBodyTextureEntity(RenderLayer layer) {
+	public BodyTextureEntity(RenderLayer layer) {
 		this.layer = layer;
 	}
 	
-	public AbstractBodyTextureEntity() {
+	public BodyTextureEntity() {
 		this(RenderLayer.PLAYER);
 	}
 	

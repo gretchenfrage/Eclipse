@@ -2,20 +2,23 @@ package com.phoenixkahlo.eclipse.world;
 
 import org.dyn4j.geometry.Vector2;
 
-public abstract class AbstractWalkingEntity extends AbstractBodyTextureEntity {
+/**
+ * A BodyTextureEntity that can walk and maybe thrust.
+ */
+public abstract class WalkingEntity extends BodyTextureEntity {
 
 	private transient float walkSpeed = 0;
 	private transient boolean canThrust = false;
 	private transient float thrustForce = 0;
 	private Vector2 direction = new Vector2(0, 0);
 	
-	public AbstractWalkingEntity() {}
+	public WalkingEntity() {}
 	
-	public AbstractWalkingEntity(int id, RenderLayer layer) {
+	public WalkingEntity(int id, RenderLayer layer) {
 		super(id, layer);
 	}
 	
-	public AbstractWalkingEntity(RenderLayer layer) {
+	public WalkingEntity(RenderLayer layer) {
 		super(layer);
 	}
 
@@ -29,7 +32,9 @@ public abstract class AbstractWalkingEntity extends AbstractBodyTextureEntity {
 			vector.multiply(getBody().getMass().getMass());
 			getBody().applyImpulse(vector);
 		} else {
-			getBody().applyImpulse(direction.copy().multiply(thrustForce));
+			Vector2 impulse = direction.copy().multiply(thrustForce);
+			System.out.println("applying impulse: " + impulse);
+			getBody().applyForce(impulse);
 		}
 	}
 
