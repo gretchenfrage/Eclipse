@@ -6,7 +6,7 @@ package com.phoenixkahlo.eclipse.server;
 public enum ServerFunction {
 
 	/**
-	 * When the ClientConnectionState is constructed, it sends this to the server 
+	 * When the ServerConnection is constructed, it sends this to the server 
 	 * to tell the server to initialize the client. 
 	 * args = {}
 	 */

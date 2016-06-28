@@ -14,7 +14,7 @@ public enum ImageResource {
 	BALL_1("ball_1");
 	
 	/**
-	 * Should be called by MainMenuState.
+	 * Should be called by MainMenu.
 	 */
 	public static void init() throws SlickException {
 		for (ImageResource resource : ImageResource.values()) {

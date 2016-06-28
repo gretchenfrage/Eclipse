@@ -29,9 +29,9 @@ public class ClientConnection {
 	private FunctionBroadcaster broadcaster;
 	private FunctionReceiverThread receiverThread;
 	private Server server;
-	
 	private int entityID = -1; // Is -1 to represent lack of entity.
-
+	private boolean isInitialized = false;
+	
 	public ClientConnection(Socket socket, Server server) throws IOException {
 		this.address = socket.getInetAddress().toString();
 		this.server = server;
@@ -51,7 +51,7 @@ public class ClientConnection {
 		receiver.registerFunction(ServerFunction.IMPOSE_EVENT.ordinal(),
 				factory.create(ImposeEventEvent.class, int.class, Consumer.class));
 		receiver.registerFunction(ServerFunction.SET_DIRECTION.ordinal(),
-				new InstanceMethod(this, "receiveSetDirection", Vector2.class));
+				new InstanceMethod(this, "setDirection", Vector2.class));
 		
 		assert receiver.areAllOrdinalsRegistered(ServerFunction.class) : "Server function(s) not registered";
 		
@@ -74,11 +74,7 @@ public class ClientConnection {
 	public void broadcastImposeEvent(int time, Consumer<WorldState> event) throws IOException {
 		broadcaster.broadcast(ClientFunction.IMPOSE_EVENT, time, event);
 	}
-	/*
-	public void broadcastImposeGetPerspectiveFromEntityEvent(int time, int id) throws IOException {
-		broadcaster.broadcast(ClientFunction.IMPOSE_GET_PERSPECTIVE_FROM_ENTITY_EVENT, time, id);
-	}
-	*/
+	
 	public int getEntityID() {
 		return entityID;
 	}
@@ -87,7 +83,15 @@ public class ClientConnection {
 		this.entityID = entityID;
 	}
 	
-	public void disconnected(String cause) {
+	public boolean isInitialized() {
+		return isInitialized;
+	}
+	
+	public void setIsInitialized() {
+		isInitialized = true;
+	}
+	
+	public void onDisconnection(String cause) {
 		receiverThread.terminate();
 		if (entityID != -1)
 			server.imposeEvent(new EntityDeletionEvent(entityID));
@@ -98,7 +102,7 @@ public class ClientConnection {
 		return "ClientConnection to " + address;
 	}
 	
-	public void receiveSetDirection(Vector2 direction) {
+	public void setDirection(Vector2 direction) {
 		if (entityID != -1)
 			server.queueEvent(new ImposeEventEvent(server.getContinuum().getTime(),
 					new SetWalkingEntityDirectionEvent(entityID, direction)));

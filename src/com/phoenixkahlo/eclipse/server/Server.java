@@ -11,6 +11,7 @@ import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
 import com.phoenixkahlo.eclipse.world.entity.SpaceBackground;
 import com.phoenixkahlo.networking.ClientWaiter;
+import com.phoenixkahlo.utils.TickerThread;
 
 public class Server {
 
@@ -67,7 +68,7 @@ public class Server {
 	
 	public void disconnectClient(ClientConnection client, String cause) {
 		clients.remove(client);
-		client.disconnected(cause);
+		client.onDisconnection(cause);
 		System.out.println(client + " disconnected because: " + cause);
 	}
 	
@@ -83,11 +84,12 @@ public class Server {
 		try {
 			continuum.imposeEvent(event, time, null);
 			for (int i = clients.size() - 1; i >= 0; i--) {
-				try {
-					clients.get(i).broadcastImposeEvent(time, event);
-				} catch (IOException e) {
-					disconnectClient(clients.get(i), e.toString());
-				}
+				if (clients.get(i).isInitialized())
+					try {
+						clients.get(i).broadcastImposeEvent(time, event);
+					} catch (IOException e) {
+						disconnectClient(clients.get(i), e.toString());
+					}
 			}
 		} catch (NoSuchFieldException e) {
 			System.out.println("Failed to impose " + event + " at " + time);

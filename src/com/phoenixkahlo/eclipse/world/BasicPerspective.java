@@ -1,8 +1,5 @@
 package com.phoenixkahlo.eclipse.world;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;

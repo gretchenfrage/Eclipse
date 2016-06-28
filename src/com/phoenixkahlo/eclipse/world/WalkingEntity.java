@@ -25,16 +25,14 @@ public abstract class WalkingEntity extends BodyTextureEntity {
 	@Override
 	public void preTick() {
 		super.preTick();
-		if (true) { //TODO: make this detect if standing on platform
+		if (false) { //TODO: make this detect if standing on platform
 			Vector2 vector = direction.copy();
 			vector.multiply(walkSpeed);
 			vector.subtract(getBody().getLinearVelocity());
 			vector.multiply(getBody().getMass().getMass());
 			getBody().applyImpulse(vector);
 		} else {
-			Vector2 impulse = direction.copy().multiply(thrustForce);
-			System.out.println("applying impulse: " + impulse);
-			getBody().applyForce(impulse);
+			getBody().applyForce(direction.copy().multiply(thrustForce));
 		}
 	}
 

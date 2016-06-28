@@ -31,7 +31,7 @@ import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
 
-public class ClientConnectionState extends BasicGameState {
+public class ServerConnection extends BasicGameState {
 
 	private WorldStateContinuum continuum;
 	private FunctionBroadcaster broadcaster;
@@ -39,9 +39,9 @@ public class ClientConnectionState extends BasicGameState {
 	private Socket socket;
 	private StateBasedGame game;
 	private Vector2 cachedDirection = new Vector2(0, 0);
-	private List<Consumer<ClientConnectionState>> eventQueue = new ArrayList<Consumer<ClientConnectionState>>();
+	private List<Consumer<ServerConnection>> eventQueue = new ArrayList<Consumer<ServerConnection>>();
 	
-	public ClientConnectionState(Socket socket, StateBasedGame game) {
+	public ServerConnection(Socket socket, StateBasedGame game) {
 		continuum = new WorldStateContinuum();
 		this.socket = socket;
 		this.game = game;
@@ -53,16 +53,15 @@ public class ClientConnectionState extends BasicGameState {
 			in = socket.getInputStream();
 			out = socket.getOutputStream();
 		} catch (IOException e) {
-			disconnection(e);
+			disconnect(e);
 		}
 		
 		broadcaster = new FunctionBroadcaster(out, EclipseCoderFactory.makeEncoder());
 		broadcaster.registerEnumClass(ServerFunction.class);
 
 		FunctionReceiver receiver = new FunctionReceiver(in, EclipseCoderFactory.makeDecoder());
-		
-		QueueFunctionFactory<ClientConnectionState> factory =
-				new QueueFunctionFactory<ClientConnectionState>(this::queueEvent);
+		QueueFunctionFactory<ServerConnection> factory =
+				new QueueFunctionFactory<ServerConnection>(this::queueEvent);
 		
 		receiver.registerFunction(ClientFunction.SET_TIME.ordinal(), 
 				factory.create(SetTimeEvent.class, int.class));
@@ -74,20 +73,20 @@ public class ClientConnectionState extends BasicGameState {
 		
 		assert receiver.areAllOrdinalsRegistered(ClientFunction.class) : "Client function(s) not registered";
 		
-		receiverThread = new FunctionReceiverThread(receiver, this::disconnection);
+		receiverThread = new FunctionReceiverThread(receiver, this::disconnect);
 		receiverThread.start();
+		
+		System.out.println("Connected with " + socket);
 		
 		// Call for setup
 		try {
 			broadcaster.broadcast(ServerFunction.INIT_CLIENT);
 		} catch (IOException e) {
-			disconnection(e);
+			disconnect(e);
 		}
-		
-		System.out.println("Connected with " + socket);
 	}
 	
-	private void queueEvent(Consumer<ClientConnectionState> event) {
+	private void queueEvent(Consumer<ServerConnection> event) {
 		synchronized (eventQueue) {
 			eventQueue.add(event);
 		}
@@ -96,7 +95,7 @@ public class ClientConnectionState extends BasicGameState {
 	/**
 	 * @param cause nullable.
 	 */
-	private void disconnection(Exception cause) {
+	private void disconnect(Exception cause) {
 		if (cause != null) {
 			System.out.println("Disconnecting " + this + " because:");
 			cause.printStackTrace(System.out);
@@ -112,15 +111,15 @@ public class ClientConnectionState extends BasicGameState {
 	}
 	
 	@Override
-	public void init(GameContainer container, StateBasedGame game) throws SlickException {
-		
-	}
+	public void init(GameContainer container, StateBasedGame game) throws SlickException {}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+		// Transform perspective
 		Perspective perspective = continuum.getState().getPerspective();
 		if (perspective != null)
 			perspective.transform(g, container);
+		// Render background
 		Background background = continuum.getState().getBackground();
 		if (background != null)
 			background.render(g, container, perspective);
@@ -135,9 +134,11 @@ public class ClientConnectionState extends BasicGameState {
 	
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+		// Check for escaping to main menu
 		if (container.getInput().isKeyPressed(Input.KEY_ESCAPE))
-			container.exit();
+			disconnect(null);
 		
+		// Execute eventQueue
 		synchronized (eventQueue) {
 			while (!eventQueue.isEmpty()) {
 				eventQueue.remove(0).accept(this);
@@ -146,6 +147,7 @@ public class ClientConnectionState extends BasicGameState {
 		
 		Input input = container.getInput();
 		
+		// Broadcast movement changes
 		Vector2 direction = new Vector2(0, 0);
 		if (input.isKeyDown(Input.KEY_W))
 			direction.y--;
@@ -160,15 +162,17 @@ public class ClientConnectionState extends BasicGameState {
 				broadcaster.broadcast(ServerFunction.SET_DIRECTION, direction);
 				cachedDirection = direction;
 			}
-			continuum.tick();
 		} catch (IOException e) {
-			disconnection(e);
+			disconnect(e);
 		}
+		
+		// Tick the continuum
+		continuum.tick();
 	}
 
 	@Override
 	public int getID() {
-		return ClientGameState.CLIENT_CONNECTION.ordinal();
+		return ClientGameState.SERVER_CONNECTION.ordinal();
 	}
 	
 	public void setTime(int time) {

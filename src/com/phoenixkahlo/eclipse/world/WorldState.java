@@ -16,8 +16,7 @@ import com.phoenixkahlo.networking.FieldDecoder;
  */
 public class WorldState {
 	
-	public static final double SECONDS_PER_TICK = 1D / 60;
-	public static final int MILLISECONDS_PER_TICK = (int) (SECONDS_PER_TICK * 1000);
+	private static final double SECONDS_PER_TICK = 1D / 60;
 
 	private transient World world = new World();
 	private List<Entity> entities = new ArrayList<Entity>();

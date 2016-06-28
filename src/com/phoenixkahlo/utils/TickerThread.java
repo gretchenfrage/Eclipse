@@ -1,6 +1,4 @@
-package com.phoenixkahlo.eclipse.server;
-
-import com.phoenixkahlo.utils.Event;
+package com.phoenixkahlo.utils;
 
 public class TickerThread extends Thread {
 

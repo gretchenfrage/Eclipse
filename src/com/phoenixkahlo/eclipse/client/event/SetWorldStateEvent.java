@@ -2,10 +2,10 @@ package com.phoenixkahlo.eclipse.client.event;
 
 import java.util.function.Consumer;
 
-import com.phoenixkahlo.eclipse.client.ClientConnectionState;
+import com.phoenixkahlo.eclipse.client.ServerConnection;
 import com.phoenixkahlo.eclipse.world.WorldState;
 
-public class SetWorldStateEvent implements Consumer<ClientConnectionState> {
+public class SetWorldStateEvent implements Consumer<ServerConnection> {
 
 	private WorldState state;
 	
@@ -14,7 +14,7 @@ public class SetWorldStateEvent implements Consumer<ClientConnectionState> {
 	}
 	
 	@Override
-	public void accept(ClientConnectionState client) {
+	public void accept(ServerConnection client) {
 		client.setWorldState(state);
 	}
 	

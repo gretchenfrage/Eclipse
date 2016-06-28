@@ -16,10 +16,6 @@ public enum ClientFunction {
 	/**
 	 * args = {int time, Consumer<WorldState> event}
 	 */
-	IMPOSE_EVENT,	
-	/**
-	 * args = {int time, int id}
-	 */
-	//IMPOSE_GET_PERSPECTIVE_FROM_ENTITY_EVENT;
+	IMPOSE_EVENT;
 	
 }

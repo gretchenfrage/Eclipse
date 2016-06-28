@@ -28,20 +28,18 @@ public class ClientInitializationEvent implements Consumer<Server> {
 	@Override
 	public void accept(Server server) {
 		try {
-			// Setup world
-			//TODO: have server not broadcast imposeEvent to clients that haven't been initialized
-			int reminder;
 			client.broadcastSetTime(server.getContinuum().getTime());
 			client.broadcastSetWorldState(server.getContinuum().getState());
+			client.setIsInitialized();
+			
 			Entity player = new Player();
-			int time = server.getContinuum().getTime();
-			server.imposeEvent(time, new EntityAdditionEvent(player));
-			client.broadcastImposeEvent(time, new SetPerspectiveGetterEvent(new IDPerspectiveGetter(player.getID())));
+			server.imposeEvent(new EntityAdditionEvent(player));
+			client.broadcastImposeEvent(server.getContinuum().getTime(),
+					new SetPerspectiveGetterEvent(new IDPerspectiveGetter(player.getID())));
 			// TODO: when the missing worldstate requests are added, the server'll need to remember this
 			client.setEntityID(player.getID());
-			//client.broadcastImposeGetPerspectiveFromEntityEvent(time, player.getID());
 		} catch (IOException e) {
-			server.disconnectClient(client, e.toString());
+			server.disconnectClient(client, e);
 		}
 	}
 

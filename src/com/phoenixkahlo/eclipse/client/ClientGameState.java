@@ -5,7 +5,7 @@ package com.phoenixkahlo.eclipse.client;
  */
 public enum ClientGameState {
 
-	CLIENT_CONNECTION,
+	SERVER_CONNECTION,
 	MAIN_MENU;
 	
 }

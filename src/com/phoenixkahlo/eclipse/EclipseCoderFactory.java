@@ -29,6 +29,9 @@ public class EclipseCoderFactory {
 
 	private EclipseCoderFactory() {}
 	
+	public static final EncodingProtocol ENCODER = makeEncoder();
+	public static final DecodingProtocol DECODER = makeDecoder();
+	
 	public static EncodingProtocol makeEncoder() {
 		UnionEncoder encoder = new UnionEncoder();
 		encoder.registerProtocol(CodableType.ARRAY_LIST.ordinal(),

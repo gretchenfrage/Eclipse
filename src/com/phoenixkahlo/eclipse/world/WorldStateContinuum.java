@@ -10,18 +10,10 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import com.phoenixkahlo.eclipse.CodableType;
 import com.phoenixkahlo.eclipse.EclipseCoderFactory;
-import com.phoenixkahlo.eclipse.world.entity.Ball;
-import com.phoenixkahlo.networking.ArrayListDecoder;
-import com.phoenixkahlo.networking.ArrayListEncoder;
 import com.phoenixkahlo.networking.DecodingProtocol;
 import com.phoenixkahlo.networking.EncodingProtocol;
-import com.phoenixkahlo.networking.FieldDecoder;
-import com.phoenixkahlo.networking.FieldEncoder;
 import com.phoenixkahlo.networking.ProtocolViolationException;
-import com.phoenixkahlo.networking.UnionDecoder;
-import com.phoenixkahlo.networking.UnionEncoder;
 import com.phoenixkahlo.utils.BufferCollection;
 import com.phoenixkahlo.utils.GCBufferCollection;
 
@@ -33,8 +25,8 @@ public class WorldStateContinuum {
 	private WorldState state;
 	private BufferCollection buffers;
 	private int time; // Time in ticks. Between calls to tick(), time is the time of the next tick.
-	private EncodingProtocol encoder;
-	private DecodingProtocol decoder;
+	private EncodingProtocol encoder = EclipseCoderFactory.ENCODER;
+	private DecodingProtocol decoder = EclipseCoderFactory.DECODER;
 	// Events to be imposed on the game state at certain periods in time.
 	private Map<Integer, List<Consumer<WorldState>>> events = new HashMap<Integer, List<Consumer<WorldState>>>();
 	
@@ -42,8 +34,6 @@ public class WorldStateContinuum {
 		state = new WorldState();
 		buffers = new GCBufferCollection(180);
 		time = 0;
-		encoder = makeEncoder();
-		decoder = makeDecoder(state);
 	}
 	
 	public WorldState getState() {
@@ -118,34 +108,6 @@ public class WorldStateContinuum {
 	
 	public void setWorldState(WorldState state) {
 		this.state = state;
-	}
-	
-	private static EncodingProtocol makeEncoder() {
-		/*
-		UnionEncoder union = new UnionEncoder();
-		union.registerProtocol(CodableType.ARRAY_LIST.ordinal(), new ArrayListEncoder(union));
-		// Encoders must be registered here for each class of entity
-		union.registerProtocol(CodableType.BALL.ordinal(), new FieldEncoder(Ball.class, union));
-		
-		return new FieldEncoder(WorldState.class, union);
-		*/
-		return EclipseCoderFactory.makeEncoder();
-	}
-	
-	/**
-	 * Imposes the gamestate data on the old gamestate to avoid object creation
-	 */
-	private static DecodingProtocol makeDecoder(WorldState imposeOn) {
-		/*
-		UnionDecoder union = new UnionDecoder();
-		union.registerProtocol(CodableType.ARRAY_LIST.ordinal(), new ArrayListDecoder(union));
-		// Decoders must be registered here for each class of entity
-		union.registerProtocol(CodableType.BALL.ordinal(),
-				new FieldDecoder(Ball.class, Ball::new, union));
-		
-		return new FieldDecoder(WorldState.class, () -> imposeOn, union);
-		*/
-		return EclipseCoderFactory.makeDecoder();
 	}
 	
 }

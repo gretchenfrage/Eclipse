@@ -20,7 +20,7 @@ import com.phoenixkahlo.eclipse.world.ImageResource;
 /**
  * The main menu GameState.
  */
-public class MainMenuState extends BasicGameState {
+public class MainMenu extends BasicGameState {
 	
 	private static final int IP_FIELD_WIDTH = 500;
 	private static final int IP_FIELD_HEIGHT = 50;
@@ -69,6 +69,12 @@ public class MainMenuState extends BasicGameState {
 	}
 
 	@Override
+	public void enter(GameContainer container, StateBasedGame game) throws SlickException {
+		super.enter(container, game);
+		ipField.setText("");
+	}
+
+	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 		if (container.getInput().isKeyPressed(Input.KEY_ESCAPE))
 			container.exit();
@@ -82,9 +88,9 @@ public class MainMenuState extends BasicGameState {
 			String address = ipField.getText().split(":")[0];
 			int port = Integer.parseInt(ipField.getText().split(":")[1]);
 			Socket socket = new Socket(address, port);
-			GameState state = new ClientConnectionState(socket, game);
+			GameState state = new ServerConnection(socket, game);
 			game.addState(state);
-			game.enterState(ClientGameState.CLIENT_CONNECTION.ordinal());
+			game.enterState(ClientGameState.SERVER_CONNECTION.ordinal());
 		} catch (Exception e) {
 			System.out.println("Failed to connect because of:");
 			e.printStackTrace(System.out);
