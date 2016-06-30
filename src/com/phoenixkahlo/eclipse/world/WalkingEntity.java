@@ -10,7 +10,10 @@ public abstract class WalkingEntity extends BodyTextureEntity {
 	private transient float walkSpeed = 0;
 	private transient boolean canThrust = false;
 	private transient float thrustForce = 0;
+	private transient float runningMultiplier = 1;
+	private transient float sprintThrustingMultiplier = 1;
 	private Vector2 direction = new Vector2(0, 0);
+	private boolean isSprinting = false;
 	
 	public WalkingEntity() {}
 	
@@ -25,14 +28,20 @@ public abstract class WalkingEntity extends BodyTextureEntity {
 	@Override
 	public void preTick() {
 		super.preTick();
-		if (false) { //TODO: make this detect if standing on platform
+		if (true) { //TODO: make this detect if standing on platform
 			Vector2 vector = direction.copy();
 			vector.multiply(walkSpeed);
+			if (isSprinting)
+				vector.multiply(runningMultiplier);
 			vector.subtract(getBody().getLinearVelocity());
 			vector.multiply(getBody().getMass().getMass());
 			getBody().applyImpulse(vector);
 		} else {
-			getBody().applyForce(direction.copy().multiply(thrustForce));
+			Vector2 vector = direction.copy();
+			vector.multiply(thrustForce);
+			if (isSprinting)
+				vector.multiply(sprintThrustingMultiplier);
+			getBody().applyForce(vector);
 		}
 	}
 
@@ -60,12 +69,36 @@ public abstract class WalkingEntity extends BodyTextureEntity {
 		this.thrustForce = thrust;
 	}
 
+	public float getRunningMultiplier() {
+		return runningMultiplier;
+	}
+
+	public float getSprintThrustingMultiplier() {
+		return sprintThrustingMultiplier;
+	}
+
+	public void setRunningMultiplier(float runningMultiplier) {
+		this.runningMultiplier = runningMultiplier;
+	}
+
+	public void setSprintThrustingMultiplier(float sprintThrustingMultiplier) {
+		this.sprintThrustingMultiplier = sprintThrustingMultiplier;
+	}
+
 	public Vector2 getDirection() {
 		return direction;
 	}
 
 	public void setDirection(Vector2 direction) {
 		this.direction = direction;
+	}
+
+	public boolean isSprinting() {
+		return isSprinting;
+	}
+
+	public void setIsSprinting(boolean isSprinting) {
+		this.isSprinting = isSprinting;
 	}
 	
 }

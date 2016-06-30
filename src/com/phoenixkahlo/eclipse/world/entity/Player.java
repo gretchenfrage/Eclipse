@@ -19,9 +19,11 @@ public class Player extends WalkingEntity {
 			injectTexture(ImageResource.BALL_1.image(), 1, 1, 0);
 		addBodyFixture(new BodyFixture(new Circle(0.5)));
 		getBody().setMass(MassType.NORMAL);
-		setWalkSpeed(1);
+		setWalkSpeed(10);
 		setThrustForce(10);
 		setCanThrust(true);
+		setRunningMultiplier(1.6F);
+		setSprintThrustingMultiplier(2);
 		
 		perspective.setScale(25);
 	}

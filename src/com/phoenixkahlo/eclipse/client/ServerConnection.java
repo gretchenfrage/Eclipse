@@ -39,8 +39,9 @@ public class ServerConnection extends BasicGameState {
 	private Thread receiverThread;
 	private Socket socket;
 	private StateBasedGame game;
-	private Vector2 cachedDirection = new Vector2(0, 0);
 	private List<Consumer<ServerConnection>> eventQueue = new ArrayList<Consumer<ServerConnection>>();
+	private Vector2 cachedDirection = new Vector2(0, 0);
+	private boolean cachedIsSprinting = false;
 	
 	public ServerConnection(Socket socket, StateBasedGame game) {
 		continuum = new WorldStateContinuum();
@@ -164,6 +165,16 @@ public class ServerConnection extends BasicGameState {
 			if (!direction.equals(cachedDirection)) {
 				broadcaster.broadcast(ServerFunction.SET_DIRECTION, direction);
 				cachedDirection = direction;
+			}
+		} catch (IOException e) {
+			disconnect(e);
+		}
+		
+		boolean isSprinting = input.isKeyDown(Input.KEY_LSHIFT);
+		try {
+			if (isSprinting != cachedIsSprinting) {
+				broadcaster.broadcast(ServerFunction.SET_IS_SPRINTING, isSprinting);
+				cachedIsSprinting = isSprinting;
 			}
 		} catch (IOException e) {
 			disconnect(e);

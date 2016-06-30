@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 
 import org.dyn4j.geometry.Vector2;
 
-import com.phoenixkahlo.eclipse.QueueFunctionFactory;
 import com.phoenixkahlo.eclipse.EclipseCoderFactory;
+import com.phoenixkahlo.eclipse.QueueFunctionFactory;
 import com.phoenixkahlo.eclipse.client.ClientFunction;
 import com.phoenixkahlo.eclipse.server.event.ClientDisconnectionEvent;
 import com.phoenixkahlo.eclipse.server.event.ClientInitializationEvent;
@@ -16,6 +16,7 @@ import com.phoenixkahlo.eclipse.server.event.ImposeEventEvent;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.event.EntityDeletionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
+import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityIsSprintingEvent;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
@@ -52,6 +53,8 @@ public class ClientConnection {
 				factory.create(ImposeEventEvent.class, int.class, Consumer.class));
 		receiver.registerFunction(ServerFunction.SET_DIRECTION.ordinal(),
 				new InstanceMethod(this, "setDirection", Vector2.class));
+		receiver.registerFunction(ServerFunction.SET_IS_SPRINTING.ordinal(),
+				new InstanceMethod(this, "setIsSprinting", boolean.class));
 		receiver.registerFunction(ServerFunction.DISCONNECT.ordinal(),
 				new InstanceMethod(this, "disconnect"));
 		
@@ -136,6 +139,12 @@ public class ClientConnection {
 		if (entityID != -1)
 			server.queueEvent(new ImposeEventEvent(server.getContinuum().getTime(),
 					new SetWalkingEntityDirectionEvent(entityID, direction)));
+	}
+	
+	public void setIsSprinting(boolean isSprinting) {
+		if (entityID != -1)
+			server.queueEvent(new ImposeEventEvent(server.getContinuum().getTime(),
+					new SetWalkingEntityIsSprintingEvent(entityID, isSprinting)));
 	}
 	
 }

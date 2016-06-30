@@ -14,6 +14,7 @@ import com.phoenixkahlo.eclipse.world.event.SetBackgroundEvent;
 import com.phoenixkahlo.eclipse.world.event.SetPerspectiveGetterEvent;
 import com.phoenixkahlo.eclipse.world.event.SetVelocityEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
+import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityIsSprintingEvent;
 import com.phoenixkahlo.networking.ArrayDecoder;
 import com.phoenixkahlo.networking.ArrayEncoder;
 import com.phoenixkahlo.networking.ArrayListDecoder;
@@ -58,6 +59,8 @@ public class EclipseCoderFactory {
 				new FieldEncoder(SetBackgroundEvent.class, encoder));
 		encoder.registerProtocol(CodableType.SET_WALKING_ENTITY_DIRECTION_EVENT.ordinal(),
 				new FieldEncoder(SetWalkingEntityDirectionEvent.class, encoder));
+		encoder.registerProtocol(CodableType.SET_WALKING_ENTITY_IS_SPRINTING_EVENT.ordinal(), 
+				new FieldEncoder(SetWalkingEntityIsSprintingEvent.class, encoder));
 		encoder.registerProtocol(CodableType.BASIC_PERSPECTIVE.ordinal(), 
 				new FieldEncoder(BasicPerspective.class, encoder));
 		encoder.registerProtocol(CodableType.SET_PERSPECTIVE_GETTER_EVENT.ordinal(), 
@@ -93,6 +96,8 @@ public class EclipseCoderFactory {
 				new FieldDecoder(SetBackgroundEvent.class, SetBackgroundEvent::new, decoder));
 		decoder.registerProtocol(CodableType.SET_WALKING_ENTITY_DIRECTION_EVENT.ordinal(), 
 				new FieldDecoder(SetWalkingEntityDirectionEvent.class, SetWalkingEntityDirectionEvent::new, decoder));
+		decoder.registerProtocol(CodableType.SET_WALKING_ENTITY_IS_SPRINTING_EVENT.ordinal(), 
+				new FieldDecoder(SetWalkingEntityIsSprintingEvent.class, SetWalkingEntityIsSprintingEvent::new, decoder));
 		decoder.registerProtocol(CodableType.BASIC_PERSPECTIVE.ordinal(), 
 				new FieldDecoder(BasicPerspective.class, BasicPerspective::new, decoder));
 		decoder.registerProtocol(CodableType.SET_PERSPECTIVE_GETTER_EVENT.ordinal(), 

@@ -20,6 +20,10 @@ public enum ServerFunction {
 	 */
 	SET_DIRECTION,
 	/**
+	 * args = {boolean sprinting}
+	 */
+	SET_IS_SPRINTING,
+	/**
 	 * args = {}
 	 */
 	DISCONNECT;
