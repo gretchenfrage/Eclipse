@@ -37,6 +37,7 @@ public class Player extends WalkingEntity {
 		Vector2 position = getBody().getWorldPoint(new Vector2(0, 0));
 		perspective.setX((float) position.x);
 		perspective.setY((float) position.y);
+		perspective.setRotation(perspective.getRotation() + 0.02f);
 	}
 
 	@Override

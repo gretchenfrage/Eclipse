@@ -1,5 +1,6 @@
 package com.phoenixkahlo.eclipse.world;
 
+import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -38,10 +39,11 @@ public abstract class BasicBackground implements Background {
 			xMax = container.getWidth();
 			yMax = container.getHeight();
 		} else {
-			xStart = MathUtils.roundDown((float) perspective.getMinX(container), width);
-			yStart = MathUtils.roundDown((float) perspective.getMinY(container), height);
-			xMax = (float) perspective.getMaxX(container);
-			yMax = (float) perspective.getMaxY(container);
+			Vector2 containerSize = new Vector2(container.getWidth(), container.getHeight());
+			xStart = MathUtils.roundDown((float) perspective.getMinX(containerSize), width);
+			yStart = MathUtils.roundDown((float) perspective.getMinY(containerSize), height);
+			xMax = (float) perspective.getMaxX(containerSize);
+			yMax = (float) perspective.getMaxY(containerSize);
 		}
 		for (float x = xStart; x < xMax; x += width) {
 			for (float y = yStart; y < yMax; y += height) {

@@ -27,43 +27,61 @@ public class BasicPerspective implements Perspective {
 		g.translate(container.getWidth() / 2, container.getHeight() / 2);
 		g.scale(scale, scale);
 		g.translate(-x, -y);
-		g.rotate(x, y, rotation);
-	}
-
-	private Vector2 getMin(GameContainer container) {
-		Vector2 min = new Vector2(-container.getWidth() / 2, -container.getHeight() / 2);
-		min.multiply(1 / scale);
-		min.rotate(rotation);
-		min.add(x, y);
-		return min;
+		g.rotate(x, y, (float) -Math.toDegrees(rotation));
 	}
 	
-	private Vector2 getMax(GameContainer container) {
-		Vector2 max = new Vector2(container.getWidth() / 2, container.getHeight() / 2);
-		max.multiply(1 / scale);
-		max.rotate(rotation);
-		max.add(x, y);
-		return max;
+	public Vector2 screenToWorld(Vector2 screenPoint, Vector2 containerSize) {
+		Vector2 out = screenPoint.copy();
+		
+		// Scale the screen around its center
+		Vector2 screenCenter = containerSize.copy().multiply(0.5);
+		//out.subtract(screenCenter);
+		out.multiply(1 / scale);
+		//out.add(screenCenter);
+		// Move the origin of the screen to the point of the perspective
+		out.add(x, y);
+		// Move the center of the screen to the point of the perspective
+		out.subtract(screenCenter.multiply(1 / scale));
+		// Rotate the screen around the perspective
+		out.rotate(rotation);
+		
+		return out;
+	}
+	
+	private Vector2 getMinCorner(Vector2 containerSize) {
+		return screenToWorld(new Vector2(0, 0), containerSize);
+	}
+	
+	private Vector2 getMaxCorner(Vector2 containerSize) {
+		return screenToWorld(containerSize, containerSize);
 	}
 	
 	@Override
-	public double getMinX(GameContainer container) {
-		return getMin(container).x;
+	public double getMinX(Vector2 containerSize) {
+		Vector2 c1 = getMinCorner(containerSize);
+		Vector2 c2 = getMaxCorner(containerSize);
+		return c1.x < c2.x ? c1.x : c2.x;
 	}
 
 	@Override
-	public double getMinY(GameContainer container) {
-		return getMin(container).y;
+	public double getMinY(Vector2 containerSize) {
+		Vector2 c1 = getMinCorner(containerSize);
+		Vector2 c2 = getMaxCorner(containerSize);
+		return c1.y < c2.y ? c1.y : c2.y;
 	}
 
 	@Override
-	public double getMaxX(GameContainer container) {
-		return getMax(container).x;
+	public double getMaxX(Vector2 containerSize) {
+		Vector2 c1 = getMinCorner(containerSize);
+		Vector2 c2 = getMaxCorner(containerSize);
+		return c1.x > c2.x ? c1.x : c2.x;
 	}
 
 	@Override
-	public double getMaxY(GameContainer container) {
-		return getMax(container).y;
+	public double getMaxY(Vector2 containerSize) {
+		Vector2 c1 = getMinCorner(containerSize);
+		Vector2 c2 = getMaxCorner(containerSize);
+		return c1.y > c2.y ? c1.y : c2.y;
 	}
 
 	public float getX() {
