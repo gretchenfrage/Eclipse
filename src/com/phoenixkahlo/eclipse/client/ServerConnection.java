@@ -34,6 +34,8 @@ import com.phoenixkahlo.networking.FunctionReceiverThread;
 
 public class ServerConnection extends BasicGameState {
 
+	private static final long NANOSECONDS_PER_TICK = (long) (WorldState.SECONDS_PER_TICK * 1_000_000_000);
+	
 	private WorldStateContinuum continuum;
 	private FunctionBroadcaster broadcaster;
 	private Thread receiverThread;
@@ -42,6 +44,7 @@ public class ServerConnection extends BasicGameState {
 	private List<Consumer<ServerConnection>> eventQueue = new ArrayList<Consumer<ServerConnection>>();
 	private Vector2 cachedDirection = new Vector2(0, 0);
 	private boolean cachedIsSprinting = false;
+	private long timeForNextTick = System.nanoTime();
 	
 	public ServerConnection(Socket socket, StateBasedGame game) {
 		continuum = new WorldStateContinuum();
@@ -141,6 +144,10 @@ public class ServerConnection extends BasicGameState {
 		// Check for escaping to main menu
 		if (container.getInput().isKeyPressed(Input.KEY_ESCAPE))
 			disconnect(null);
+		
+		// Active wait until time is ready
+		while (System.nanoTime() < timeForNextTick) {}
+		timeForNextTick += NANOSECONDS_PER_TICK;
 		
 		// Execute eventQueue
 		synchronized (eventQueue) {

@@ -11,7 +11,8 @@ public enum ImageResource {
 	STARS_1("stars_1"),
 	BANNER_1("banner_1"),
 	BANNER_2("banner_2"),
-	BALL_1("ball_1");
+	BALL_1("ball_1"),
+	BALL_2("ball_2");
 	
 	/**
 	 * Should be called by MainMenu.

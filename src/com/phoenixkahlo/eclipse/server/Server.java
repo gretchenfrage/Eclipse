@@ -24,7 +24,7 @@ public class Server {
 		new Server(Integer.parseInt(args[0])).start();
 	}
 
-	private static final int TICKS_PER_TIME_SYNCHRONIZE = 1;
+	private static final int TICKS_PER_TIME_SYNCHRONIZE = 600;
 	
 	private ClientWaiter waiter;
 	private List<Consumer<Server>> eventQueue = new ArrayList<Consumer<Server>>();
@@ -64,7 +64,8 @@ public class Server {
 	
 	public void start() {
 		waiter.start();
-		new TickerThread(this::tick, 1_000_000_000 / 60).start();
+		//new TickerThread(this::tick, 1_000_000_000 / 60).start();
+		new TickerThread(this::tick, (int) (WorldState.SECONDS_PER_TICK * 1_000_000_000)).start();
 		System.out.println("Server started");
 	}
 	

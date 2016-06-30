@@ -37,7 +37,7 @@ public abstract class BodyTextureEntity extends BodyEntity {
 	
 	@Override
 	public void render(Graphics g) {
-		Vector2 pos = getBody().getTransform().getTranslation();
+		Vector2 pos = getBody().getWorldPoint(new Vector2());
 		Vector2 min = pos.copy().subtract(width / 2, height / 2);
 		Vector2 max = pos.copy().add(width / 2, height / 2);
 		g.rotate((float) pos.x, (float) pos.y,
@@ -49,7 +49,8 @@ public abstract class BodyTextureEntity extends BodyEntity {
 				(float) max.y,
 				0, 0,
 				image.getWidth(),
-				image.getHeight());
+				image.getHeight(),
+				g.getColor());
 		g.rotate((float) pos.x, (float) pos.y,
 				(float) getBody().getTransform().getRotation() + renderAngle);
 	}

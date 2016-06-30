@@ -4,6 +4,8 @@ import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 
 import com.phoenixkahlo.eclipse.world.BasicPerspective;
 import com.phoenixkahlo.eclipse.world.ImageResource;
@@ -11,12 +13,13 @@ import com.phoenixkahlo.eclipse.world.Perspective;
 import com.phoenixkahlo.eclipse.world.WalkingEntity;
 
 public class Player extends WalkingEntity {
-
-	private transient BasicPerspective perspective = new BasicPerspective();;
+	
+	private transient BasicPerspective perspective = new BasicPerspective();
+	private int color = (int) (Math.random() * (0xFFFFFF + 1));
 
 	public Player() {
-		if (ImageResource.BALL_1.image() != null)
-			injectTexture(ImageResource.BALL_1.image(), 1, 1, 0);
+		if (ImageResource.BALL_2.image() != null)
+			injectTexture(ImageResource.BALL_2.image(), 1, 1, 0);
 		addBodyFixture(new BodyFixture(new Circle(0.5)));
 		getBody().setMass(MassType.NORMAL);
 		setWalkSpeed(10);
@@ -39,6 +42,14 @@ public class Player extends WalkingEntity {
 	@Override
 	public Perspective getPerspective() {
 		return perspective;
+	}
+	
+	@Override
+	public void render(Graphics g) {
+		Color beforeColor = g.getColor();
+		g.setColor(new Color(color));
+		super.render(g);
+		g.setColor(beforeColor);
 	}
 	
 }

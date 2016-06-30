@@ -5,6 +5,8 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import com.phoenixkahlo.eclipse.world.WorldState;
+
 /**
  * The game.
  */
@@ -21,9 +23,7 @@ public class Client extends StateBasedGame {
 	public void start() {
 		try {
 			AppGameContainer container = new AppGameContainer(this, 1000, 900, false);
-			container.setTargetFrameRate(60);
-			container.setMinimumLogicUpdateInterval(1000 / 60);
-			container.setMaximumLogicUpdateInterval(1000 / 60);
+			container.setTargetFrameRate(WorldState.TICKS_PER_SECOND);
 			container.setVSync(true);
 			container.setShowFPS(false);
 			container.start();
