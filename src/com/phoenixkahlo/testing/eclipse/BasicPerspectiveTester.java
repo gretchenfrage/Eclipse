@@ -8,14 +8,14 @@ public class BasicPerspectiveTester {
 
 	public static void main(String[] args) {
 		BasicPerspective perspective = new BasicPerspective();
-		perspective.setScale(100);
-		perspective.setX(5);
+		perspective.setScale(1);
+		perspective.setX(10);
 		perspective.setY(5);
 		perspective.setRotation((float) (Math.PI / 2));
 		System.out.println(
 				perspective.screenToWorld(
-						new Vector2(2.5, 2.5), 
-						new Vector2(1000, 1000)
+						new Vector2(10, 5), 
+						new Vector2(30, 20)
 						));
 	}
 	

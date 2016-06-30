@@ -33,55 +33,57 @@ public class BasicPerspective implements Perspective {
 	public Vector2 screenToWorld(Vector2 screenPoint, Vector2 containerSize) {
 		Vector2 out = screenPoint.copy();
 		
-		// Scale the screen around its center
+		// Scale the screen
 		Vector2 screenCenter = containerSize.copy().multiply(0.5);
-		//out.subtract(screenCenter);
 		out.multiply(1 / scale);
-		//out.add(screenCenter);
 		// Move the origin of the screen to the point of the perspective
 		out.add(x, y);
 		// Move the center of the screen to the point of the perspective
 		out.subtract(screenCenter.multiply(1 / scale));
 		// Rotate the screen around the perspective
-		out.rotate(rotation);
+		out.rotate(-rotation, x, y);
 		
 		return out;
 	}
 	
-	private Vector2 getMinCorner(Vector2 containerSize) {
-		return screenToWorld(new Vector2(0, 0), containerSize);
-	}
-	
-	private Vector2 getMaxCorner(Vector2 containerSize) {
-		return screenToWorld(containerSize, containerSize);
-	}
-	
 	@Override
 	public double getMinX(Vector2 containerSize) {
-		Vector2 c1 = getMinCorner(containerSize);
-		Vector2 c2 = getMaxCorner(containerSize);
-		return c1.x < c2.x ? c1.x : c2.x;
+		return min(new double[] {
+				screenToWorld(new Vector2(0, 0), containerSize).x,
+				screenToWorld(containerSize, containerSize).x,
+				screenToWorld(new Vector2(containerSize.x, 0), containerSize).x,
+				screenToWorld(new Vector2(0, containerSize.y), containerSize).x
+				});
 	}
 
 	@Override
 	public double getMinY(Vector2 containerSize) {
-		Vector2 c1 = getMinCorner(containerSize);
-		Vector2 c2 = getMaxCorner(containerSize);
-		return c1.y < c2.y ? c1.y : c2.y;
+		return min(new double[] {
+				screenToWorld(new Vector2(0, 0), containerSize).y,
+				screenToWorld(containerSize, containerSize).y,
+				screenToWorld(new Vector2(containerSize.x, 0), containerSize).y,
+				screenToWorld(new Vector2(0, containerSize.y), containerSize).y
+				});
 	}
 
 	@Override
 	public double getMaxX(Vector2 containerSize) {
-		Vector2 c1 = getMinCorner(containerSize);
-		Vector2 c2 = getMaxCorner(containerSize);
-		return c1.x > c2.x ? c1.x : c2.x;
+		return max(new double[] {
+				screenToWorld(new Vector2(0, 0), containerSize).x,
+				screenToWorld(containerSize, containerSize).x,
+				screenToWorld(new Vector2(containerSize.x, 0), containerSize).x,
+				screenToWorld(new Vector2(0, containerSize.y), containerSize).x
+				});
 	}
 
 	@Override
 	public double getMaxY(Vector2 containerSize) {
-		Vector2 c1 = getMinCorner(containerSize);
-		Vector2 c2 = getMaxCorner(containerSize);
-		return c1.y > c2.y ? c1.y : c2.y;
+		return max(new double[] {
+				screenToWorld(new Vector2(0, 0), containerSize).y,
+				screenToWorld(containerSize, containerSize).y,
+				screenToWorld(new Vector2(containerSize.x, 0), containerSize).y,
+				screenToWorld(new Vector2(0, containerSize.y), containerSize).y
+				});
 	}
 
 	public float getX() {
@@ -115,5 +117,23 @@ public class BasicPerspective implements Perspective {
 	public void setRotation(float rotation) {
 		this.rotation = rotation;
 	}
+	
+	private double max(double[] arr) {
+		double out = arr[0];
+		for (int i = 1; i < arr.length; i++) {
+			if (arr[i] > out)
+				out = arr[i];
+		}
+		return out;
+	}
 
+	private double min(double[] arr) {
+		double out = arr[0];
+		for (int i = 1; i < arr.length; i++) {
+			if (arr[i] < out)
+				out = arr[i];
+		}
+		return out;
+	}
+	
 }

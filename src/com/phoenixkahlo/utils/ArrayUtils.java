@@ -30,7 +30,7 @@ public class ArrayUtils {
 		return null;
 	}
 	
-	public static <A, B> boolean equals(A[] aArr, B[] bArr) {
+	public static boolean equals(Object[] aArr, Object[] bArr) {
 		if (aArr.length != bArr.length) return false;
 		for (int i = 0; i < aArr.length; i++) {
 			if (!aArr[i].equals(bArr[i])) return false;
