@@ -10,6 +10,8 @@ public class BasicPerspective implements Perspective {
 	private float y;
 	private float scale;
 	private float rotation;
+	private float suggestibleScaleMin = Float.NaN; // May be NaN to represent lack thereof
+	private float suggestibleScaleMax = Float.NaN; // May be NaN to represent lack thereof
 	
 	public BasicPerspective(float x, float y, float scale, float rotation) {
 		this.x = x;
@@ -31,10 +33,10 @@ public class BasicPerspective implements Perspective {
 	}
 	
 	public Vector2 screenToWorld(Vector2 screenPoint, Vector2 containerSize) {
+		Vector2 screenCenter = containerSize.copy().multiply(0.5);
 		Vector2 out = screenPoint.copy();
 		
-		// Scale the screen
-		Vector2 screenCenter = containerSize.copy().multiply(0.5);
+		// Scale the screen to its origin
 		out.multiply(1 / scale);
 		// Move the origin of the screen to the point of the perspective
 		out.add(x, y);
@@ -85,7 +87,27 @@ public class BasicPerspective implements Perspective {
 				screenToWorld(new Vector2(0, containerSize.y), containerSize).y
 				});
 	}
+	
+	@Override
+	public void suggestAddRotation(double radians) {
+		rotation += radians;
+		rotation %= Math.PI * 2;
+	}
+	
+	@Override
+	public void suggestRaiseScale(double factor) {
+		scale = (float) Math.pow(scale, factor);
+		if (scale > suggestibleScaleMax)
+			scale = suggestibleScaleMax;
+		if (scale < suggestibleScaleMin)
+			scale = suggestibleScaleMin;
+	}
 
+	@Override
+	public double attemptGetRotation() {
+		return rotation;
+	}
+	
 	public float getX() {
 		return x;
 	}
@@ -118,6 +140,22 @@ public class BasicPerspective implements Perspective {
 		this.rotation = rotation;
 	}
 	
+	public float getSuggestibleScaleMin() {
+		return suggestibleScaleMin;
+	}
+
+	public void setSuggestibleScaleMin(float suggestibleScaleMin) {
+		this.suggestibleScaleMin = suggestibleScaleMin;
+	}
+
+	public float getSuggestibleScaleMax() {
+		return suggestibleScaleMax;
+	}
+
+	public void setSuggestibleScaleMax(float suggestibleScaleMax) {
+		this.suggestibleScaleMax = suggestibleScaleMax;
+	}
+
 	private double max(double[] arr) {
 		double out = arr[0];
 		for (int i = 1; i < arr.length; i++) {

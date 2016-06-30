@@ -19,4 +19,13 @@ public interface Perspective {
 	
 	double getMaxY(Vector2 containerSize);
 	
+	void suggestAddRotation(double radians);
+	
+	void suggestRaiseScale(double factor);
+	
+	/**
+	 * @return the perspective's rotation or Double.NaN
+	 */
+	double attemptGetRotation();
+	
 }

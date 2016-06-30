@@ -32,9 +32,14 @@ import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
 
+/**
+ * The client's state of being connected to the server.
+ */
 public class ServerConnection extends BasicGameState {
 
 	private static final long NANOSECONDS_PER_TICK = (long) (WorldState.SECONDS_PER_TICK * 1_000_000_000);
+	private static final double RADIANS_ROTATE_PER_TICK = 0.1;
+	private static final double SCALE_FACTOR_PER_TICK = 0.01;
 	
 	private WorldStateContinuum continuum;
 	private FunctionBroadcaster broadcaster;
@@ -158,7 +163,8 @@ public class ServerConnection extends BasicGameState {
 		
 		Input input = container.getInput();
 		
-		// Broadcast movement changes
+		// Broadcast controls
+		// Direction
 		Vector2 direction = new Vector2(0, 0);
 		if (input.isKeyDown(Input.KEY_W))
 			direction.y--;
@@ -168,6 +174,12 @@ public class ServerConnection extends BasicGameState {
 			direction.x--;
 		if (input.isKeyDown(Input.KEY_D))
 			direction.x++;
+		Perspective perspective = continuum.getState().getPerspective();
+		if (perspective != null) {
+			double rotation = perspective.attemptGetRotation();
+			if (!Double.isNaN(rotation))
+				direction.rotate(rotation);
+		}
 		try {
 			if (!direction.equals(cachedDirection)) {
 				broadcaster.broadcast(ServerFunction.SET_DIRECTION, direction);
@@ -176,7 +188,7 @@ public class ServerConnection extends BasicGameState {
 		} catch (IOException e) {
 			disconnect(e);
 		}
-		
+		// Sprinting
 		boolean isSprinting = input.isKeyDown(Input.KEY_LSHIFT);
 		try {
 			if (isSprinting != cachedIsSprinting) {
@@ -185,6 +197,20 @@ public class ServerConnection extends BasicGameState {
 			}
 		} catch (IOException e) {
 			disconnect(e);
+		}
+		
+		// Local controls
+		if (perspective != null) {
+			// Rotation
+			if (input.isKeyDown(Input.KEY_E))
+				perspective.suggestAddRotation(RADIANS_ROTATE_PER_TICK);
+			if (input.isKeyDown(Input.KEY_Q))
+				perspective.suggestAddRotation(-RADIANS_ROTATE_PER_TICK);
+			// Scale
+			if (input.isKeyDown(Input.KEY_R))
+				perspective.suggestRaiseScale(1 + SCALE_FACTOR_PER_TICK);
+			if (input.isKeyDown(Input.KEY_F))
+				perspective.suggestRaiseScale(1 - SCALE_FACTOR_PER_TICK);
 		}
 		
 		// Tick the continuum

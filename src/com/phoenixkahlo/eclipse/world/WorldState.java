@@ -52,7 +52,7 @@ public class WorldState {
 	}
 	
 	/**
-	 * Nullable.
+	 * @return nullable
 	 */
 	public Entity getEntity(int id) {
 		for (Entity entity : entities) {

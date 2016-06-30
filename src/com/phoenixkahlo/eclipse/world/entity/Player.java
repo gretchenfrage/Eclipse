@@ -14,7 +14,7 @@ import com.phoenixkahlo.eclipse.world.WalkingEntity;
 
 public class Player extends WalkingEntity {
 	
-	private transient BasicPerspective perspective = new BasicPerspective();
+	private BasicPerspective perspective = new BasicPerspective();
 	private int color = (int) (Math.random() * (0xFFFFFF + 1));
 
 	public Player() {
@@ -29,6 +29,8 @@ public class Player extends WalkingEntity {
 		setSprintThrustingMultiplier(2);
 		
 		perspective.setScale(25);
+		perspective.setSuggestibleScaleMin(10);
+		perspective.setSuggestibleScaleMax(50);
 	}
 	
 	@Override
@@ -37,7 +39,6 @@ public class Player extends WalkingEntity {
 		Vector2 position = getBody().getWorldPoint(new Vector2(0, 0));
 		perspective.setX((float) position.x);
 		perspective.setY((float) position.y);
-		perspective.setRotation(perspective.getRotation() + 0.02f);
 	}
 
 	@Override
