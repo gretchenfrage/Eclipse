@@ -7,7 +7,7 @@ public class SpaceBackground extends BasicBackground {
 
 	public SpaceBackground() {
 		if (ImageResource.STARS_1.image() != null) 
-			injectTexture(ImageResource.STARS_1.image(), 300);
+			injectTexture(ImageResource.STARS_1.image(), 30);
 	}
 	
 }

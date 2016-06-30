@@ -64,8 +64,12 @@ public class ClientConnection {
 		receiverThread.start();
 	}
 	
-	public void broadcastSetTime(int time) throws IOException {
-		broadcaster.broadcast(ClientFunction.SET_TIME, time);
+	public void broadcastSetTimeLogiclessly(int time) throws IOException {
+		broadcaster.broadcast(ClientFunction.SET_TIME_LOGICLESSLY, time);
+	}
+	
+	public void broadcastBringToTime(int time) throws IOException {
+		broadcaster.broadcast(ClientFunction.BRING_TO_TIME, time);
 	}
 	
 	public void broadcastSetWorldState(WorldState state) throws IOException {

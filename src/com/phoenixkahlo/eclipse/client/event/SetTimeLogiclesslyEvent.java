@@ -4,17 +4,17 @@ import java.util.function.Consumer;
 
 import com.phoenixkahlo.eclipse.client.ServerConnection;
 
-public class SetTimeEvent implements Consumer<ServerConnection> {
+public class SetTimeLogiclesslyEvent implements Consumer<ServerConnection> {
 
 	private int time;
 	
-	public SetTimeEvent(int time) {
+	public SetTimeLogiclesslyEvent(int time) {
 		this.time = time;
 	}
 	
 	@Override
 	public void accept(ServerConnection client) {
-		client.setTime(time);
+		client.setTimeLogiclessly(time);
 	}
 
 }

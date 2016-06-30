@@ -23,6 +23,8 @@ public class Server {
 		
 		new Server(Integer.parseInt(args[0])).start();
 	}
+
+	private static final int TICKS_PER_TIME_SYNCHRONIZE = 6;
 	
 	private ClientWaiter waiter;
 	private List<Consumer<Server>> eventQueue = new ArrayList<Consumer<Server>>();
@@ -39,7 +41,20 @@ public class Server {
 	}
 	
 	public void tick() {
+		// Tick continuum
 		continuum.tick();
+		// Maybe synchronize client time
+		if (continuum.getTime() % TICKS_PER_TIME_SYNCHRONIZE == 0) {
+			for (int i = clients.size() - 1; i >= 0; i--) {
+				if (clients.get(i).isInitialized())
+					try {
+						clients.get(i).broadcastBringToTime(continuum.getTime());
+					} catch (IOException e) {
+						disconnectClient(clients.get(i), e.toString());
+					}
+			}
+		}
+		// Execute eventQueue
 		synchronized (eventQueue) {
 			while (!eventQueue.isEmpty()) {
 				eventQueue.remove(0).accept(this);

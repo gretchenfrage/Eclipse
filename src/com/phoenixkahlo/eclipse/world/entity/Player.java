@@ -20,10 +20,10 @@ public class Player extends WalkingEntity {
 		addBodyFixture(new BodyFixture(new Circle(0.5)));
 		getBody().setMass(MassType.NORMAL);
 		setWalkSpeed(1);
-		setThrustForce(1000);
+		setThrustForce(10);
 		setCanThrust(true);
 		
-		perspective.setScale(50);
+		perspective.setScale(25);
 	}
 	
 	@Override

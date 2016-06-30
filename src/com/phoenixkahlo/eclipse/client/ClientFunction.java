@@ -8,7 +8,11 @@ public enum ClientFunction {
 	/**
 	 * args = {int time}
 	 */
-	SET_TIME,
+	SET_TIME_LOGICLESSLY,
+	/**
+	 * args = {int time}
+	 */
+	BRING_TO_TIME,
 	/**
 	 * args = {WorldState state}
 	 */

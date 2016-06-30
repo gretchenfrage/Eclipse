@@ -18,8 +18,9 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import com.phoenixkahlo.eclipse.EclipseCoderFactory;
 import com.phoenixkahlo.eclipse.QueueFunctionFactory;
+import com.phoenixkahlo.eclipse.client.event.BringToTimeEvent;
 import com.phoenixkahlo.eclipse.client.event.ImposeEventEvent;
-import com.phoenixkahlo.eclipse.client.event.SetTimeEvent;
+import com.phoenixkahlo.eclipse.client.event.SetTimeLogiclesslyEvent;
 import com.phoenixkahlo.eclipse.client.event.SetWorldStateEvent;
 import com.phoenixkahlo.eclipse.server.ServerFunction;
 import com.phoenixkahlo.eclipse.world.Background;
@@ -63,13 +64,14 @@ public class ServerConnection extends BasicGameState {
 		QueueFunctionFactory<ServerConnection> factory =
 				new QueueFunctionFactory<ServerConnection>(this::queueEvent);
 		
-		receiver.registerFunction(ClientFunction.SET_TIME.ordinal(), 
-				factory.create(SetTimeEvent.class, int.class));
+		receiver.registerFunction(ClientFunction.SET_TIME_LOGICLESSLY.ordinal(), 
+				factory.create(SetTimeLogiclesslyEvent.class, int.class));
 		receiver.registerFunction(ClientFunction.SET_WORLD_STATE.ordinal(), 
 				factory.create(SetWorldStateEvent.class, WorldState.class));
 		receiver.registerFunction(ClientFunction.IMPOSE_EVENT.ordinal(),
 				factory.create(ImposeEventEvent.class, int.class, Consumer.class));
-		
+		receiver.registerFunction(ClientFunction.BRING_TO_TIME.ordinal(),
+				factory.create(BringToTimeEvent.class, int.class));
 		
 		assert receiver.areAllOrdinalsRegistered(ClientFunction.class) : "Client function(s) not registered";
 		
@@ -176,8 +178,16 @@ public class ServerConnection extends BasicGameState {
 		return ClientGameState.SERVER_CONNECTION.ordinal();
 	}
 	
-	public void setTime(int time) {
-		continuum.setTime(time);
+	public void setTimeLogiclessly(int time) {
+		continuum.setTimeLogiclessly(time);
+	}
+	
+	public void bringToTime(int time) {
+		try {
+			continuum.bringToTime(time, null);
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public void setWorldState(WorldState state) {
@@ -188,7 +198,7 @@ public class ServerConnection extends BasicGameState {
 		try {
 			continuum.imposeEvent(event, time, null);
 		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 	

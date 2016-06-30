@@ -25,8 +25,8 @@ public class BasicPerspective implements Perspective {
 	@Override
 	public void transform(Graphics g, GameContainer container) {
 		g.translate(container.getWidth() / 2, container.getHeight() / 2);
-		g.translate(-x, -y);
 		g.scale(scale, scale);
+		g.translate(-x, -y);
 		g.rotate(x, y, rotation);
 	}
 

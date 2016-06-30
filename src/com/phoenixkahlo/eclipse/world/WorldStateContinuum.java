@@ -102,8 +102,23 @@ public class WorldStateContinuum {
 		}
 	}
 	
-	public void setTime(int time) {
-		this.time = time;
+	/**
+	 * Sets the time variable without any revertion of ticking.
+	 */
+	public void setTimeLogiclessly(int destTime) {
+		time = destTime;
+	}
+	
+	/**
+	 * Brings to the time through gamestate mutation
+	 * @param ifMissing see revert.
+	 */
+	public void bringToTime(int destTime, Supplier<WorldState> ifMissing) throws NoSuchFieldException {
+		if (destTime < time)
+			revert(destTime, ifMissing);
+		else if (destTime > time)
+			while (destTime > time)
+				tick();
 	}
 	
 	public void setWorldState(WorldState state) {

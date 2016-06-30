@@ -28,7 +28,7 @@ public class ClientInitializationEvent implements Consumer<Server> {
 	@Override
 	public void accept(Server server) {
 		try {
-			client.broadcastSetTime(server.getContinuum().getTime());
+			client.broadcastSetTimeLogiclessly(server.getContinuum().getTime());
 			client.broadcastSetWorldState(server.getContinuum().getState());
 			client.setIsInitialized();
 			
