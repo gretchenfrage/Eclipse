@@ -10,6 +10,7 @@ import java.util.Random;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.geometry.Convex;
 
 import com.phoenixkahlo.networking.FieldDecoder;
 import com.phoenixkahlo.networking.FieldEncoder;
@@ -34,6 +35,10 @@ public abstract class BodyEntity extends EntityAdapter {
 
 	protected void addBodyFixture(BodyFixture fixture) {
 		body.addFixture(fixture);
+	}
+	
+	protected void addConvexFixture(Convex convex) {
+		addBodyFixture(new BodyFixture(convex));
 	}
 	
 	@Override

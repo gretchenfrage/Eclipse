@@ -9,19 +9,19 @@ import org.dyn4j.geometry.Vector2;
 /**
  * Things may stand on it.
  */
-public class Platform extends BodyTextureEntity {
+public class BodyPlatform extends BodyTextureEntity {
 	
-	private List<Convex> area = new ArrayList<Convex>();
+	private transient List<Convex> area = new ArrayList<Convex>();
 	
-	public Platform(int id, RenderLayer layer) {
+	public BodyPlatform(int id, RenderLayer layer) {
 		super(id, layer);
 	}
 	
-	public Platform(RenderLayer layer) {
+	public BodyPlatform(RenderLayer layer) {
 		super(layer);
 	}
 	
-	public Platform() {}
+	public BodyPlatform() {}
 
 	protected void addArea(Convex convex) {
 		area.add(convex);
@@ -35,6 +35,11 @@ public class Platform extends BodyTextureEntity {
 				return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public RenderLayer getRenderLayer() {
+		return RenderLayer.SHIP;
 	}
 
 }

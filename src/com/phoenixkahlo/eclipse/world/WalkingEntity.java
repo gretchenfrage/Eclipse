@@ -82,7 +82,7 @@ public abstract class WalkingEntity extends StandingEntity {
 		return sprintThrustingMultiplier;
 	}
 
-	public void setRunningMultiplier(float runningMultiplier) {
+	public void setSprintWalkingMultiplier(float runningMultiplier) {
 		this.runningMultiplier = runningMultiplier;
 	}
 

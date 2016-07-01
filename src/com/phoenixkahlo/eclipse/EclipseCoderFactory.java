@@ -6,6 +6,7 @@ import com.phoenixkahlo.eclipse.world.BasicPerspective;
 import com.phoenixkahlo.eclipse.world.IDPerspectiveGetter;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.entity.Ball;
+import com.phoenixkahlo.eclipse.world.entity.BasicShip1;
 import com.phoenixkahlo.eclipse.world.entity.Player;
 import com.phoenixkahlo.eclipse.world.entity.SpaceBackground;
 import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
@@ -67,6 +68,8 @@ public class EclipseCoderFactory {
 				new FieldEncoder(SetPerspectiveGetterEvent.class, encoder));
 		encoder.registerProtocol(CodableType.ID_PERSPECTIVE_GETTER.ordinal(), 
 				new FieldEncoder(IDPerspectiveGetter.class, encoder));
+		encoder.registerProtocol(CodableType.BASIC_SHIP_1.ordinal(),
+				new FieldEncoder(BasicShip1.class, encoder));
 		return encoder;
 	}
 	
@@ -103,7 +106,9 @@ public class EclipseCoderFactory {
 		decoder.registerProtocol(CodableType.SET_PERSPECTIVE_GETTER_EVENT.ordinal(), 
 				new FieldDecoder(SetPerspectiveGetterEvent.class, SetPerspectiveGetterEvent::new, decoder));
 		decoder.registerProtocol(CodableType.ID_PERSPECTIVE_GETTER.ordinal(), 
-				new FieldDecoder(IDPerspectiveGetter.class, IDPerspectiveGetter::new, decoder));	
+				new FieldDecoder(IDPerspectiveGetter.class, IDPerspectiveGetter::new, decoder));
+		decoder.registerProtocol(CodableType.BASIC_SHIP_1.ordinal(),
+				new FieldDecoder(BasicShip1.class, BasicShip1::new, decoder));
 		return decoder;
 	}
 	

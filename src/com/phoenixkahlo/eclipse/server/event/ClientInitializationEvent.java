@@ -7,6 +7,7 @@ import com.phoenixkahlo.eclipse.server.ClientConnection;
 import com.phoenixkahlo.eclipse.server.Server;
 import com.phoenixkahlo.eclipse.world.Entity;
 import com.phoenixkahlo.eclipse.world.IDPerspectiveGetter;
+import com.phoenixkahlo.eclipse.world.entity.BasicShip1;
 import com.phoenixkahlo.eclipse.world.entity.Player;
 import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetPerspectiveGetterEvent;
@@ -34,9 +35,12 @@ public class ClientInitializationEvent implements Consumer<Server> {
 			
 			Entity player = new Player();
 			server.imposeEvent(new EntityAdditionEvent(player));
+			
+			Entity ship = new BasicShip1();
+			server.imposeEvent(new EntityAdditionEvent(ship));
+			
 			client.broadcastImposeEvent(server.getContinuum().getTime(),
 					new SetPerspectiveGetterEvent(new IDPerspectiveGetter(player.getID())));
-			// TODO: when the missing worldstate requests are added, the server'll need to remember this
 			client.setEntityID(player.getID());
 		} catch (IOException e) {
 			server.disconnectClient(client, e);

@@ -12,13 +12,14 @@ public enum ImageResource {
 	BANNER_1("banner_1"),
 	BANNER_2("banner_2"),
 	BALL_1("ball_1"),
-	BALL_2("ball_2");
+	BALL_2("ball_2"),
+	BASIC_SHIP_1("basic_ship_1");
 	
 	/**
 	 * Should be called by MainMenu.
 	 */
 	public static void init() throws SlickException {
-		for (ImageResource resource : ImageResource.values()) {
+		for (ImageResource resource : values()) {
 			resource.image = ResourceUtils.loadImage(resource.path);
 		}
 	}
@@ -30,6 +31,9 @@ public enum ImageResource {
 		this.path = path;
 	}
 	
+	/**
+	 * @return nullable in contexts where rendering is unexpected (the server)
+	 */
 	public Image image() {
 		return image;
 	}

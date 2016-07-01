@@ -19,7 +19,7 @@ import com.phoenixkahlo.eclipse.world.WorldState;
 public class Player extends WalkingEntity {
 	
 	private BasicPerspective perspective = new BasicPerspective();
-	private int color = (int) (Math.random() * (0xFFFFFF + 1));
+	private int color = (int) (Math.random() * (0xFFFFFF + 1)) | (int) (Math.random() * (0xFFFFFF + 1));
 
 	public Player() {
 		if (ImageResource.BALL_2.image() != null)
@@ -29,7 +29,7 @@ public class Player extends WalkingEntity {
 		setWalkSpeed(10);
 		setThrustForce(10);
 		setCanThrust(true);
-		setRunningMultiplier(1.6F);
+		setSprintWalkingMultiplier(2);
 		setSprintThrustingMultiplier(2);
 		
 		perspective.setScale(25);
