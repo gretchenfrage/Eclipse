@@ -1,8 +1,12 @@
 package com.phoenixkahlo.eclipse.world;
 
 import org.dyn4j.dynamics.Body;
+import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.Graphics;
 
+/**
+ * Uninteresting implementation of Entity.
+ */
 public abstract class EntityAdapter implements Entity {
 
 	@Override
@@ -11,10 +15,10 @@ public abstract class EntityAdapter implements Entity {
 	}
 
 	@Override
-	public void preTick() {}
+	public void preTick(WorldState state) {}
 
 	@Override
-	public void postTick() {}
+	public void postTick(WorldState state) {}
 
 	@Override
 	public void render(Graphics g) {}
@@ -27,6 +31,11 @@ public abstract class EntityAdapter implements Entity {
 	@Override
 	public Perspective getPerspective() {
 		return null;
+	}
+	
+	@Override
+	public boolean isStandingOn(Vector2 position) {
+		return false;
 	}
 	
 }

@@ -2,7 +2,11 @@ package com.phoenixkahlo.eclipse.world;
 
 import org.dyn4j.dynamics.Body;
 import org.newdawn.slick.Graphics;
+import org.dyn4j.geometry.Vector2;
 
+/**
+ * It goes within the world.
+ */
 public interface Entity {
 
 	/**
@@ -10,9 +14,9 @@ public interface Entity {
 	 */
 	Body getBody();
 	
-	void preTick();
+	void preTick(WorldState state);
 	
-	void postTick();
+	void postTick(WorldState state);
 	
 	void render(Graphics g);
 	
@@ -30,5 +34,7 @@ public interface Entity {
 	 * Nullable if entity doesn't have perspective.
 	 */
 	Perspective getPerspective();
+	
+	boolean isStandingOn(Vector2 position);
 	
 }

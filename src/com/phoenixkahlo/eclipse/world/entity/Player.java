@@ -11,7 +11,11 @@ import com.phoenixkahlo.eclipse.world.BasicPerspective;
 import com.phoenixkahlo.eclipse.world.ImageResource;
 import com.phoenixkahlo.eclipse.world.Perspective;
 import com.phoenixkahlo.eclipse.world.WalkingEntity;
+import com.phoenixkahlo.eclipse.world.WorldState;
 
+/**
+ * It's you!
+ */
 public class Player extends WalkingEntity {
 	
 	private BasicPerspective perspective = new BasicPerspective();
@@ -34,8 +38,8 @@ public class Player extends WalkingEntity {
 	}
 	
 	@Override
-	public void postTick() {
-		super.postTick();
+	public void postTick(WorldState state) {
+		super.postTick(state);
 		Vector2 position = getBody().getWorldPoint(new Vector2(0, 0));
 		perspective.setX((float) position.x);
 		perspective.setY((float) position.y);

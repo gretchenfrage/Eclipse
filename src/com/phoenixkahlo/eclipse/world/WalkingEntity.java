@@ -1,11 +1,12 @@
 package com.phoenixkahlo.eclipse.world;
 
+import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Vector2;
 
 /**
- * A BodyTextureEntity that can walk and maybe thrust.
+ * It can walk on things, maybe it can thrust through space.
  */
-public abstract class WalkingEntity extends BodyTextureEntity {
+public abstract class WalkingEntity extends StandingEntity {
 
 	private transient float walkSpeed = 0;
 	private transient boolean canThrust = false;
@@ -26,9 +27,10 @@ public abstract class WalkingEntity extends BodyTextureEntity {
 	}
 
 	@Override
-	public void preTick() {
-		super.preTick();
-		if (false) { //TODO: make this detect if standing on platform
+	public void preTick(WorldState state) {
+		super.preTick(state);
+		Entity platform = platformOn(state);
+		if (platform != null) {
 			Vector2 vector = direction.copy();
 			vector.multiply(walkSpeed);
 			if (isSprinting)
@@ -36,6 +38,9 @@ public abstract class WalkingEntity extends BodyTextureEntity {
 			vector.subtract(getBody().getLinearVelocity());
 			vector.multiply(getBody().getMass().getMass());
 			getBody().applyImpulse(vector);
+			Body platformBody = platform.getBody();
+			if (platformBody != null)
+				platformBody.applyImpulse(vector.multiply(-1));
 		} else {
 			Vector2 vector = direction.copy();
 			vector.multiply(thrustForce);

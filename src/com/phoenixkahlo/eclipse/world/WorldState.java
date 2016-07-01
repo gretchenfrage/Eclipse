@@ -65,13 +65,13 @@ public class WorldState {
 	public void tick() {
 		index = 0;
 		while (index < entities.size()) {
-			entities.get(index).preTick();
+			entities.get(index).preTick(this);
 			index++;
 		}
 		world.update(WorldState.SECONDS_PER_TICK);
 		index = 0;
 		while (index < entities.size()) {
-			entities.get(index).postTick();
+			entities.get(index).postTick(this);
 			index++;
 		}
 	}
