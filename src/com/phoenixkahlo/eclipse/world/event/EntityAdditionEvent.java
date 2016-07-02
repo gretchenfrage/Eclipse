@@ -9,16 +9,16 @@ import java.util.function.Consumer;
 import com.phoenixkahlo.eclipse.EclipseCoderFactory;
 import com.phoenixkahlo.eclipse.world.Entity;
 import com.phoenixkahlo.eclipse.world.WorldState;
+import com.phoenixkahlo.networking.DecodingFinisher;
 import com.phoenixkahlo.networking.DecodingProtocol;
 import com.phoenixkahlo.networking.EncodingProtocol;
-import com.phoenixkahlo.networking.FieldDecoder;
 import com.phoenixkahlo.networking.ProtocolViolationException;
 
 /**
  * Holds the entity in serialized byte[] form so that it can decode a fresh copy with each
  * invocation.
  */
-public class EntityAdditionEvent implements Consumer<WorldState> {
+public class EntityAdditionEvent implements Consumer<WorldState>, DecodingFinisher {
 
 	private static EncodingProtocol encoder = EclipseCoderFactory.makeEncoder();
 	private static DecodingProtocol decoder = EclipseCoderFactory.makeDecoder();
@@ -49,7 +49,7 @@ public class EntityAdditionEvent implements Consumer<WorldState> {
 	/**
 	 * Ensures that entityBytes follows protocol.
 	 */
-	@FieldDecoder.DecodingFinisher
+	@Override
 	public void finishDecoding(InputStream in) throws ProtocolViolationException {
 		try {
 			Object obj = decoder.decode(new ByteArrayInputStream(entityBytes));

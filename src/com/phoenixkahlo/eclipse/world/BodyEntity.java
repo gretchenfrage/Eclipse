@@ -12,13 +12,13 @@ import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Convex;
 
-import com.phoenixkahlo.networking.FieldDecoder;
-import com.phoenixkahlo.networking.FieldEncoder;
+import com.phoenixkahlo.networking.DecodingFinisher;
+import com.phoenixkahlo.networking.EncodingFinisher;
 
 /**
  * An entity with a body.
  */
-public abstract class BodyEntity extends EntityAdapter {
+public abstract class BodyEntity extends EntityAdapter implements EncodingFinisher, DecodingFinisher {
 
 	protected static final Random RANDOM = new Random();
 	
@@ -51,7 +51,7 @@ public abstract class BodyEntity extends EntityAdapter {
 		return id;
 	}
 	
-	@FieldEncoder.EncodingFinisher
+	@Override
 	public void finishEncoding(OutputStream out) throws IOException {
 		writeDouble(body.getTransform().getTranslationX(), out);
 		writeDouble(body.getTransform().getTranslationY(), out);
@@ -61,7 +61,7 @@ public abstract class BodyEntity extends EntityAdapter {
 		writeDouble(body.getAngularVelocity(), out);
 	}
 	
-	@FieldDecoder.DecodingFinisher
+	@Override
 	public void finishDecoding(InputStream in) throws IOException {
 		body.getTransform().setTranslationX(readDouble(in));
 		body.getTransform().setTranslationY(readDouble(in));

@@ -9,12 +9,12 @@ import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.World;
 import org.dyn4j.geometry.Vector2;
 
-import com.phoenixkahlo.networking.FieldDecoder;
+import com.phoenixkahlo.networking.DecodingFinisher;
 
 /**
  * The state of the world at an instance in time. Can be ticked.
  */
-public class WorldState {
+public class WorldState implements DecodingFinisher {
 	
 	public static final int TICKS_PER_SECOND = 60;
 	public static final double SECONDS_PER_TICK = 1D / TICKS_PER_SECOND;
@@ -100,7 +100,7 @@ public class WorldState {
 	/**
 	 * Gives the world any bodies the entities provide
 	 */
-	@FieldDecoder.DecodingFinisher
+	@Override
 	public void finishDecoding(InputStream in) {
 		world.removeAllBodies();
 		for (Entity entity : entities) {

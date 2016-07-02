@@ -2,16 +2,8 @@ package com.phoenixkahlo.networking;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 import com.phoenixkahlo.utils.ReflectionUtils;
@@ -21,19 +13,9 @@ import com.phoenixkahlo.utils.ReflectionUtils;
  * Begins with boolean to signify if null.
  */
 public class FieldDecoder implements DecodingProtocol {
-
-	/**
-	 * Decoded classes may annotate methods with this to give them control of their own decoding:
-	 * @FieldDecoder.DecodingFinisher 
-	 * public void [name](InputStream out) throws IOException, ProtocolViolationException
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.METHOD)
-	public static @interface DecodingFinisher {}
 	
 	private Supplier<?> supplier;
 	private Field[] fields;
-	private List<Method> decodingFinishers;
 	private DecodingProtocol subDecoder; // Nullable
 	
 	public <E> FieldDecoder(Class<E> clazz, Supplier<E> supplier, DecodingProtocol subDecoder) {
@@ -42,11 +24,13 @@ public class FieldDecoder implements DecodingProtocol {
 		fields = ReflectionUtils.getAllFields(clazz);//clazz.getDeclaredFields();
 		for (Field field : fields)
 			field.setAccessible(true);
+		/*
 		decodingFinishers = new ArrayList<Method>();
 		for (Method method : clazz.getMethods()) {
 			if (method.isAnnotationPresent(DecodingFinisher.class))
 				decodingFinishers.add(method);
 		}
+		*/
 	}
 	
 	public <E> FieldDecoder(Class<E> clazz, Supplier<E> supplier) {
@@ -70,6 +54,10 @@ public class FieldDecoder implements DecodingProtocol {
 				}
 			}
 			// Allow DecodingFinishers to finish
+			if (obj instanceof DecodingFinisher) {
+				((DecodingFinisher) obj).finishDecoding(in);
+			}
+			/*
 			for (Method method : decodingFinishers) {
 				try {
 					method.invoke(obj, in);
@@ -84,6 +72,7 @@ public class FieldDecoder implements DecodingProtocol {
 						throw new IllegalStateException(e);
 				}
 			}
+			*/
 			return obj;
 		}
 	}
