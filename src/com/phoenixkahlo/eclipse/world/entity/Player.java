@@ -1,9 +1,13 @@
 package com.phoenixkahlo.eclipse.world.entity;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
+import org.newdawn.slick.Color;
 
 import com.phoenixkahlo.eclipse.world.BasicPerspective;
 import com.phoenixkahlo.eclipse.world.ImageResource;
@@ -20,8 +24,8 @@ public class Player extends WalkingEntity {
 	private int color = (int) (Math.random() * (0xFFFFFF + 1)) | (int) (Math.random() * (0xFFFFFF + 1));
 
 	public Player() {
-		if (ImageResource.SQUARE_1.image() != null)
-			injectTexture(ImageResource.SQUARE_1.image(), 1, 1, 0);
+		if (ImageResource.BALL_2.image() != null)
+			injectTexture(ImageResource.BALL_2.image(), 1, 1, 0);
 		addBodyFixture(new BodyFixture(new Circle(0.5)));
 		getBody().setMass(MassType.FIXED_ANGULAR_VELOCITY);
 		setWalkSpeed(10);
@@ -51,6 +55,12 @@ public class Player extends WalkingEntity {
 	@Override
 	protected void onPlatformRotation(double theta) {
 		perspective.setRotation(perspective.getRotation() + (float) theta);
+	}
+	
+	@Override
+	public void finishDecoding(InputStream in) throws IOException {
+		super.finishDecoding(in);
+		setColor(new Color(color));
 	}
 	
 }
