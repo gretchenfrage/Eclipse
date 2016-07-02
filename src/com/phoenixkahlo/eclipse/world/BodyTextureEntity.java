@@ -1,6 +1,7 @@
 package com.phoenixkahlo.eclipse.world;
 
 import org.dyn4j.geometry.Vector2;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
@@ -14,6 +15,7 @@ public abstract class BodyTextureEntity extends BodyEntity {
 	private transient float height;
 	private transient float renderAngle;
 	private transient RenderLayer layer;
+	private transient Color color; // Nullable
 	
 	public BodyTextureEntity(int id, RenderLayer layer) {
 		super(id);
@@ -35,24 +37,38 @@ public abstract class BodyTextureEntity extends BodyEntity {
 		this.renderAngle = renderAngle;
 	}
 	
+	public void setColor(Color color) {
+		this.color = color;
+	}
+	
 	@Override
 	public void render(Graphics g) {
 		Vector2 pos = getBody().getWorldPoint(new Vector2());
 		Vector2 min = pos.copy().subtract(width / 2, height / 2);
 		Vector2 max = pos.copy().add(width / 2, height / 2);
 		g.rotate((float) pos.x, (float) pos.y,
-				(float) -(getBody().getTransform().getRotation() + renderAngle));
-		g.drawImage(image,
-				(float) min.x,
-				(float) min.y,
-				(float) max.x,
-				(float) max.y,
-				0, 0,
-				image.getWidth(),
-				image.getHeight(),
-				g.getColor());
+				(float) Math.toDegrees(getBody().getTransform().getRotation() + renderAngle));
+		if (color == null)
+			g.drawImage(image,
+					(float) min.x,
+					(float) min.y,
+					(float) max.x,
+					(float) max.y,
+					0, 0,
+					image.getWidth(),
+					image.getHeight());
+		else
+			g.drawImage(image,
+					(float) min.x,
+					(float) min.y,
+					(float) max.x,
+					(float) max.y,
+					0, 0,
+					image.getWidth(),
+					image.getHeight(),
+					color);
 		g.rotate((float) pos.x, (float) pos.y,
-				(float) getBody().getTransform().getRotation() + renderAngle);
+				(float) -Math.toDegrees(getBody().getTransform().getRotation() + renderAngle));
 	}
 	
 	@Override

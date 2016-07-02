@@ -1,6 +1,5 @@
 package com.phoenixkahlo.eclipse.world;
 
-import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Vector2;
 
 /**
@@ -11,7 +10,7 @@ public abstract class WalkingEntity extends StandingEntity {
 	private transient float walkSpeed = 0;
 	private transient boolean canThrust = false;
 	private transient float thrustForce = 0;
-	private transient float runningMultiplier = 1;
+	private transient float sprintWalkingMultiplier = 1;
 	private transient float sprintThrustingMultiplier = 1;
 	private Vector2 direction = new Vector2(0, 0);
 	private boolean isSprinting = false;
@@ -25,31 +24,27 @@ public abstract class WalkingEntity extends StandingEntity {
 	public WalkingEntity(RenderLayer layer) {
 		super(layer);
 	}
-
+	
 	@Override
 	public void preTick(WorldState state) {
 		super.preTick(state);
-		Entity platform = platformOn(state);
-		if (platform != null) {
-			Vector2 vector = direction.copy();
-			vector.multiply(walkSpeed);
-			if (isSprinting)
-				vector.multiply(runningMultiplier);
-			vector.subtract(getBody().getLinearVelocity());
-			vector.multiply(getBody().getMass().getMass());
-			getBody().applyImpulse(vector);
-			Body platformBody = platform.getBody();
-			if (platformBody != null)
-				platformBody.applyImpulse(vector.multiply(-1));
-		} else {
+		
+		if (canThrust && platformOn(state) == null) {
 			Vector2 vector = direction.copy();
 			vector.multiply(thrustForce);
-			if (isSprinting)
-				vector.multiply(sprintThrustingMultiplier);
-			getBody().applyForce(vector);
+			if (isSprinting) vector.multiply(sprintThrustingMultiplier);
+			getBody().applyImpulse(vector);
 		}
 	}
-
+	
+	@Override
+	protected Vector2 getTargetRelativeVelocity() {
+		if (isSprinting)
+			return direction.copy().multiply(walkSpeed).multiply(sprintWalkingMultiplier);
+		else
+			return direction.copy().multiply(walkSpeed);
+	}
+	
 	public float getWalkSpeed() {
 		return walkSpeed;
 	}
@@ -75,7 +70,7 @@ public abstract class WalkingEntity extends StandingEntity {
 	}
 
 	public float getRunningMultiplier() {
-		return runningMultiplier;
+		return sprintWalkingMultiplier;
 	}
 
 	public float getSprintThrustingMultiplier() {
@@ -83,7 +78,7 @@ public abstract class WalkingEntity extends StandingEntity {
 	}
 
 	public void setSprintWalkingMultiplier(float runningMultiplier) {
-		this.runningMultiplier = runningMultiplier;
+		this.sprintWalkingMultiplier = runningMultiplier;
 	}
 
 	public void setSprintThrustingMultiplier(float sprintThrustingMultiplier) {

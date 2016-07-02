@@ -216,6 +216,14 @@ public class ServerConnection extends BasicGameState {
 		// Tick the continuum
 		continuum.tick();
 	}
+	
+	public void imposeEvent(int time, Consumer<WorldState> event) {
+		try {
+			continuum.imposeEvent(event, time, null);
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public int getID() {
@@ -236,14 +244,6 @@ public class ServerConnection extends BasicGameState {
 	
 	public void setWorldState(WorldState state) {
 		continuum.setWorldState(state);
-	}
-	
-	public void imposeEvent(int time, Consumer<WorldState> event) {
-		try {
-			continuum.imposeEvent(event, time, null);
-		} catch (NoSuchFieldException e) {
-			throw new RuntimeException(e);
-		}
 	}
 	
 }
