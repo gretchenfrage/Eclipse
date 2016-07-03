@@ -7,7 +7,7 @@ import com.phoenixkahlo.eclipse.server.Server;
 
 /**
  * Server-side event. 
- * Useful for the FunctionReceiverThread to integrate client disconnection with 
+ * Used for the FunctionReceiverThread to integrate client disconnection with 
  * the main game loop.
  */
 public class ClientDisconnectionEvent implements Consumer<Server> {

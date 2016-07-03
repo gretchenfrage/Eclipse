@@ -16,6 +16,7 @@ public class EntityDeletionEvent implements Consumer<WorldState> {
 	
 	@Override
 	public void accept(WorldState state) {
+		System.out.println("EntityDeletionEvent.accept, " + id + ", " + state.getEntity(id));
 		state.removeEntity(state.getEntity(id));
 	}
 

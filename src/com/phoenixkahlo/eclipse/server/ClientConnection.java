@@ -125,6 +125,7 @@ public class ClientConnection {
 	}
 	
 	public void onDisconnection(String cause) {
+		System.out.println("ClientConnection.onDisconnection(" + cause + ")");
 		receiverThread.terminate();
 		if (entityID != -1)
 			server.imposeEvent(new EntityDeletionEvent(entityID));

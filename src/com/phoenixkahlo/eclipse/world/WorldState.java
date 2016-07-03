@@ -39,7 +39,7 @@ public class WorldState implements DecodingFinisher {
 		int location = entities.indexOf(entity);
 		if (location < 0) return;
 		if (location <= index) index--;
-		entities.remove(index);
+		entities.remove(location);
 		Body body = entity.getBody();
 		if (body != null) world.removeBody(body);
 	}
