@@ -1,4 +1,4 @@
-package com.phoenixkahlo.eclipse.world.entity;
+package com.phoenixkahlo.eclipse.world.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +23,7 @@ import com.phoenixkahlo.utils.MathUtils;
 public class Player extends WalkingEntity {
 	
 	private BasicPerspective perspective = new BasicPerspective();
-
+	
 	public Player() {
 		if (ImageResource.HUMAN_1.image() != null)
 			injectTexture(ImageResource.HUMAN_1.image(), 1, 1, 0);
@@ -38,6 +38,10 @@ public class Player extends WalkingEntity {
 		perspective.setScale(25);
 		perspective.setSuggestibleScaleMin(10);
 		perspective.setSuggestibleScaleMax(50);
+	}
+	
+	public void rightTrigger(Vector2 worldPos, WorldState state) {
+		Consumer<Player> event = state.
 	}
 	
 	@Override

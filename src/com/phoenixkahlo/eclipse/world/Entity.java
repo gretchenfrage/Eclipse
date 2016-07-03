@@ -1,8 +1,12 @@
 package com.phoenixkahlo.eclipse.world;
 
+import java.util.function.Consumer;
+
 import org.dyn4j.dynamics.Body;
-import org.newdawn.slick.Graphics;
 import org.dyn4j.geometry.Vector2;
+import org.newdawn.slick.Graphics;
+
+import com.phoenixkahlo.eclipse.world.impl.Player;
 
 /**
  * It goes within the world.
@@ -26,7 +30,7 @@ public interface Entity {
 	RenderLayer getRenderLayer();
 	
 	/**
-	 * @return a hopefully unique, non-negative integer.
+	 * @return a hopefully unique (RNG is fine), non-negative integer.
 	 */
 	int getID();
 
@@ -36,5 +40,10 @@ public interface Entity {
 	Perspective getPerspective();
 	
 	boolean isStandingOn(Vector2 position);
+	
+	/**
+	 * Nullable if not useable at that position.
+	 */
+	Consumer<Player> getUseable(Vector2 position);
 	
 }

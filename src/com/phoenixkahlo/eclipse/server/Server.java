@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import com.phoenixkahlo.eclipse.server.event.ClientConnectionEvent;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
-import com.phoenixkahlo.eclipse.world.entity.SpaceBackground;
+import com.phoenixkahlo.eclipse.world.impl.SpaceBackground;
 import com.phoenixkahlo.networking.ClientWaiter;
 import com.phoenixkahlo.utils.TickerThread;
 

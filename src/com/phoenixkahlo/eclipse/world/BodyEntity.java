@@ -6,7 +6,6 @@ import static com.phoenixkahlo.networking.SerializationUtils.writeDouble;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Random;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -19,19 +18,8 @@ import com.phoenixkahlo.networking.EncodingFinisher;
  * An entity with a body.
  */
 public abstract class BodyEntity extends EntityAdapter implements EncodingFinisher, DecodingFinisher {
-
-	protected static final Random RANDOM = new Random();
 	
 	private transient Body body = new Body();
-	private int id;
-	
-	public BodyEntity(int id) {
-		this.id = id;
-	}
-	
-	public BodyEntity() {
-		this(RANDOM.nextInt(Integer.MAX_VALUE));
-	}
 
 	protected void addBodyFixture(BodyFixture fixture) {
 		body.addFixture(fixture);
@@ -44,11 +32,6 @@ public abstract class BodyEntity extends EntityAdapter implements EncodingFinish
 	@Override
 	public Body getBody() {
 		return body;
-	}
-	
-	@Override
-	public int getID() {
-		return id;
 	}
 	
 	@Override

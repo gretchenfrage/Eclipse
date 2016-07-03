@@ -13,10 +13,6 @@ public abstract class BodyPlatform extends BodyTextureEntity {
 	
 	private transient List<Convex> area = new ArrayList<Convex>();
 	
-	public BodyPlatform(int id, RenderLayer layer) {
-		super(id, layer);
-	}
-	
 	public BodyPlatform(RenderLayer layer) {
 		super(layer);
 	}

@@ -7,10 +7,10 @@ import com.phoenixkahlo.eclipse.server.ClientConnection;
 import com.phoenixkahlo.eclipse.server.Server;
 import com.phoenixkahlo.eclipse.world.Entity;
 import com.phoenixkahlo.eclipse.world.IDPerspectiveGetter;
-import com.phoenixkahlo.eclipse.world.entity.BasicShip1;
-import com.phoenixkahlo.eclipse.world.entity.Player;
 import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetPerspectiveGetterEvent;
+import com.phoenixkahlo.eclipse.world.impl.BasicShip1;
+import com.phoenixkahlo.eclipse.world.impl.Player;
 
 /**
  * Networked event received by client at the beginning of the connection to set up the client.

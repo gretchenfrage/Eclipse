@@ -15,6 +15,7 @@ import com.phoenixkahlo.eclipse.server.event.ClientInitializationEvent;
 import com.phoenixkahlo.eclipse.server.event.ImposeEventEvent;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.event.EntityDeletionEvent;
+import com.phoenixkahlo.eclipse.world.event.RightTriggerPlayerEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityIsSprintingEvent;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
@@ -57,6 +58,8 @@ public class ClientConnection {
 				new InstanceMethod(this, "setIsSprinting", boolean.class));
 		receiver.registerFunction(ServerFunction.DISCONNECT.ordinal(),
 				new InstanceMethod(this, "disconnect"));
+		receiver.registerFunction(ServerFunction.RIGHT_TRIGGER.ordinal(), 
+				new InstanceMethod(this, "rightTrigger", Vector2.class));
 		
 		assert receiver.areAllOrdinalsRegistered(ServerFunction.class) : "Server function(s) not registered";
 		
@@ -129,7 +132,6 @@ public class ClientConnection {
 	}
 	
 	public void onDisconnection(String cause) {
-		System.out.println("ClientConnection.onDisconnection(" + cause + ")");
 		receiverThread.terminate();
 		if (entityID != -1)
 			server.imposeEvent(new EntityDeletionEvent(entityID));
@@ -150,6 +152,12 @@ public class ClientConnection {
 		if (entityID != -1)
 			server.queueEvent(new ImposeEventEvent(server.getContinuum().getTime(),
 					new SetWalkingEntityIsSprintingEvent(entityID, isSprinting)));
+	}
+	
+	public void rightTrigger(Vector2 worldPos) {
+		if (entityID != -1)
+			server.queueEvent(new ImposeEventEvent(server.getContinuum().getTime(),
+					new RightTriggerPlayerEvent(entityID, worldPos)));
 	}
 	
 }

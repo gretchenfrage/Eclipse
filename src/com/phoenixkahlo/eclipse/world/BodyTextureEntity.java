@@ -17,11 +17,6 @@ public abstract class BodyTextureEntity extends BodyEntity {
 	private transient RenderLayer layer;
 	private transient Color color; // Nullable
 	
-	public BodyTextureEntity(int id, RenderLayer layer) {
-		super(id);
-		this.layer = layer;
-	}
-	
 	public BodyTextureEntity(RenderLayer layer) {
 		this.layer = layer;
 	}

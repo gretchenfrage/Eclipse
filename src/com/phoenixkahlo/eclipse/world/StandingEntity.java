@@ -6,7 +6,7 @@ import org.dyn4j.geometry.Vector2;
 /**
  * It stands on things.
  */
-public class StandingEntity extends BodyTextureEntity {
+public abstract class StandingEntity extends BodyTextureEntity {
 	
 	/**
 	 * Correcting rotation without fixed angular velocity can be weird.
@@ -14,10 +14,6 @@ public class StandingEntity extends BodyTextureEntity {
 	private transient boolean correctRotation = true;
 	private int lastPlatformID = -1;
 	private double lastPlatformRotation;
-	
-	public StandingEntity(int id, RenderLayer layer) {
-		super(id, layer);
-	}
 	
 	public StandingEntity(RenderLayer layer) {
 		super(layer);

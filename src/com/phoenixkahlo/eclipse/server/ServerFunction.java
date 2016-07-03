@@ -6,8 +6,6 @@ package com.phoenixkahlo.eclipse.server;
 public enum ServerFunction {
 
 	/**
-	 * When the ServerConnection is constructed, it sends this to the server 
-	 * to tell the server to initialize the client. 
 	 * args = {}
 	 */
 	INIT_CLIENT,
@@ -26,6 +24,10 @@ public enum ServerFunction {
 	/**
 	 * args = {}
 	 */
-	DISCONNECT;
+	DISCONNECT,
+	/**
+	 * args = {Vector2 worldPos}
+	 */
+	RIGHT_TRIGGER;
 	
 }

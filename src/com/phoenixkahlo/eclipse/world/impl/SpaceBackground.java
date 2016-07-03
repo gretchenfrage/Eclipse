@@ -1,4 +1,4 @@
-package com.phoenixkahlo.eclipse.world.entity;
+package com.phoenixkahlo.eclipse.world.impl;
 
 import com.phoenixkahlo.eclipse.world.BasicBackground;
 import com.phoenixkahlo.eclipse.world.ImageResource;

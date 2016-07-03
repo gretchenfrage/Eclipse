@@ -17,10 +17,6 @@ public abstract class WalkingEntity extends StandingEntity {
 	
 	public WalkingEntity() {}
 	
-	public WalkingEntity(int id, RenderLayer layer) {
-		super(id, layer);
-	}
-	
 	public WalkingEntity(RenderLayer layer) {
 		super(layer);
 	}

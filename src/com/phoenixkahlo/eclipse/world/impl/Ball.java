@@ -1,4 +1,4 @@
-package com.phoenixkahlo.eclipse.world.entity;
+package com.phoenixkahlo.eclipse.world.impl;
 
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Circle;
