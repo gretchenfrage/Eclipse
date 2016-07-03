@@ -19,7 +19,11 @@ public class SetWalkingEntityIsSprintingEvent implements Consumer<WorldState> {
 	
 	@Override
 	public void accept(WorldState state) {
-		((WalkingEntity) state.getEntity(id)).setIsSprinting(isSprinting);
+		try {
+			((WalkingEntity) state.getEntity(id)).setIsSprinting(isSprinting);
+		} catch (NullPointerException | ClassCastException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

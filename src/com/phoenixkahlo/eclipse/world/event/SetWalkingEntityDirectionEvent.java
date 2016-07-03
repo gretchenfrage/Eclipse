@@ -21,7 +21,11 @@ public class SetWalkingEntityDirectionEvent implements Consumer<WorldState> {
 	
 	@Override
 	public void accept(WorldState state) {
-		((WalkingEntity) state.getEntity(id)).setDirection(direction);
+		try {
+			((WalkingEntity) state.getEntity(id)).setDirection(direction);
+		} catch (NullPointerException | ClassCastException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

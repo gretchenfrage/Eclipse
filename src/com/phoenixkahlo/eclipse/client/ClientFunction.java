@@ -20,6 +20,10 @@ public enum ClientFunction {
 	/**
 	 * args = {int time, Consumer<WorldState> event}
 	 */
-	IMPOSE_EVENT;
+	IMPOSE_EVENT,
+	/**
+	 * args = {int id}
+	 */
+	SET_ENTITY_ID;
 	
 }

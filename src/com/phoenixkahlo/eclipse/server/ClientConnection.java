@@ -87,8 +87,12 @@ public class ClientConnection {
 		return entityID;
 	}
 	
-	public void setEntityID(int entityID) {
+	/**
+	 * Sets it but also broadcasts is so its synchronized.
+	 */
+	public void setAndBroadcastEntityID(int entityID) throws IOException {
 		this.entityID = entityID;
+		broadcaster.broadcast(ClientFunction.SET_ENTITY_ID, entityID);
 	}
 	
 	public boolean isInitialized() {

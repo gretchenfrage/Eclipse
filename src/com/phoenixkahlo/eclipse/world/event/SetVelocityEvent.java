@@ -20,7 +20,11 @@ public class SetVelocityEvent implements Consumer<WorldState> {
 	
 	@Override
 	public void accept(WorldState state) {
-		state.getEntity(id).getBody().setLinearVelocity(velocity);
+		try {
+			state.getEntity(id).getBody().setLinearVelocity(velocity);
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

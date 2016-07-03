@@ -13,6 +13,7 @@ import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
 import com.phoenixkahlo.eclipse.world.event.EntityDeletionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetBackgroundEvent;
 import com.phoenixkahlo.eclipse.world.event.SetPerspectiveGetterEvent;
+import com.phoenixkahlo.eclipse.world.event.SetRenderAngleEvent;
 import com.phoenixkahlo.eclipse.world.event.SetVelocityEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityIsSprintingEvent;
@@ -70,6 +71,8 @@ public class EclipseCoderFactory {
 				new FieldEncoder(IDPerspectiveGetter.class, encoder));
 		encoder.registerProtocol(CodableType.BASIC_SHIP_1.ordinal(),
 				new FieldEncoder(BasicShip1.class, encoder));
+		encoder.registerProtocol(CodableType.SET_RENDER_ANGLE_EVENT.ordinal(),
+				new FieldEncoder(SetRenderAngleEvent.class, encoder));
 		return encoder;
 	}
 	
@@ -109,6 +112,8 @@ public class EclipseCoderFactory {
 				new FieldDecoder(IDPerspectiveGetter.class, IDPerspectiveGetter::new, decoder));
 		decoder.registerProtocol(CodableType.BASIC_SHIP_1.ordinal(),
 				new FieldDecoder(BasicShip1.class, BasicShip1::new, decoder));
+		decoder.registerProtocol(CodableType.SET_RENDER_ANGLE_EVENT.ordinal(), 
+				new FieldDecoder(SetRenderAngleEvent.class, SetRenderAngleEvent::new, decoder));
 		return decoder;
 	}
 	

@@ -20,8 +20,8 @@ import com.phoenixkahlo.networking.ProtocolViolationException;
  */
 public class EntityAdditionEvent implements Consumer<WorldState>, DecodingFinisher {
 
-	private static EncodingProtocol encoder = EclipseCoderFactory.makeEncoder();
-	private static DecodingProtocol decoder = EclipseCoderFactory.makeDecoder();
+	private static EncodingProtocol encoder = EclipseCoderFactory.ENCODER;
+	private static DecodingProtocol decoder = EclipseCoderFactory.DECODER;
 	
 	private byte[] entityBytes;
 	

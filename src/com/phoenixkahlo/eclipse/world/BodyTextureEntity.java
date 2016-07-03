@@ -37,6 +37,14 @@ public abstract class BodyTextureEntity extends BodyEntity {
 		this.renderAngle = renderAngle;
 	}
 	
+	public float getRenderAngle() {
+		return renderAngle;
+	}
+	
+	public void setRenderAngle(float renderAngle) {
+		this.renderAngle = renderAngle;
+	}
+	
 	public void setColor(Color color) {
 		this.color = color;
 	}

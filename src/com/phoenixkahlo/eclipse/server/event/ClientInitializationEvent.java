@@ -37,13 +37,11 @@ public class ClientInitializationEvent implements Consumer<Server> {
 			server.imposeEvent(new EntityAdditionEvent(player));
 			
 			Entity ship = new BasicShip1();
-			ship.getBody().setLinearVelocity(5, 3);
-			ship.getBody().setAngularVelocity(1);
 			server.imposeEvent(new EntityAdditionEvent(ship));
 			
 			client.broadcastImposeEvent(server.getContinuum().getTime(),
 					new SetPerspectiveGetterEvent(new IDPerspectiveGetter(player.getID())));
-			client.setEntityID(player.getID());
+			client.setAndBroadcastEntityID(player.getID());
 		} catch (IOException e) {
 			server.disconnectClient(client, e);
 		}

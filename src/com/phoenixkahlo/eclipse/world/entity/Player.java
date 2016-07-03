@@ -2,6 +2,7 @@ package com.phoenixkahlo.eclipse.world.entity;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Circle;
@@ -14,6 +15,7 @@ import com.phoenixkahlo.eclipse.world.ImageResource;
 import com.phoenixkahlo.eclipse.world.Perspective;
 import com.phoenixkahlo.eclipse.world.WalkingEntity;
 import com.phoenixkahlo.eclipse.world.WorldState;
+import com.phoenixkahlo.networking.SerializationUtils;
 
 /**
  * It's you!
@@ -24,8 +26,8 @@ public class Player extends WalkingEntity {
 	private int color = (int) (Math.random() * (0xFFFFFF + 1)) | (int) (Math.random() * (0xFFFFFF + 1));
 
 	public Player() {
-		if (ImageResource.BALL_2.image() != null)
-			injectTexture(ImageResource.BALL_2.image(), 1, 1, 0);
+		if (ImageResource.ARROW_SQUARE.image() != null)
+			injectTexture(ImageResource.ARROW_SQUARE.image(), 1, 1, 0);
 		addBodyFixture(new BodyFixture(new Circle(0.5)));
 		getBody().setMass(MassType.FIXED_ANGULAR_VELOCITY);
 		setWalkSpeed(10);
@@ -42,9 +44,13 @@ public class Player extends WalkingEntity {
 	@Override
 	public void postTick(WorldState state) {
 		super.postTick(state);
+		
 		Vector2 position = getBody().getWorldPoint(new Vector2(0, 0));
 		perspective.setX((float) position.x);
 		perspective.setY((float) position.y);
+		
+		// Even on platforms, it mustn't rotate.
+		getBody().getTransform().setRotation(0);
 	}
 
 	@Override
@@ -58,8 +64,18 @@ public class Player extends WalkingEntity {
 	}
 	
 	@Override
+	public void finishEncoding(OutputStream out) throws IOException {
+		super.finishEncoding(out);
+		
+		SerializationUtils.writeFloat(getRenderAngle(), out);
+	}
+	
+	@Override
 	public void finishDecoding(InputStream in) throws IOException {
 		super.finishDecoding(in);
+		
+		setRenderAngle(SerializationUtils.readFloat(in));
+		
 		setColor(new Color(color));
 	}
 	

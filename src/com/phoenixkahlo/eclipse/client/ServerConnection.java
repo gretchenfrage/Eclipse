@@ -20,6 +20,7 @@ import com.phoenixkahlo.eclipse.EclipseCoderFactory;
 import com.phoenixkahlo.eclipse.QueueFunctionFactory;
 import com.phoenixkahlo.eclipse.client.event.BringToTimeEvent;
 import com.phoenixkahlo.eclipse.client.event.ImposeEventEvent;
+import com.phoenixkahlo.eclipse.client.event.SetEntityIDEvent;
 import com.phoenixkahlo.eclipse.client.event.SetTimeLogiclesslyEvent;
 import com.phoenixkahlo.eclipse.client.event.SetWorldStateEvent;
 import com.phoenixkahlo.eclipse.server.ServerFunction;
@@ -28,6 +29,7 @@ import com.phoenixkahlo.eclipse.world.Entity;
 import com.phoenixkahlo.eclipse.world.Perspective;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
+import com.phoenixkahlo.eclipse.world.event.SetRenderAngleEvent;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
@@ -50,6 +52,7 @@ public class ServerConnection extends BasicGameState {
 	private Vector2 cachedDirection = new Vector2(0, 0);
 	private boolean cachedIsSprinting = false;
 	private long timeForNextTick = System.nanoTime();
+	private int entityID = -1;
 	
 	public ServerConnection(Socket socket, StateBasedGame game) {
 		continuum = new WorldStateContinuum();
@@ -81,6 +84,8 @@ public class ServerConnection extends BasicGameState {
 				factory.create(ImposeEventEvent.class, int.class, Consumer.class));
 		receiver.registerFunction(ClientFunction.BRING_TO_TIME.ordinal(),
 				factory.create(BringToTimeEvent.class, int.class));
+		receiver.registerFunction(ClientFunction.SET_ENTITY_ID.ordinal(), 
+				factory.create(SetEntityIDEvent.class, int.class));
 		
 		assert receiver.areAllOrdinalsRegistered(ClientFunction.class) : "Client function(s) not registered";
 		
@@ -165,7 +170,7 @@ public class ServerConnection extends BasicGameState {
 		
 		// Broadcast controls
 		// Direction
-		Vector2 direction = new Vector2(0, 0);
+		Vector2 direction = new Vector2();
 		if (input.isKeyDown(Input.KEY_W))
 			direction.y--;
 		if (input.isKeyDown(Input.KEY_S))
@@ -196,7 +201,26 @@ public class ServerConnection extends BasicGameState {
 				cachedIsSprinting = isSprinting;
 			}
 		} catch (IOException e) {
-			disconnect(e);
+			
+		}
+		// Looking direction
+		if (entityID != -1) {
+			Vector2 p1 = continuum.getState().getEntity(entityID).getBody().getWorldCenter();
+			if (perspective != null)
+				p1 = perspective.worldToScreen(p1, new Vector2(container.getWidth(), container.getHeight()));
+			Vector2 p2 = new Vector2(input.getMouseX(), input.getMouseY()); 
+			p2.subtract(p1);
+			float angle = (float) Math.atan2(p2.y, p2.x);
+			if (perspective != null && !Double.isNaN(perspective.attemptGetRotation()))
+				angle += perspective.attemptGetRotation();
+			try {
+				broadcaster.broadcast(
+						ServerFunction.IMPOSE_EVENT,
+						continuum.getTime(),
+						new SetRenderAngleEvent(entityID, angle));
+			} catch (IOException e) {
+				disconnect(e);
+			}
 		}
 		
 		// Local controls
@@ -244,6 +268,10 @@ public class ServerConnection extends BasicGameState {
 	
 	public void setWorldState(WorldState state) {
 		continuum.setWorldState(state);
+	}
+	
+	public void setEntityID(int entityID) {
+		this.entityID = entityID;
 	}
 	
 }

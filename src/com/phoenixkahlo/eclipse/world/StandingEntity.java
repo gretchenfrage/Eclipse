@@ -56,12 +56,14 @@ public class StandingEntity extends BodyTextureEntity {
 		Entity platformOn = platformOn(state);
 		if (platformOn != null && platformOn.getBody() != null) {
 			Vector2 location = body.getWorldPoint(new Vector2());
+			Vector2 relativeTarget = getTargetRelativeVelocity();
 			Vector2 vector;
 			vector = platformOn.getBody().getLinearVelocity(location); // Platform velocity
-			vector.add(getTargetRelativeVelocity()); // Target velocity
+			vector.add(relativeTarget); // Target velocity
 			vector.subtract(body.getLinearVelocity()); // Target velocity difference
 			vector.multiply(body.getMass().getMass()); // Force to apply
 			body.applyImpulse(vector);
+			platformOn.getBody().applyImpulse(vector.copy().multiply(-1), body.getWorldCenter());
 		}
 		
 		if (correctRotation) {

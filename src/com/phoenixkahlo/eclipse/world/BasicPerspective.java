@@ -26,12 +26,17 @@ public class BasicPerspective implements Perspective {
 	
 	@Override
 	public void transform(Graphics g, GameContainer container) {
+		// Translate the world origin to the screen center
 		g.translate(container.getWidth() / 2, container.getHeight() / 2);
+		// Scale the world around the screen center / it's origin
 		g.scale(scale, scale);
+		// Translate the world's position coords to the screen center
 		g.translate(-x, -y);
+		// Rotate the world around the perspective
 		g.rotate(x, y, (float) -Math.toDegrees(rotation));
 	}
 	
+	@Override
 	public Vector2 screenToWorld(Vector2 screenPoint, Vector2 containerSize) {
 		Vector2 screenCenter = containerSize.copy().multiply(0.5);
 		Vector2 out = screenPoint.copy();
@@ -49,43 +54,19 @@ public class BasicPerspective implements Perspective {
 	}
 	
 	@Override
-	public double getMinX(Vector2 containerSize) {
-		return min(new double[] {
-				screenToWorld(new Vector2(0, 0), containerSize).x,
-				screenToWorld(containerSize, containerSize).x,
-				screenToWorld(new Vector2(containerSize.x, 0), containerSize).x,
-				screenToWorld(new Vector2(0, containerSize.y), containerSize).x
-				});
-	}
-
-	@Override
-	public double getMinY(Vector2 containerSize) {
-		return min(new double[] {
-				screenToWorld(new Vector2(0, 0), containerSize).y,
-				screenToWorld(containerSize, containerSize).y,
-				screenToWorld(new Vector2(containerSize.x, 0), containerSize).y,
-				screenToWorld(new Vector2(0, containerSize.y), containerSize).y
-				});
-	}
-
-	@Override
-	public double getMaxX(Vector2 containerSize) {
-		return max(new double[] {
-				screenToWorld(new Vector2(0, 0), containerSize).x,
-				screenToWorld(containerSize, containerSize).x,
-				screenToWorld(new Vector2(containerSize.x, 0), containerSize).x,
-				screenToWorld(new Vector2(0, containerSize.y), containerSize).x
-				});
-	}
-
-	@Override
-	public double getMaxY(Vector2 containerSize) {
-		return max(new double[] {
-				screenToWorld(new Vector2(0, 0), containerSize).y,
-				screenToWorld(containerSize, containerSize).y,
-				screenToWorld(new Vector2(containerSize.x, 0), containerSize).y,
-				screenToWorld(new Vector2(0, containerSize.y), containerSize).y
-				});
+	public Vector2 worldToScreen(Vector2 worldPoint, Vector2 containerSize) {
+		Vector2 out = worldPoint.copy();
+		
+		// Translate the world origin to the screen center
+		out.add(containerSize.copy().multiply(0.5));
+		// Scale the world around the screen center / it's origin
+		worldPoint.multiply(scale);
+		// Translate the world's position coords to the screen center
+		worldPoint.subtract(new Vector2(x, y));
+		// Rotate the world around the perspective
+		worldPoint.rotate(-rotation, new Vector2(x, y));
+		
+		return out;
 	}
 	
 	@Override
@@ -99,7 +80,7 @@ public class BasicPerspective implements Perspective {
 		scale = (float) Math.pow(scale, factor);
 		if (scale > suggestibleScaleMax)
 			scale = suggestibleScaleMax;
-		if (scale < suggestibleScaleMin)
+		else if (scale < suggestibleScaleMin)
 			scale = suggestibleScaleMin;
 	}
 
@@ -154,24 +135,6 @@ public class BasicPerspective implements Perspective {
 
 	public void setSuggestibleScaleMax(float suggestibleScaleMax) {
 		this.suggestibleScaleMax = suggestibleScaleMax;
-	}
-
-	private double max(double[] arr) {
-		double out = arr[0];
-		for (int i = 1; i < arr.length; i++) {
-			if (arr[i] > out)
-				out = arr[i];
-		}
-		return out;
-	}
-
-	private double min(double[] arr) {
-		double out = arr[0];
-		for (int i = 1; i < arr.length; i++) {
-			if (arr[i] < out)
-				out = arr[i];
-		}
-		return out;
 	}
 	
 }
