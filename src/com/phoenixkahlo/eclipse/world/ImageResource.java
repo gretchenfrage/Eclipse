@@ -15,7 +15,8 @@ public enum ImageResource {
 	BALL_2("ball_2"),
 	BASIC_SHIP_1("basic_ship_1"),
 	SQUARE_1("square_1"),
-	ARROW_SQUARE("arrow_square");
+	ARROW_SQUARE("arrow_square"),
+	HUMAN_1("human_1");
 	
 	/**
 	 * Should be called by MainMenu.

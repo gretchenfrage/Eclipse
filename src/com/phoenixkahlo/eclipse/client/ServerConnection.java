@@ -51,6 +51,7 @@ public class ServerConnection extends BasicGameState {
 	private List<Consumer<ServerConnection>> eventQueue = new ArrayList<Consumer<ServerConnection>>();
 	private Vector2 cachedDirection = new Vector2(0, 0);
 	private boolean cachedIsSprinting = false;
+	private float cachedAngle = Float.NaN;
 	private long timeForNextTick = System.nanoTime();
 	private int entityID = -1;
 	
@@ -213,13 +214,16 @@ public class ServerConnection extends BasicGameState {
 			float angle = (float) Math.atan2(p2.y, p2.x);
 			if (perspective != null && !Double.isNaN(perspective.attemptGetRotation()))
 				angle += perspective.attemptGetRotation();
-			try {
-				broadcaster.broadcast(
-						ServerFunction.IMPOSE_EVENT,
-						continuum.getTime(),
-						new SetRenderAngleEvent(entityID, angle));
-			} catch (IOException e) {
-				disconnect(e);
+			if (angle != cachedAngle) {
+				try {
+					broadcaster.broadcast(
+							ServerFunction.IMPOSE_EVENT,
+							continuum.getTime(),
+							new SetRenderAngleEvent(entityID, angle));
+				} catch (IOException e) {
+					disconnect(e);
+				}
+				cachedAngle = angle;
 			}
 		}
 		

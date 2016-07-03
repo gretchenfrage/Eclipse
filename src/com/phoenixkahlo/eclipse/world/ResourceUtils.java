@@ -19,7 +19,7 @@ public class ResourceUtils {
 	/**
 	 * @return image from that resource path
 	 */
-	public static Image loadImageAbs(String path) throws SlickException {
+	public static Image loadAbsImage(String path) throws SlickException {
 		return new Image(getResourceStream(path), path, false);
 	}
 	
@@ -27,7 +27,7 @@ public class ResourceUtils {
 	 * @return image from the resource path resources/images/name.png
 	 */
 	public static Image loadImage(String name) throws SlickException {
-		return loadImageAbs("resources/images/" + name + ".png");
+		return loadAbsImage("resources/images/" + name + ".png");
 	}
 	
 	/**

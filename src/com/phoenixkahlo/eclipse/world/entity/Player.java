@@ -8,7 +8,6 @@ import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
-import org.newdawn.slick.Color;
 
 import com.phoenixkahlo.eclipse.world.BasicPerspective;
 import com.phoenixkahlo.eclipse.world.ImageResource;
@@ -16,6 +15,7 @@ import com.phoenixkahlo.eclipse.world.Perspective;
 import com.phoenixkahlo.eclipse.world.WalkingEntity;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.networking.SerializationUtils;
+import com.phoenixkahlo.utils.MathUtils;
 
 /**
  * It's you!
@@ -23,11 +23,10 @@ import com.phoenixkahlo.networking.SerializationUtils;
 public class Player extends WalkingEntity {
 	
 	private BasicPerspective perspective = new BasicPerspective();
-	private int color = (int) (Math.random() * (0xFFFFFF + 1)) | (int) (Math.random() * (0xFFFFFF + 1));
 
 	public Player() {
-		if (ImageResource.ARROW_SQUARE.image() != null)
-			injectTexture(ImageResource.ARROW_SQUARE.image(), 1, 1, 0);
+		if (ImageResource.HUMAN_1.image() != null)
+			injectTexture(ImageResource.HUMAN_1.image(), 1, 1, 0);
 		addBodyFixture(new BodyFixture(new Circle(0.5)));
 		getBody().setMass(MassType.FIXED_ANGULAR_VELOCITY);
 		setWalkSpeed(10);
@@ -41,6 +40,11 @@ public class Player extends WalkingEntity {
 		perspective.setSuggestibleScaleMax(50);
 	}
 	
+	@Override
+	public void setRenderAngle(float renderAngle) {
+		super.setRenderAngle(renderAngle - MathUtils.PI_F / 2);
+	}
+
 	@Override
 	public void postTick(WorldState state) {
 		super.postTick(state);
@@ -75,8 +79,6 @@ public class Player extends WalkingEntity {
 		super.finishDecoding(in);
 		
 		setRenderAngle(SerializationUtils.readFloat(in));
-		
-		setColor(new Color(color));
 	}
 	
 }
