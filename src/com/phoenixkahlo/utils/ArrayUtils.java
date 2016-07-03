@@ -1,7 +1,7 @@
 package com.phoenixkahlo.utils;
 
 import java.lang.reflect.Array;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class ArrayUtils {
 
@@ -22,9 +22,9 @@ public class ArrayUtils {
 	/**
 	 * @return the first item in arr that satisfies condition, or null if none do.
 	 */
-	public static <E> E conditionSearch(E[] arr, Function<E, Boolean> condition) {
+	public static <E> E conditionSearch(E[] arr, Predicate<E> condition) {
 		for (E e : arr) {
-			if (condition.apply(e))
+			if (condition.test(e))
 				return e;
 		}
 		return null;
