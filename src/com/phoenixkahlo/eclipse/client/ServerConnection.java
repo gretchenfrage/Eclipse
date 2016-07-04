@@ -54,6 +54,7 @@ public class ServerConnection extends BasicGameState {
 	private float cachedAngle = Float.NaN;
 	private long timeForNextTick = System.nanoTime();
 	private int entityID = -1;
+	private ClientControlHandler controlHandler;
 	
 	public ServerConnection(Socket socket, StateBasedGame game) {
 		continuum = new WorldStateContinuum();
@@ -134,7 +135,7 @@ public class ServerConnection extends BasicGameState {
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		// Transform perspective
-		Perspective perspective = continuum.getState().getPerspective();
+		Perspective perspective = controlHandler.getPerspective();
 		if (perspective != null)
 			perspective.transform(g, container);
 		// Render background
@@ -167,6 +168,10 @@ public class ServerConnection extends BasicGameState {
 			}
 		}
 		
+		// Have controlHandler handle
+		controlHandler.update(container.getInput());
+		
+		/*
 		Input input = container.getInput();
 		
 		// Broadcast controls
@@ -240,6 +245,7 @@ public class ServerConnection extends BasicGameState {
 			if (input.isKeyDown(Input.KEY_F))
 				perspective.suggestRaiseScale(1 - SCALE_FACTOR_PER_TICK);
 		}
+		 */
 		
 		// Tick the continuum
 		continuum.tick();

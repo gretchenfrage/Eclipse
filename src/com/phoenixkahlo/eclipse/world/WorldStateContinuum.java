@@ -89,6 +89,7 @@ public class WorldStateContinuum {
 	 * @throws NoSuchFieldException see revert.
 	 */
 	public void imposeEvent(Consumer<WorldState> event, int destTime, Supplier<WorldState> ifMissing) throws NoSuchFieldException {
+		System.out.println("imposing " + event + " at " + destTime);
 		// Add event
 		if (!events.containsKey(destTime))
 			events.put(destTime, new ArrayList<Consumer<WorldState>>());

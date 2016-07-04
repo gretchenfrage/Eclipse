@@ -41,7 +41,7 @@ public class Player extends WalkingEntity {
 	}
 	
 	public void rightTrigger(Vector2 worldPos, WorldState state) {
-		Consumer<Player> event = state.
+		
 	}
 	
 	@Override

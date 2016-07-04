@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import com.phoenixkahlo.utils.ReflectionUtils;
 
@@ -19,10 +20,17 @@ public class FieldEncoder implements EncodingProtocol {
 	
 	private Class<?> clazz;
 	private EncodingProtocol subEncoder; // Nullable
+	private Predicate<Field> condition;
 	
-	public FieldEncoder(Class<?> clazz, EncodingProtocol subEncoder) {
+	public FieldEncoder(Class<?> clazz, EncodingProtocol subEncoder, Predicate<Field> condition) {
 		this.clazz = clazz;
 		this.subEncoder = subEncoder;
+		this.condition = condition;
+	}
+	
+	public FieldEncoder(Class<?> clazz, EncodingProtocol subEncoder) {
+		this(clazz, subEncoder, (Field field) -> !Modifier.isTransient(field.getModifiers()) && 
+				!Modifier.isStatic(field.getModifiers()));
 	}
 	
 	public FieldEncoder(Class<?> clazz) {
@@ -59,8 +67,8 @@ public class FieldEncoder implements EncodingProtocol {
 		for (Field field : ReflectionUtils.getAllFields(clazz)) {
 			field.setAccessible(true);
 			try {
-				int mods = field.getModifiers();
-				if (!Modifier.isTransient(mods) && !Modifier.isStatic(mods))
+				//if (!Modifier.isTransient(mods) && !Modifier.isStatic(mods))
+				if (condition.test(field))
 					SerializationUtils.writeAny(field.get(obj), out, subEncoder);
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
