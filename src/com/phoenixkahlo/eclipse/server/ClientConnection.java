@@ -78,8 +78,8 @@ public class ClientConnection {
 	}
 	
 	public void setAndBroadcastControlHandler(ServerControlHandler controlHandler) throws IOException {
-		if (controlHandler != null)
-			controlHandler.disable();
+		if (this.controlHandler != null)
+			this.controlHandler.disable();
 		this.controlHandler = controlHandler;
 		broadcaster.broadcast(ClientFunction.CREATE_CONTROL_HANDLER, controlHandler.getClientHandlerCreator());
 	}

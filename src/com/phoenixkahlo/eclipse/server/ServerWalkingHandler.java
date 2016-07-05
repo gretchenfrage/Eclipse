@@ -8,7 +8,7 @@ import com.phoenixkahlo.eclipse.client.ClientControlHandler;
 import com.phoenixkahlo.eclipse.client.ClientWalkingHandlerCreator;
 import com.phoenixkahlo.eclipse.client.ServerConnection;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
-import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityIsSprintingEvent;
+import com.phoenixkahlo.eclipse.world.event.SetWalkingEntitySprintingEvent;
 
 public class ServerWalkingHandler extends NetworkedServerControlHandler {
 	
@@ -31,13 +31,11 @@ public class ServerWalkingHandler extends NetworkedServerControlHandler {
 	}
 	
 	public void receiveSetDirection(Vector2 direction) {
-		System.out.println("receiveSetDirection " + direction);
 		server.imposeEvent(new SetWalkingEntityDirectionEvent(entityID, direction));
 	}
 	
 	public void receiveSetSprinting(boolean sprinting) {
-		System.out.println("receiveSetSprinting " + sprinting);
-		server.imposeEvent(new SetWalkingEntityIsSprintingEvent(entityID, sprinting));
+		server.imposeEvent(new SetWalkingEntitySprintingEvent(entityID, sprinting));
 	}
 	
 }

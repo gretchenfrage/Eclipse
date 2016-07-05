@@ -10,7 +10,6 @@ import org.dyn4j.geometry.MassType;
 
 import com.phoenixkahlo.eclipse.world.ImageResource;
 import com.phoenixkahlo.eclipse.world.WalkingEntity;
-import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.networking.SerializationUtils;
 import com.phoenixkahlo.utils.MathUtils;
 
@@ -18,8 +17,8 @@ import com.phoenixkahlo.utils.MathUtils;
  * It's you!
  */
 public class Player extends WalkingEntity {
-		
-	private static final float TRUE_BASE_RENDER_ANGLE = MathUtils.PI_F / 2;
+	
+	private double facingAngle;
 	
 	public Player() {
 		if (ImageResource.HUMAN_1.image() != null)
@@ -31,33 +30,31 @@ public class Player extends WalkingEntity {
 		setCanThrust(true);
 		setSprintWalkingMultiplier(2);
 		setSprintThrustingMultiplier(2);
+		
+		setBaseRenderAngle(MathUtils.PI_F / 2);
+	}
+	
+	public void setFacingAngle(double facingAngle) {
+		this.facingAngle = facingAngle;
 	}
 	
 	@Override
-	public void setRenderAngle(float renderAngle) {
-		super.setRenderAngle(renderAngle - TRUE_BASE_RENDER_ANGLE);
-	}
-
-	@Override
-	public void postTick(WorldState state) {
-		super.postTick(state);
-		
-		// Even on platforms, it mustn't rotate.
-		getBody().getTransform().setRotation(0);
+	public double getRenderAngle() {
+		return getBaseRenderAngle() + facingAngle;
 	}
 	
 	@Override
 	public void finishEncoding(OutputStream out) throws IOException {
 		super.finishEncoding(out);
 		
-		SerializationUtils.writeFloat(getRenderAngle(), out);
+		SerializationUtils.writeFloat(getBaseRenderAngle(), out);
 	}
 	
 	@Override
 	public void finishDecoding(InputStream in) throws IOException {
 		super.finishDecoding(in);
 		
-		setRenderAngle(SerializationUtils.readFloat(in));
+		setBaseRenderAngle(SerializationUtils.readFloat(in));
 	}
 	
 }

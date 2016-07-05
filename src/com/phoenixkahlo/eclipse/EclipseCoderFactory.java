@@ -8,10 +8,9 @@ import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
 import com.phoenixkahlo.eclipse.world.event.EntityDeletionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetBackgroundEvent;
-import com.phoenixkahlo.eclipse.world.event.SetRenderAngleEvent;
 import com.phoenixkahlo.eclipse.world.event.SetVelocityEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
-import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityIsSprintingEvent;
+import com.phoenixkahlo.eclipse.world.event.SetWalkingEntitySprintingEvent;
 import com.phoenixkahlo.eclipse.world.impl.Ball;
 import com.phoenixkahlo.eclipse.world.impl.BasicShip1;
 import com.phoenixkahlo.eclipse.world.impl.Player;
@@ -61,13 +60,11 @@ public class EclipseCoderFactory {
 		encoder.registerProtocol(CodableType.SET_WALKING_ENTITY_DIRECTION_EVENT.ordinal(),
 				new FieldEncoder(SetWalkingEntityDirectionEvent.class, encoder));
 		encoder.registerProtocol(CodableType.SET_WALKING_ENTITY_IS_SPRINTING_EVENT.ordinal(), 
-				new FieldEncoder(SetWalkingEntityIsSprintingEvent.class, encoder));
+				new FieldEncoder(SetWalkingEntitySprintingEvent.class, encoder));
 		encoder.registerProtocol(CodableType.BASIC_PERSPECTIVE.ordinal(), 
 				new FieldEncoder(BasicPerspective.class, encoder));
 		encoder.registerProtocol(CodableType.BASIC_SHIP_1.ordinal(),
 				new FieldEncoder(BasicShip1.class, encoder));
-		encoder.registerProtocol(CodableType.SET_RENDER_ANGLE_EVENT.ordinal(),
-				new FieldEncoder(SetRenderAngleEvent.class, encoder));
 		encoder.registerProtocol(CodableType.CLIENT_WALKING_HANDLER_CREATOR.ordinal(), 
 				new FieldEncoder(ClientWalkingHandlerCreator.class, encoder));
 		return encoder;
@@ -100,13 +97,11 @@ public class EclipseCoderFactory {
 		decoder.registerProtocol(CodableType.SET_WALKING_ENTITY_DIRECTION_EVENT.ordinal(), 
 				new FieldDecoder(SetWalkingEntityDirectionEvent.class, SetWalkingEntityDirectionEvent::new, decoder));
 		decoder.registerProtocol(CodableType.SET_WALKING_ENTITY_IS_SPRINTING_EVENT.ordinal(), 
-				new FieldDecoder(SetWalkingEntityIsSprintingEvent.class, SetWalkingEntityIsSprintingEvent::new, decoder));
+				new FieldDecoder(SetWalkingEntitySprintingEvent.class, SetWalkingEntitySprintingEvent::new, decoder));
 		decoder.registerProtocol(CodableType.BASIC_PERSPECTIVE.ordinal(), 
 				new FieldDecoder(BasicPerspective.class, BasicPerspective::new, decoder));
 		decoder.registerProtocol(CodableType.BASIC_SHIP_1.ordinal(),
 				new FieldDecoder(BasicShip1.class, BasicShip1::new, decoder));
-		decoder.registerProtocol(CodableType.SET_RENDER_ANGLE_EVENT.ordinal(), 
-				new FieldDecoder(SetRenderAngleEvent.class, SetRenderAngleEvent::new, decoder));
 		decoder.registerProtocol(CodableType.CLIENT_WALKING_HANDLER_CREATOR.ordinal(),
 				new FieldDecoder(ClientWalkingHandlerCreator.class, ClientWalkingHandlerCreator::new, decoder));
 		return decoder;

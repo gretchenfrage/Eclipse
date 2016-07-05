@@ -32,6 +32,7 @@ import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
+import com.phoenixkahlo.utils.PrintingOutputStream;
 
 /**
  * The client's state of being connected to the server.
@@ -62,6 +63,7 @@ public class ServerConnection extends BasicGameState {
 			out = socket.getOutputStream();
 		} catch (IOException e) {
 			disconnect(e);
+			return;
 		}
 		
 		broadcaster = new FunctionBroadcaster(out, EclipseCoderFactory.makeEncoder());
@@ -162,7 +164,7 @@ public class ServerConnection extends BasicGameState {
 				eventQueue.remove(0).accept(this);
 			}
 		}
-		
+				
 		// Have controlHandler handle
 		if (controlHandler != null)
 			controlHandler.update(container.getInput(), continuum.getState());

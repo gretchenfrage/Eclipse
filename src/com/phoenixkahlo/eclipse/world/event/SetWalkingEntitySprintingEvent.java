@@ -5,22 +5,22 @@ import java.util.function.Consumer;
 import com.phoenixkahlo.eclipse.world.WalkingEntity;
 import com.phoenixkahlo.eclipse.world.WorldState;
 
-public class SetWalkingEntityIsSprintingEvent implements Consumer<WorldState> {
+public class SetWalkingEntitySprintingEvent implements Consumer<WorldState> {
 
 	private int id;
-	private boolean isSprinting;
+	private boolean sprinting;
 	
-	public SetWalkingEntityIsSprintingEvent() {}
+	public SetWalkingEntitySprintingEvent() {}
 	
-	public SetWalkingEntityIsSprintingEvent(int id, boolean isSprinting) {
+	public SetWalkingEntitySprintingEvent(int id, boolean sprinting) {
 		this.id = id;
-		this.isSprinting = isSprinting;
+		this.sprinting = sprinting;
 	}
 	
 	@Override
 	public void accept(WorldState state) {
 		try {
-			((WalkingEntity) state.getEntity(id)).setIsSprinting(isSprinting);
+			((WalkingEntity) state.getEntity(id)).setIsSprinting(sprinting);
 		} catch (NullPointerException | ClassCastException e) {
 			e.printStackTrace();
 		}

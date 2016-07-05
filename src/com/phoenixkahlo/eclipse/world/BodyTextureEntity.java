@@ -13,7 +13,7 @@ public abstract class BodyTextureEntity extends BodyEntity {
 	private transient Image image;
 	private transient float width;
 	private transient float height;
-	private transient float renderAngle;
+	private transient float baseRenderAngle;
 	private transient RenderLayer layer;
 	private transient Color color; // Nullable
 	
@@ -29,19 +29,26 @@ public abstract class BodyTextureEntity extends BodyEntity {
 		this.image = image;
 		this.width = width;
 		this.height = height;
-		this.renderAngle = renderAngle;
+		this.baseRenderAngle = renderAngle;
 	}
 	
-	public float getRenderAngle() {
-		return renderAngle;
+	public float getBaseRenderAngle() {
+		return baseRenderAngle;
 	}
 	
-	public void setRenderAngle(float renderAngle) {
-		this.renderAngle = renderAngle;
+	public void setBaseRenderAngle(float renderAngle) {
+		this.baseRenderAngle = renderAngle;
 	}
 	
 	public void setColor(Color color) {
 		this.color = color;
+	}
+	
+	/**
+	 * @return not the base render angle, the angle it actually gets rendered at.
+	 */
+	protected double getRenderAngle() {
+		return getBody().getTransform().getRotation() + baseRenderAngle;
 	}
 	
 	@Override
@@ -50,7 +57,7 @@ public abstract class BodyTextureEntity extends BodyEntity {
 		Vector2 min = pos.copy().subtract(width / 2, height / 2);
 		Vector2 max = pos.copy().add(width / 2, height / 2);
 		g.rotate((float) pos.x, (float) pos.y,
-				(float) Math.toDegrees(getBody().getTransform().getRotation() + renderAngle));
+				(float) Math.toDegrees(getRenderAngle()));
 		if (color == null)
 			g.drawImage(image,
 					(float) min.x,
@@ -71,7 +78,7 @@ public abstract class BodyTextureEntity extends BodyEntity {
 					image.getHeight(),
 					color);
 		g.rotate((float) pos.x, (float) pos.y,
-				(float) -Math.toDegrees(getBody().getTransform().getRotation() + renderAngle));
+				(float) -Math.toDegrees(getBody().getTransform().getRotation() + baseRenderAngle));
 	}
 	
 	@Override
