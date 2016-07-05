@@ -22,8 +22,8 @@ public enum ClientFunction {
 	 */
 	IMPOSE_EVENT,
 	/**
-	 * args = {int id}
+	 * args = {Function<ServerConnection, ControlHandler> function}
 	 */
-	SET_ENTITY_ID;
+	CREATE_CONTROL_HANDLER;
 	
 }

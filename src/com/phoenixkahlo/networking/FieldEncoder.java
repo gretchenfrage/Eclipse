@@ -18,9 +18,9 @@ import com.phoenixkahlo.utils.ReflectionUtils;
  */
 public class FieldEncoder implements EncodingProtocol {
 	
-	private Class<?> clazz;
-	private EncodingProtocol subEncoder; // Nullable
-	private Predicate<Field> condition;
+	private final Class<?> clazz;
+	private final EncodingProtocol subEncoder; // Nullable
+	private final Predicate<Field> condition;
 	
 	public FieldEncoder(Class<?> clazz, EncodingProtocol subEncoder, Predicate<Field> condition) {
 		this.clazz = clazz;
@@ -56,53 +56,34 @@ public class FieldEncoder implements EncodingProtocol {
 		// Handle circular reference scenario
 		Thread thread = Thread.currentThread();
 		boolean head = false;
-		if (!encoded.containsKey(thread)) {
-			encoded.put(thread, new ArrayList<Object>());
-			head = true;
+		synchronized (encoded) {
+			if (!encoded.containsKey(thread)) {
+				encoded.put(thread, new ArrayList<Object>());
+				head = true;
+			}
+			if (!head && encoded.get(thread).contains(obj))
+				throw new IllegalArgumentException("Circular references");
+			encoded.get(thread).add(obj);
 		}
-		if (!head && identityContains(encoded.get(thread), obj))
-			throw new IllegalArgumentException("circular references");
-		encoded.get(thread).add(obj);
 		// Encode fields
 		for (Field field : ReflectionUtils.getAllFields(clazz)) {
 			field.setAccessible(true);
 			try {
-				//if (!Modifier.isTransient(mods) && !Modifier.isStatic(mods))
 				if (condition.test(field))
 					SerializationUtils.writeAny(field.get(obj), out, subEncoder);
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 		}
 		// Let object do its own encoding
 		if (obj instanceof EncodingFinisher) {
 			((EncodingFinisher) obj).finishEncoding(out);
 		}
-		/*
-		for (Method method : clazz.getMethods()) {
-			if (method.isAnnotationPresent(EncodingFinisher.class)) {
-				try {
-					method.invoke(obj, out);
-				} catch (IllegalAccessException e) {
-					throw new IllegalStateException(e);
-				} catch (InvocationTargetException e) {
-					if (e.getTargetException() instanceof IOException)
-						throw (IOException) e.getTargetException();
-					else
-						throw new IllegalStateException(e);
-				}
-			}
-		}
-		*/
 		// Cleanup circular reference handling
 		if (head)
-			encoded.remove(thread);
-	}
-	
-	private static boolean identityContains(List<?> list, Object obj) {
-		for (Object item : list)
-			if (item == obj) return true;
-		return false;
+			synchronized (encoded) {
+				encoded.remove(thread);
+			}
 	}
 	
 }

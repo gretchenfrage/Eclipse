@@ -14,10 +14,6 @@ import com.phoenixkahlo.eclipse.server.event.ClientDisconnectionEvent;
 import com.phoenixkahlo.eclipse.server.event.ClientInitializationEvent;
 import com.phoenixkahlo.eclipse.server.event.ImposeEventEvent;
 import com.phoenixkahlo.eclipse.world.WorldState;
-import com.phoenixkahlo.eclipse.world.event.EntityDeletionEvent;
-import com.phoenixkahlo.eclipse.world.event.RightTriggerPlayerEvent;
-import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
-import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityIsSprintingEvent;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
@@ -29,10 +25,11 @@ public class ClientConnection {
 	private final String address;
 	
 	private FunctionBroadcaster broadcaster;
+	private FunctionReceiver receiver;
 	private FunctionReceiverThread receiverThread;
 	private Server server;
-	private int entityID = -1; // Is -1 to represent lack of entity.
 	private boolean isInitialized = false;
+	private ServerControlHandler controlHandler; // Nullable
 	
 	public ClientConnection(Socket socket, Server server) throws IOException {
 		this.address = socket.getInetAddress().toString();
@@ -45,21 +42,15 @@ public class ClientConnection {
 		InputStream in = socket.getInputStream();
 		in = new DisconnectionDetectionInputStream(in);
 		
-		FunctionReceiver receiver = new FunctionReceiver(in, EclipseCoderFactory.makeDecoder());
+		receiver = new FunctionReceiver(in, EclipseCoderFactory.makeDecoder());
 		QueueFunctionFactory<Server> factory = new QueueFunctionFactory<Server>(server::queueEvent);
 		
 		receiver.registerFunction(ServerFunction.INIT_CLIENT.ordinal(),
 				factory.create(ClientInitializationEvent.class, new Object[] {this}, ClientConnection.class));
 		receiver.registerFunction(ServerFunction.IMPOSE_EVENT.ordinal(),
 				factory.create(ImposeEventEvent.class, int.class, Consumer.class));
-		receiver.registerFunction(ServerFunction.SET_DIRECTION.ordinal(),
-				new InstanceMethod(this, "setDirection", Vector2.class));
-		receiver.registerFunction(ServerFunction.SET_IS_SPRINTING.ordinal(),
-				new InstanceMethod(this, "setIsSprinting", boolean.class));
 		receiver.registerFunction(ServerFunction.DISCONNECT.ordinal(),
 				new InstanceMethod(this, "disconnect"));
-		receiver.registerFunction(ServerFunction.RIGHT_TRIGGER.ordinal(), 
-				new InstanceMethod(this, "rightTrigger", Vector2.class));
 		
 		assert receiver.areAllOrdinalsRegistered(ServerFunction.class) : "Server function(s) not registered";
 		
@@ -86,16 +77,9 @@ public class ClientConnection {
 		broadcaster.broadcast(ClientFunction.IMPOSE_EVENT, time, event);
 	}
 	
-	public int getEntityID() {
-		return entityID;
-	}
-	
-	/**
-	 * Sets it but also broadcasts is so its synchronized.
-	 */
-	public void setAndBroadcastEntityID(int entityID) throws IOException {
-		this.entityID = entityID;
-		broadcaster.broadcast(ClientFunction.SET_ENTITY_ID, entityID);
+	public void setAndBroadcastControlHandler(ServerControlHandler controlHandler) throws IOException {
+		this.controlHandler = controlHandler;
+		broadcaster.broadcast(ClientFunction.CREATE_CONTROL_HANDLER, controlHandler.getClientHandlerCreator());
 	}
 	
 	public boolean isInitialized() {
@@ -104,6 +88,10 @@ public class ClientConnection {
 	
 	public void setIsInitialized() {
 		isInitialized = true;
+	}
+	
+	public FunctionReceiver getReceiver() {
+		return receiver;
 	}
 	
 	/**
@@ -133,31 +121,11 @@ public class ClientConnection {
 	
 	public void onDisconnection(String cause) {
 		receiverThread.terminate();
-		if (entityID != -1)
-			server.imposeEvent(new EntityDeletionEvent(entityID));
 	}
 	
 	@Override
 	public String toString() {
 		return "ClientConnection to " + address;
-	}
-	
-	public void setDirection(Vector2 direction) {
-		if (entityID != -1)
-			server.queueEvent(new ImposeEventEvent(server.getContinuum().getTime(),
-					new SetWalkingEntityDirectionEvent(entityID, direction)));
-	}
-	
-	public void setIsSprinting(boolean isSprinting) {
-		if (entityID != -1)
-			server.queueEvent(new ImposeEventEvent(server.getContinuum().getTime(),
-					new SetWalkingEntityIsSprintingEvent(entityID, isSprinting)));
-	}
-	
-	public void rightTrigger(Vector2 worldPos) {
-		if (entityID != -1)
-			server.queueEvent(new ImposeEventEvent(server.getContinuum().getTime(),
-					new RightTriggerPlayerEvent(entityID, worldPos)));
 	}
 	
 }

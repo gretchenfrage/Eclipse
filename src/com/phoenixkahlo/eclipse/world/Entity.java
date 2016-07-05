@@ -33,11 +33,6 @@ public interface Entity {
 	 * @return a hopefully unique (RNG is fine), non-negative integer.
 	 */
 	int getID();
-
-	/**
-	 * Nullable if entity doesn't have perspective.
-	 */
-	Perspective getPerspective();
 	
 	boolean isStandingOn(Vector2 position);
 	

@@ -7,8 +7,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
-import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -19,8 +19,8 @@ import org.newdawn.slick.state.StateBasedGame;
 import com.phoenixkahlo.eclipse.EclipseCoderFactory;
 import com.phoenixkahlo.eclipse.QueueFunctionFactory;
 import com.phoenixkahlo.eclipse.client.event.BringToTimeEvent;
+import com.phoenixkahlo.eclipse.client.event.CreateControlHandlerEvent;
 import com.phoenixkahlo.eclipse.client.event.ImposeEventEvent;
-import com.phoenixkahlo.eclipse.client.event.SetEntityIDEvent;
 import com.phoenixkahlo.eclipse.client.event.SetTimeLogiclesslyEvent;
 import com.phoenixkahlo.eclipse.client.event.SetWorldStateEvent;
 import com.phoenixkahlo.eclipse.server.ServerFunction;
@@ -29,7 +29,6 @@ import com.phoenixkahlo.eclipse.world.Entity;
 import com.phoenixkahlo.eclipse.world.Perspective;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
-import com.phoenixkahlo.eclipse.world.event.SetRenderAngleEvent;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
@@ -40,8 +39,6 @@ import com.phoenixkahlo.networking.FunctionReceiverThread;
 public class ServerConnection extends BasicGameState {
 
 	private static final long NANOSECONDS_PER_TICK = (long) (WorldState.SECONDS_PER_TICK * 1_000_000_000);
-	private static final double RADIANS_ROTATE_PER_TICK = 0.1;
-	private static final double SCALE_FACTOR_PER_TICK = 0.01;
 	
 	private WorldStateContinuum continuum;
 	private FunctionBroadcaster broadcaster;
@@ -49,12 +46,8 @@ public class ServerConnection extends BasicGameState {
 	private Socket socket;
 	private StateBasedGame game;
 	private List<Consumer<ServerConnection>> eventQueue = new ArrayList<Consumer<ServerConnection>>();
-	private Vector2 cachedDirection = new Vector2(0, 0);
-	private boolean cachedIsSprinting = false;
-	private float cachedAngle = Float.NaN;
 	private long timeForNextTick = System.nanoTime();
-	private int entityID = -1;
-	private ClientControlHandler controlHandler;
+	private ClientControlHandler controlHandler; // Nullable
 	
 	public ServerConnection(Socket socket, StateBasedGame game) {
 		continuum = new WorldStateContinuum();
@@ -86,8 +79,8 @@ public class ServerConnection extends BasicGameState {
 				factory.create(ImposeEventEvent.class, int.class, Consumer.class));
 		receiver.registerFunction(ClientFunction.BRING_TO_TIME.ordinal(),
 				factory.create(BringToTimeEvent.class, int.class));
-		receiver.registerFunction(ClientFunction.SET_ENTITY_ID.ordinal(), 
-				factory.create(SetEntityIDEvent.class, int.class));
+		receiver.registerFunction(ClientFunction.CREATE_CONTROL_HANDLER.ordinal(),
+				factory.create(CreateControlHandlerEvent.class, Function.class));
 		
 		assert receiver.areAllOrdinalsRegistered(ClientFunction.class) : "Client function(s) not registered";
 		
@@ -135,7 +128,9 @@ public class ServerConnection extends BasicGameState {
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		// Transform perspective
-		Perspective perspective = controlHandler.getPerspective();
+		Perspective perspective = null;
+		if (controlHandler != null)
+			perspective = controlHandler.getPerspective();
 		if (perspective != null)
 			perspective.transform(g, container);
 		// Render background
@@ -169,83 +164,8 @@ public class ServerConnection extends BasicGameState {
 		}
 		
 		// Have controlHandler handle
-		controlHandler.update(container.getInput());
-		
-		/*
-		Input input = container.getInput();
-		
-		// Broadcast controls
-		// Direction
-		Vector2 direction = new Vector2();
-		if (input.isKeyDown(Input.KEY_W))
-			direction.y--;
-		if (input.isKeyDown(Input.KEY_S))
-			direction.y++;
-		if (input.isKeyDown(Input.KEY_A))
-			direction.x--;
-		if (input.isKeyDown(Input.KEY_D))
-			direction.x++;
-		Perspective perspective = continuum.getState().getPerspective();
-		if (perspective != null) {
-			double rotation = perspective.attemptGetRotation();
-			if (!Double.isNaN(rotation))
-				direction.rotate(rotation);
-		}
-		try {
-			if (!direction.equals(cachedDirection)) {
-				broadcaster.broadcast(ServerFunction.SET_DIRECTION, direction);
-				cachedDirection = direction;
-			}
-		} catch (IOException e) {
-			disconnect(e);
-		}
-		// Sprinting
-		boolean isSprinting = input.isKeyDown(Input.KEY_LSHIFT);
-		try {
-			if (isSprinting != cachedIsSprinting) {
-				broadcaster.broadcast(ServerFunction.SET_IS_SPRINTING, isSprinting);
-				cachedIsSprinting = isSprinting;
-			}
-		} catch (IOException e) {
-			
-		}
-		// Looking direction
-		if (entityID != -1) {
-			Vector2 p1 = continuum.getState().getEntity(entityID).getBody().getWorldCenter();
-			if (perspective != null)
-				p1 = perspective.worldToScreen(p1, new Vector2(container.getWidth(), container.getHeight()));
-			Vector2 p2 = new Vector2(input.getMouseX(), input.getMouseY()); 
-			p2.subtract(p1);
-			float angle = (float) Math.atan2(p2.y, p2.x);
-			if (perspective != null && !Double.isNaN(perspective.attemptGetRotation()))
-				angle += perspective.attemptGetRotation();
-			if (angle != cachedAngle) {
-				try {
-					broadcaster.broadcast(
-							ServerFunction.IMPOSE_EVENT,
-							continuum.getTime(),
-							new SetRenderAngleEvent(entityID, angle));
-				} catch (IOException e) {
-					disconnect(e);
-				}
-				cachedAngle = angle;
-			}
-		}
-		
-		// Local controls
-		if (perspective != null) {
-			// Rotation
-			if (input.isKeyDown(Input.KEY_E))
-				perspective.suggestAddRotation(RADIANS_ROTATE_PER_TICK);
-			if (input.isKeyDown(Input.KEY_Q))
-				perspective.suggestAddRotation(-RADIANS_ROTATE_PER_TICK);
-			// Scale
-			if (input.isKeyDown(Input.KEY_R))
-				perspective.suggestRaiseScale(1 + SCALE_FACTOR_PER_TICK);
-			if (input.isKeyDown(Input.KEY_F))
-				perspective.suggestRaiseScale(1 - SCALE_FACTOR_PER_TICK);
-		}
-		 */
+		if (controlHandler != null)
+			controlHandler.update(container.getInput(), continuum.getState());
 		
 		// Tick the continuum
 		continuum.tick();
@@ -259,6 +179,10 @@ public class ServerConnection extends BasicGameState {
 		}
 	}
 
+	public FunctionBroadcaster getBroadcaster() {
+		return broadcaster;
+	}
+	
 	@Override
 	public int getID() {
 		return ClientGameState.SERVER_CONNECTION.ordinal();
@@ -280,8 +204,7 @@ public class ServerConnection extends BasicGameState {
 		continuum.setWorldState(state);
 	}
 	
-	public void setEntityID(int entityID) {
-		this.entityID = entityID;
+	public void setControlHandler(ClientControlHandler controlHandler) {
+		this.controlHandler = controlHandler;
 	}
-	
 }

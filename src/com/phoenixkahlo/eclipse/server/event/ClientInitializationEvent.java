@@ -5,33 +5,32 @@ import java.util.function.Consumer;
 
 import com.phoenixkahlo.eclipse.server.ClientConnection;
 import com.phoenixkahlo.eclipse.server.Server;
+import com.phoenixkahlo.eclipse.server.ServerWalkingHandler;
 import com.phoenixkahlo.eclipse.world.Entity;
-import com.phoenixkahlo.eclipse.world.IDPerspectiveGetter;
 import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
-import com.phoenixkahlo.eclipse.world.event.SetPerspectiveGetterEvent;
 import com.phoenixkahlo.eclipse.world.impl.BasicShip1;
 import com.phoenixkahlo.eclipse.world.impl.Player;
 
 /**
- * Networked event received by client at the beginning of the connection to set up the client.
+ * Networked event received by connection at the beginning of the connection to set up the connection.
  */
 public class ClientInitializationEvent implements Consumer<Server> {
 
-	private ClientConnection client;
+	private ClientConnection connection;
 	
 	/**
-	 * @param client extra.
+	 * @param connection extra.
 	 */
 	public ClientInitializationEvent(ClientConnection client) {
-		this.client = client;
+		this.connection = client;
 	}
 	
 	@Override
 	public void accept(Server server) {
 		try {
-			client.broadcastSetTimeLogiclessly(server.getContinuum().getTime());
-			client.broadcastSetWorldState(server.getContinuum().getState());
-			client.setIsInitialized();
+			connection.broadcastSetTimeLogiclessly(server.getContinuum().getTime());
+			connection.broadcastSetWorldState(server.getContinuum().getState());
+			connection.setIsInitialized();
 			
 			Entity player = new Player();
 			server.imposeEvent(new EntityAdditionEvent(player));
@@ -39,11 +38,9 @@ public class ClientInitializationEvent implements Consumer<Server> {
 			Entity ship = new BasicShip1();
 			server.imposeEvent(new EntityAdditionEvent(ship));
 			
-			client.broadcastImposeEvent(server.getContinuum().getTime(),
-					new SetPerspectiveGetterEvent(new IDPerspectiveGetter(player.getID())));
-			client.setAndBroadcastEntityID(player.getID());
+			connection.setAndBroadcastControlHandler(new ServerWalkingHandler(connection, player.getID()));
 		} catch (IOException e) {
-			server.disconnectClient(client, e);
+			server.disconnectClient(connection, e);
 		}
 	}
 

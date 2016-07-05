@@ -1,20 +1,13 @@
 package com.phoenixkahlo.testing.networking;
 
+import java.util.function.Function;
+
 public class FrameworkTester {
 
-	class Foo {
-		
-		void baz() {}
-		
-	}
-	
-	class Bar extends Foo {
-		
-		
-	}
+	FrameworkTester(String str) {}
 	
 	public static void main(String[] args) throws Exception {
-		System.out.println(Bar.class.getDeclaredMethod("baz"));
+		Function<String, FrameworkTester> function = FrameworkTester::new;
 	}
 
 }

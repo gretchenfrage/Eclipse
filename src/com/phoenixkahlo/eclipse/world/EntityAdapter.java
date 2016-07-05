@@ -47,11 +47,6 @@ public abstract class EntityAdapter implements Entity {
 	}
 	
 	@Override
-	public Perspective getPerspective() {
-		return null;
-	}
-	
-	@Override
 	public Consumer<Player> getUseable(Vector2 position) {
 		return null;
 	}

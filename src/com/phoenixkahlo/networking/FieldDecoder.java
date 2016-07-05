@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import com.phoenixkahlo.utils.ReflectionUtils;
@@ -14,23 +15,24 @@ import com.phoenixkahlo.utils.ReflectionUtils;
  */
 public class FieldDecoder implements DecodingProtocol {
 	
-	private Supplier<?> supplier;
-	private Field[] fields;
-	private DecodingProtocol subDecoder; // Nullable
+	private final Supplier<?> supplier;
+	private final Field[] fields;
+	private final DecodingProtocol subDecoder; // Nullable
+	private final Predicate<Field> condition;
 	
-	public <E> FieldDecoder(Class<E> clazz, Supplier<E> supplier, DecodingProtocol subDecoder) {
+	public <E> FieldDecoder(Class<E> clazz, Supplier<E> supplier, DecodingProtocol subDecoder, 
+			Predicate<Field> condition) {
 		this.supplier = supplier;
 		this.subDecoder = subDecoder;
+		this.condition = condition; 
 		fields = ReflectionUtils.getAllFields(clazz);//clazz.getDeclaredFields();
 		for (Field field : fields)
 			field.setAccessible(true);
-		/*
-		decodingFinishers = new ArrayList<Method>();
-		for (Method method : clazz.getMethods()) {
-			if (method.isAnnotationPresent(DecodingFinisher.class))
-				decodingFinishers.add(method);
-		}
-		*/
+	}
+	
+	public <E> FieldDecoder(Class<E> clazz, Supplier<E> supplier, DecodingProtocol subDecoder) {
+		this(clazz, supplier, subDecoder, (Field field) -> !Modifier.isTransient(field.getModifiers()) && 
+				!Modifier.isStatic(field.getModifiers()));
 	}
 	
 	public <E> FieldDecoder(Class<E> clazz, Supplier<E> supplier) {
@@ -46,8 +48,9 @@ public class FieldDecoder implements DecodingProtocol {
 			// Decode fields
 			for (Field field : fields) {
 				try {
-					int mods = field.getModifiers();
-					if (!Modifier.isTransient(mods) && !Modifier.isStatic(mods))
+					//int mods = field.getModifiers();
+					//if (!Modifier.isTransient(mods) && !Modifier.isStatic(mods))
+					if (condition.test(field))
 						field.set(obj, SerializationUtils.readType(field.getType(), in, subDecoder));
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					throw new RuntimeException(e);
@@ -57,22 +60,6 @@ public class FieldDecoder implements DecodingProtocol {
 			if (obj instanceof DecodingFinisher) {
 				((DecodingFinisher) obj).finishDecoding(in);
 			}
-			/*
-			for (Method method : decodingFinishers) {
-				try {
-					method.invoke(obj, in);
-				} catch (IllegalAccessException | IllegalArgumentException e) {
-					throw new IllegalStateException(e);
-				} catch (InvocationTargetException e) {
-					if (e.getTargetException() instanceof IOException)
-						throw (IOException) e.getTargetException();
-					else if (e.getTargetException() instanceof ProtocolViolationException)
-						throw (ProtocolViolationException) e.getTargetException();
-					else
-						throw new IllegalStateException(e);
-				}
-			}
-			*/
 			return obj;
 		}
 	}

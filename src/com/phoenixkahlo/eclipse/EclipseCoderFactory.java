@@ -2,13 +2,12 @@ package com.phoenixkahlo.eclipse;
 
 import org.dyn4j.geometry.Vector2;
 
+import com.phoenixkahlo.eclipse.client.ClientWalkingHandlerCreator;
 import com.phoenixkahlo.eclipse.world.BasicPerspective;
-import com.phoenixkahlo.eclipse.world.IDPerspectiveGetter;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
 import com.phoenixkahlo.eclipse.world.event.EntityDeletionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetBackgroundEvent;
-import com.phoenixkahlo.eclipse.world.event.SetPerspectiveGetterEvent;
 import com.phoenixkahlo.eclipse.world.event.SetRenderAngleEvent;
 import com.phoenixkahlo.eclipse.world.event.SetVelocityEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
@@ -65,14 +64,12 @@ public class EclipseCoderFactory {
 				new FieldEncoder(SetWalkingEntityIsSprintingEvent.class, encoder));
 		encoder.registerProtocol(CodableType.BASIC_PERSPECTIVE.ordinal(), 
 				new FieldEncoder(BasicPerspective.class, encoder));
-		encoder.registerProtocol(CodableType.SET_PERSPECTIVE_GETTER_EVENT.ordinal(), 
-				new FieldEncoder(SetPerspectiveGetterEvent.class, encoder));
-		encoder.registerProtocol(CodableType.ID_PERSPECTIVE_GETTER.ordinal(), 
-				new FieldEncoder(IDPerspectiveGetter.class, encoder));
 		encoder.registerProtocol(CodableType.BASIC_SHIP_1.ordinal(),
 				new FieldEncoder(BasicShip1.class, encoder));
 		encoder.registerProtocol(CodableType.SET_RENDER_ANGLE_EVENT.ordinal(),
 				new FieldEncoder(SetRenderAngleEvent.class, encoder));
+		encoder.registerProtocol(CodableType.CLIENT_WALKING_HANDLER_CREATOR.ordinal(), 
+				new FieldEncoder(ClientWalkingHandlerCreator.class, encoder));
 		return encoder;
 	}
 	
@@ -106,14 +103,12 @@ public class EclipseCoderFactory {
 				new FieldDecoder(SetWalkingEntityIsSprintingEvent.class, SetWalkingEntityIsSprintingEvent::new, decoder));
 		decoder.registerProtocol(CodableType.BASIC_PERSPECTIVE.ordinal(), 
 				new FieldDecoder(BasicPerspective.class, BasicPerspective::new, decoder));
-		decoder.registerProtocol(CodableType.SET_PERSPECTIVE_GETTER_EVENT.ordinal(), 
-				new FieldDecoder(SetPerspectiveGetterEvent.class, SetPerspectiveGetterEvent::new, decoder));
-		decoder.registerProtocol(CodableType.ID_PERSPECTIVE_GETTER.ordinal(), 
-				new FieldDecoder(IDPerspectiveGetter.class, IDPerspectiveGetter::new, decoder));
 		decoder.registerProtocol(CodableType.BASIC_SHIP_1.ordinal(),
 				new FieldDecoder(BasicShip1.class, BasicShip1::new, decoder));
 		decoder.registerProtocol(CodableType.SET_RENDER_ANGLE_EVENT.ordinal(), 
 				new FieldDecoder(SetRenderAngleEvent.class, SetRenderAngleEvent::new, decoder));
+		decoder.registerProtocol(CodableType.CLIENT_WALKING_HANDLER_CREATOR.ordinal(),
+				new FieldDecoder(ClientWalkingHandlerCreator.class, ClientWalkingHandlerCreator::new, decoder));
 		return decoder;
 	}
 	

@@ -14,20 +14,8 @@ public enum ServerFunction {
 	 */
 	IMPOSE_EVENT,
 	/**
-	 * args = {Vector2 direction}
-	 */
-	SET_DIRECTION,
-	/**
-	 * args = {boolean sprinting}
-	 */
-	SET_IS_SPRINTING,
-	/**
 	 * args = {}
 	 */
-	DISCONNECT,
-	/**
-	 * args = {Vector2 worldPos}
-	 */
-	RIGHT_TRIGGER;
+	DISCONNECT;
 	
 }

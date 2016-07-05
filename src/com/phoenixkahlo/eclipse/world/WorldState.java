@@ -3,7 +3,6 @@ package com.phoenixkahlo.eclipse.world;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.World;
@@ -23,7 +22,6 @@ public class WorldState implements DecodingFinisher {
 	private List<Entity> entities = new ArrayList<Entity>();
 	private transient int index; // Iterates forward
 	private Background background; // Nullable
-	private Function<WorldState, Perspective> perspectiveGetter; // Nullable
 	
 	public WorldState() {
 		world.setGravity(new Vector2(0, 0));
@@ -82,19 +80,6 @@ public class WorldState implements DecodingFinisher {
 
 	public void setBackground(Background background) {
 		this.background = background;
-	}
-
-	public Perspective getPerspective() {
-		if (perspectiveGetter == null) return null;
-		return perspectiveGetter.apply(this);
-	}
-
-	public void setPerspectiveGetter(Function<WorldState, Perspective> perspectiveGetter) {
-		this.perspectiveGetter = perspectiveGetter;
-	}
-	
-	public void setPerspective(Perspective perspective) {
-		perspectiveGetter = (WorldState state) -> perspective;
 	}
 
 	/**

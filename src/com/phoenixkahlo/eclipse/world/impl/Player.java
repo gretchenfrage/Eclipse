@@ -7,11 +7,8 @@ import java.io.OutputStream;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.MassType;
-import org.dyn4j.geometry.Vector2;
 
-import com.phoenixkahlo.eclipse.world.BasicPerspective;
 import com.phoenixkahlo.eclipse.world.ImageResource;
-import com.phoenixkahlo.eclipse.world.Perspective;
 import com.phoenixkahlo.eclipse.world.WalkingEntity;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.networking.SerializationUtils;
@@ -21,8 +18,8 @@ import com.phoenixkahlo.utils.MathUtils;
  * It's you!
  */
 public class Player extends WalkingEntity {
-	
-	private BasicPerspective perspective = new BasicPerspective();
+		
+	private static final float TRUE_BASE_RENDER_ANGLE = MathUtils.PI_F / 2;
 	
 	public Player() {
 		if (ImageResource.HUMAN_1.image() != null)
@@ -34,41 +31,19 @@ public class Player extends WalkingEntity {
 		setCanThrust(true);
 		setSprintWalkingMultiplier(2);
 		setSprintThrustingMultiplier(2);
-		
-		perspective.setScale(25);
-		perspective.setSuggestibleScaleMin(10);
-		perspective.setSuggestibleScaleMax(50);
-	}
-	
-	public void rightTrigger(Vector2 worldPos, WorldState state) {
-		
 	}
 	
 	@Override
 	public void setRenderAngle(float renderAngle) {
-		super.setRenderAngle(renderAngle - MathUtils.PI_F / 2);
+		super.setRenderAngle(renderAngle - TRUE_BASE_RENDER_ANGLE);
 	}
 
 	@Override
 	public void postTick(WorldState state) {
 		super.postTick(state);
 		
-		Vector2 position = getBody().getWorldPoint(new Vector2(0, 0));
-		perspective.setX((float) position.x);
-		perspective.setY((float) position.y);
-		
 		// Even on platforms, it mustn't rotate.
 		getBody().getTransform().setRotation(0);
-	}
-
-	@Override
-	public Perspective getPerspective() {
-		return perspective;
-	}
-	
-	@Override
-	protected void onPlatformRotation(double theta) {
-		perspective.setRotation(perspective.getRotation() + (float) theta);
 	}
 	
 	@Override

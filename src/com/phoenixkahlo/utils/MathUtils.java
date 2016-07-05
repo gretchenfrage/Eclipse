@@ -1,8 +1,12 @@
 package com.phoenixkahlo.utils;
 
+import java.util.Random;
+
 public class MathUtils {
 
 	private MathUtils() {}
+	
+	public static final Random RANDOM = new Random();
 	
 	public static final float PI_F = (float) Math.PI;
 	

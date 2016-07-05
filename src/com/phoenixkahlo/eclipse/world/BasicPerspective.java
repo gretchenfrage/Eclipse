@@ -10,8 +10,8 @@ public class BasicPerspective implements Perspective {
 	private float y;
 	private float scale;
 	private float rotation;
-	private float suggestibleScaleMin = Float.NaN; // May be NaN to represent lack thereof
-	private float suggestibleScaleMax = Float.NaN; // May be NaN to represent lack thereof
+	private float scaleMin = Float.NaN;
+	private float scaleMax = Float.NaN;
 	
 	public BasicPerspective(float x, float y, float scale, float rotation) {
 		this.x = x;
@@ -69,24 +69,17 @@ public class BasicPerspective implements Perspective {
 		return out;
 	}
 	
-	@Override
-	public void suggestAddRotation(double radians) {
+	public void addRotation(double radians) {
 		rotation += radians;
 		rotation %= Math.PI * 2;
 	}
 	
-	@Override
-	public void suggestRaiseScale(double factor) {
+	public void raiseScale(double factor) {
 		scale = (float) Math.pow(scale, factor);
-		if (scale > suggestibleScaleMax)
-			scale = suggestibleScaleMax;
-		else if (scale < suggestibleScaleMin)
-			scale = suggestibleScaleMin;
-	}
-
-	@Override
-	public double attemptGetRotation() {
-		return rotation;
+		if (scale > scaleMax)
+			scale = scaleMax;
+		else if (scale < scaleMin)
+			scale = scaleMin;
 	}
 	
 	public float getX() {
@@ -121,20 +114,20 @@ public class BasicPerspective implements Perspective {
 		this.rotation = rotation;
 	}
 	
-	public float getSuggestibleScaleMin() {
-		return suggestibleScaleMin;
+	public float getScaleMin() {
+		return scaleMin;
 	}
 
-	public void setSuggestibleScaleMin(float suggestibleScaleMin) {
-		this.suggestibleScaleMin = suggestibleScaleMin;
+	public void setScaleMin(float scaleMin) {
+		this.scaleMin = scaleMin;
 	}
 
-	public float getSuggestibleScaleMax() {
-		return suggestibleScaleMax;
+	public float getScaleMax() {
+		return scaleMax;
 	}
 
-	public void setSuggestibleScaleMax(float suggestibleScaleMax) {
-		this.suggestibleScaleMax = suggestibleScaleMax;
+	public void setScaleMax(float scaleMax) {
+		this.scaleMax = scaleMax;
 	}
 	
 }

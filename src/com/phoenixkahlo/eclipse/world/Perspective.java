@@ -53,13 +53,4 @@ public interface Perspective {
 				});
 	}
 	
-	void suggestAddRotation(double radians);
-	
-	void suggestRaiseScale(double factor);
-	
-	/**
-	 * @return the perspective's rotation or Double.NaN
-	 */
-	double attemptGetRotation();
-	
 }
