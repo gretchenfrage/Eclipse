@@ -1,5 +1,7 @@
 package com.phoenixkahlo.eclipse.client;
 
+import java.io.IOException;
+
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 
 /**
@@ -15,9 +17,13 @@ public abstract class NetworkedClientControlHandler implements ClientControlHand
 		this.functionHeader = functionHeader;
 	}
 	
-	protected void registerBroadcastMethod(Object token) throws IllegalArgumentException {
+	protected void registerBroadcastToken(Object token) throws IllegalArgumentException {
 		broadcaster.registerFunction(functionHeader, token);
 		functionHeader++;
+	}
+	
+	protected void broadcast(Object token, Object... args) throws IOException {
+		broadcaster.broadcast(token, args);
 	}
 	
 }

@@ -13,11 +13,17 @@ public class ServerWalkingHandler extends NetworkedServerControlHandler {
 	public ServerWalkingHandler(ClientConnection connection, int entityID) {
 		super(connection.getReceiver());
 		this.entityID = entityID;
+		
+		registerReceiveMethod("receiveG");
 	}
 
 	@Override
 	public Function<ServerConnection, ClientControlHandler> getClientHandlerCreator() {
 		return new ClientWalkingHandlerCreator(entityID, getOriginalFunctionHeader());
+	}
+	
+	public void receiveG() {
+		System.out.println("received G");
 	}
 	
 }

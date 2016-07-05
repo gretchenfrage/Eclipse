@@ -106,7 +106,7 @@ public class ServerConnection extends BasicGameState {
 	/**
 	 * @param cause nullable.
 	 */
-	private void disconnect(Exception cause) {
+	public void disconnect(Exception cause) {
 		if (cause != null) {
 			System.out.println("Disconnecting " + this + " because:");
 			cause.printStackTrace(System.out);
