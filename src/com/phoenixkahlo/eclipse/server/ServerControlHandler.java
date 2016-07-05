@@ -13,4 +13,9 @@ public interface ServerControlHandler {
 	
 	Function<ServerConnection, ClientControlHandler> getClientHandlerCreator();
 	
+	/**
+	 * End the lifespan of this handler and make any subsequent received data be ignored.
+	 */
+	void disable();
+	
 }
