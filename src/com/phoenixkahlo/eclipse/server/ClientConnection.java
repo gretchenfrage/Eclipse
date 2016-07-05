@@ -96,6 +96,10 @@ public class ClientConnection {
 		return receiver;
 	}
 	
+	public Server getServer() {
+		return server;
+	}
+	
 	/**
 	 * Is receiver thread safe.
 	 * @param cause nullable

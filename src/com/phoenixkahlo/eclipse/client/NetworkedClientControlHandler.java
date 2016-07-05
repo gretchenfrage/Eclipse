@@ -23,6 +23,7 @@ public abstract class NetworkedClientControlHandler implements ClientControlHand
 	}
 	
 	protected void broadcast(Object token, Object... args) throws IOException {
+		System.out.println("broadcasting " + token);
 		broadcaster.broadcast(token, args);
 	}
 	

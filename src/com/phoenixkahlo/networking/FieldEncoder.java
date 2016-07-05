@@ -61,8 +61,9 @@ public class FieldEncoder implements EncodingProtocol {
 				encoded.put(thread, new ArrayList<Object>());
 				head = true;
 			}
-			if (!head && encoded.get(thread).contains(obj))
-				throw new IllegalArgumentException("Circular references");
+			if (!head && identityContains(encoded.get(thread), obj))
+				throw new IllegalArgumentException("Circular references: " + obj + " of class " + 
+						obj.getClass());
 			encoded.get(thread).add(obj);
 		}
 		// Encode fields
@@ -84,6 +85,12 @@ public class FieldEncoder implements EncodingProtocol {
 			synchronized (encoded) {
 				encoded.remove(thread);
 			}
+	}
+	
+	private static boolean identityContains(List<?> list, Object obj) {
+		for (Object item : list)
+			if (item == obj) return true;
+		return false;
 	}
 	
 }
