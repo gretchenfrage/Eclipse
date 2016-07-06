@@ -41,4 +41,6 @@ public interface Entity {
 	 */
 	Consumer<Player> getUseable(Vector2 position);
 	
+	double getAlignmentAngle();
+	
 }

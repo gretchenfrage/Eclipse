@@ -9,9 +9,11 @@ import org.newdawn.slick.Input;
 import com.phoenixkahlo.eclipse.world.BasicPerspective;
 import com.phoenixkahlo.eclipse.world.Entity;
 import com.phoenixkahlo.eclipse.world.Perspective;
-import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
-import com.phoenixkahlo.utils.MathUtils;
+import com.phoenixkahlo.eclipse.world.event.SetPlayerFacingAngleEvent;
+import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
+import com.phoenixkahlo.eclipse.world.event.SetWalkingEntitySprintingEvent;
+import com.phoenixkahlo.eclipse.world.impl.Player;
 
 /**
  * The main client control handler for walking, running, thrusting, shooting, 
@@ -55,7 +57,7 @@ public class ClientWalkingHandler extends NetworkedClientControlHandler {
 	@Override
 	public void update(Input input, WorldStateContinuum continuum, GameContainer container) {
 		int time = continuum.getTime();
-		Entity entity = continuum.getState().getEntity(entityID);
+		Player entity = (Player) continuum.getState().getEntity(entityID);
 		
 		// Broadcasting stuff
 		// Moving direction
@@ -72,6 +74,7 @@ public class ClientWalkingHandler extends NetworkedClientControlHandler {
 		if (!direction.equals(cachedDirection)) {
 			try {
 				broadcastSetDirection(time, direction);
+				connection.imposeEvent(time, new SetWalkingEntityDirectionEvent(entityID, direction));
 				cachedDirection = direction;
 			} catch (IOException e) {
 				connection.disconnect(e);
@@ -83,6 +86,7 @@ public class ClientWalkingHandler extends NetworkedClientControlHandler {
 		if (sprinting != cachedSprinting) {
 			try {
 				broadcastSetSprinting(time, sprinting);
+				connection.imposeEvent(time, new SetWalkingEntitySprintingEvent(entityID, sprinting));
 				cachedSprinting = sprinting;
 			} catch (IOException e) {
 				connection.disconnect(e);
@@ -99,6 +103,7 @@ public class ClientWalkingHandler extends NetworkedClientControlHandler {
 			if (angle != cachedAngle) {
 				try {
 					broadcastSetAngle(time, angle);
+					connection.imposeEvent(time, new SetPlayerFacingAngleEvent(entityID, angle));
 					cachedAngle = angle;
 				} catch (IOException e) {
 					connection.disconnect(e);
@@ -118,12 +123,20 @@ public class ClientWalkingHandler extends NetworkedClientControlHandler {
 			perspective.raiseScale(1 + SCALE_FACTOR_PER_TICK);
 		if (input.isKeyDown(Input.KEY_F))
 			perspective.raiseScale(1 - SCALE_FACTOR_PER_TICK);
-
-		// Perspective keeping
+		// Location
 		if (entity != null) {
 			Vector2 pos = entity.getBody().getWorldCenter();
 			perspective.setX((float) pos.x);
 			perspective.setY((float) pos.y);
+		}
+		// Platform rotation
+		if (entity != null)
+			perspective.addRotation(entity.getLatestPlatformRotationChange());
+		// Alignment
+		if (entity != null && input.isKeyDown(Input.KEY_G)) {
+			Entity platform = entity.platformOn(continuum.getState());
+			if (platform != null)
+				perspective.setRotation((float) platform.getAlignmentAngle());
 		}
 	}
 	

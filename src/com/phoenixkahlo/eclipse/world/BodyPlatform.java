@@ -12,6 +12,7 @@ import org.dyn4j.geometry.Vector2;
 public abstract class BodyPlatform extends BodyTextureEntity {
 	
 	private transient List<Convex> area = new ArrayList<Convex>();
+	private transient double baseAlignmentAngle = 0;
 	
 	public BodyPlatform(RenderLayer layer) {
 		super(layer);
@@ -25,6 +26,10 @@ public abstract class BodyPlatform extends BodyTextureEntity {
 		area.add(convex);
 	}
 	
+	protected void setBaseAlignmentAngle(double angle) {
+		this.baseAlignmentAngle = angle;
+	}
+	
 	@Override
 	public boolean isStandingOn(Vector2 position) {
 		position = getBody().getLocalPoint(position);
@@ -33,6 +38,11 @@ public abstract class BodyPlatform extends BodyTextureEntity {
 				return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public double getAlignmentAngle() {
+		return getBody().getTransform().getRotation() + baseAlignmentAngle;
 	}
 
 }

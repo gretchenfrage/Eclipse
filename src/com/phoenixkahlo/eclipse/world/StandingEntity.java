@@ -14,6 +14,7 @@ public abstract class StandingEntity extends BodyTextureEntity {
 	private transient boolean correctRotation = true;
 	private int lastPlatformID = -1;
 	private double lastPlatformRotation;
+	private double latestPlatformRotationChange = 0;
 	
 	public StandingEntity(RenderLayer layer) {
 		super(layer);
@@ -31,6 +32,10 @@ public abstract class StandingEntity extends BodyTextureEntity {
 		}
 		return null;
 	}
+	
+	public double getLatestPlatformRotationChange() {
+		return latestPlatformRotationChange;
+	}
 
 	/**
 	 * Override if this entity wants to be moving relative to its platform.
@@ -38,11 +43,6 @@ public abstract class StandingEntity extends BodyTextureEntity {
 	protected Vector2 getTargetRelativeVelocity() {
 		return new Vector2();
 	}
-
-	/**
-	 * Called when StandingEntity rotates itself due to platform rotation. 
-	 */
-	protected void onPlatformRotation(double theta) {}
 	
 	@Override
 	public void postTick(WorldState state) {
@@ -71,7 +71,7 @@ public abstract class StandingEntity extends BodyTextureEntity {
 			if (lastPlatformID == currentPlatformID && currentPlatformID != -1) {
 				double theta = platformOn.getBody().getTransform().getRotation() - lastPlatformRotation;
 				body.rotateAboutCenter(theta);
-				onPlatformRotation(theta);
+				latestPlatformRotationChange = theta;
 			}
 			lastPlatformID = currentPlatformID;
 			if (currentPlatformID != -1) {

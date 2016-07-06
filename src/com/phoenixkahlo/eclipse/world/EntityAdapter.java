@@ -56,4 +56,9 @@ public abstract class EntityAdapter implements Entity {
 		return false;
 	}
 	
+	@Override
+	public double getAlignmentAngle() {
+		return 0;
+	}
+	
 }

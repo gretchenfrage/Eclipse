@@ -39,7 +39,7 @@ public class Player extends WalkingEntity {
 	}
 	
 	@Override
-	public double getRenderAngle() {
+	protected double getRenderAngle() {
 		return getBaseRenderAngle() + facingAngle;
 	}
 	

@@ -48,7 +48,7 @@ public class BasicPerspective implements Perspective {
 		// Move the center of the screen to the point of the perspective
 		out.subtract(screenCenter.multiply(1 / scale));
 		// Rotate the screen around the perspective
-		out.rotate(-rotation, x, y);
+		out.rotate(rotation, x, y);
 		
 		return out;
 	}
