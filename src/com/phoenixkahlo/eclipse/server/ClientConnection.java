@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.net.Socket;
 import java.util.function.Consumer;
 
-import org.dyn4j.geometry.Vector2;
-
 import com.phoenixkahlo.eclipse.EclipseCoderFactory;
 import com.phoenixkahlo.eclipse.QueueFunctionFactory;
 import com.phoenixkahlo.eclipse.client.ClientFunction;

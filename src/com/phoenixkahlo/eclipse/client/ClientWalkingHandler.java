@@ -3,12 +3,15 @@ package com.phoenixkahlo.eclipse.client;
 import java.io.IOException;
 
 import org.dyn4j.geometry.Vector2;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 
 import com.phoenixkahlo.eclipse.world.BasicPerspective;
 import com.phoenixkahlo.eclipse.world.Entity;
 import com.phoenixkahlo.eclipse.world.Perspective;
 import com.phoenixkahlo.eclipse.world.WorldState;
+import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
+import com.phoenixkahlo.utils.MathUtils;
 
 /**
  * The main client control handler for walking, running, thrusting, shooting, 
@@ -25,12 +28,14 @@ public class ClientWalkingHandler extends NetworkedClientControlHandler {
 	
 	private Vector2 cachedDirection = new Vector2();
 	private boolean cachedSprinting = false;
+	private float cachedAngle = 0;
 	
 	public ClientWalkingHandler(ServerConnection connection, int functionHeader, int entityID) {
 		super(connection.getBroadcaster(), functionHeader);
 		
 		registerBroadcastToken("setDirection");
 		registerBroadcastToken("setSprinting");
+		registerBroadcastToken("setAngle");
 		
 		this.connection = connection;
 		this.entityID = entityID;
@@ -48,16 +53,12 @@ public class ClientWalkingHandler extends NetworkedClientControlHandler {
 	}
 
 	@Override
-	public void update(Input input, WorldState worldState) {
-		Entity entity = worldState.getEntity(entityID);
-		if (entity != null) {
-			Vector2 pos = entity.getBody().getWorldCenter();
-			perspective.setX((float) pos.x);
-			perspective.setY((float) pos.y);
-		}
+	public void update(Input input, WorldStateContinuum continuum, GameContainer container) {
+		int time = continuum.getTime();
+		Entity entity = continuum.getState().getEntity(entityID);
 		
 		// Broadcasting stuff
-		// Direction
+		// Moving direction
 		Vector2 direction = new Vector2();
 		if (input.isKeyDown(Input.KEY_W))
 			direction.y--;
@@ -70,7 +71,7 @@ public class ClientWalkingHandler extends NetworkedClientControlHandler {
 		direction.rotate(perspective.getRotation());
 		if (!direction.equals(cachedDirection)) {
 			try {
-				broadcastSetDirection(direction);
+				broadcastSetDirection(time, direction);
 				cachedDirection = direction;
 			} catch (IOException e) {
 				connection.disconnect(e);
@@ -81,11 +82,28 @@ public class ClientWalkingHandler extends NetworkedClientControlHandler {
 		boolean sprinting = input.isKeyDown(Input.KEY_LSHIFT);
 		if (sprinting != cachedSprinting) {
 			try {
-				broadcastSetSprinting(sprinting);
+				broadcastSetSprinting(time, sprinting);
 				cachedSprinting = sprinting;
 			} catch (IOException e) {
 				connection.disconnect(e);
 				return;
+			}
+		}
+		// Facing direction
+		if (entity != null) {
+			Vector2 p1 = entity.getBody().getWorldCenter();
+			Vector2 p2 = perspective.screenToWorld(
+					new Vector2(input.getMouseX(), input.getMouseY()),
+					new Vector2(container.getWidth(), container.getHeight()));
+			float angle = (float) Math.atan2(p2.y - p1.y, p2.x - p1.x);
+			if (angle != cachedAngle) {
+				try {
+					broadcastSetAngle(time, angle);
+					cachedAngle = angle;
+				} catch (IOException e) {
+					connection.disconnect(e);
+					return;
+				}
 			}
 		}
 		
@@ -100,14 +118,25 @@ public class ClientWalkingHandler extends NetworkedClientControlHandler {
 			perspective.raiseScale(1 + SCALE_FACTOR_PER_TICK);
 		if (input.isKeyDown(Input.KEY_F))
 			perspective.raiseScale(1 - SCALE_FACTOR_PER_TICK);
+
+		// Perspective keeping
+		if (entity != null) {
+			Vector2 pos = entity.getBody().getWorldCenter();
+			perspective.setX((float) pos.x);
+			perspective.setY((float) pos.y);
+		}
 	}
 	
-	private void broadcastSetDirection(Vector2 direction) throws IOException {
-		broadcast("setDirection", direction);
+	private void broadcastSetDirection(int time, Vector2 direction) throws IOException {
+		broadcast("setDirection", time, direction);
 	}
 	
-	private void broadcastSetSprinting(boolean sprinting) throws IOException {
-		broadcast("setSprinting", sprinting);
+	private void broadcastSetSprinting(int time, boolean sprinting) throws IOException {
+		broadcast("setSprinting", time, sprinting);
+	}
+	
+	private void broadcastSetAngle(int time, float angle) throws IOException {
+		broadcast("setAngle", time, angle);
 	}
 	
 }

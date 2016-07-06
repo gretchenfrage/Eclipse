@@ -31,7 +31,7 @@ public class Player extends WalkingEntity {
 		setSprintWalkingMultiplier(2);
 		setSprintThrustingMultiplier(2);
 		
-		setBaseRenderAngle(MathUtils.PI_F / 2);
+		setBaseRenderAngle(-MathUtils.PI_F / 2);
 	}
 	
 	public void setFacingAngle(double facingAngle) {

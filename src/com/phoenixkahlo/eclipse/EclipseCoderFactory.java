@@ -8,6 +8,7 @@ import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
 import com.phoenixkahlo.eclipse.world.event.EntityDeletionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetBackgroundEvent;
+import com.phoenixkahlo.eclipse.world.event.SetPlayerFacingAngleEvent;
 import com.phoenixkahlo.eclipse.world.event.SetVelocityEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntitySprintingEvent;
@@ -67,6 +68,8 @@ public class EclipseCoderFactory {
 				new FieldEncoder(BasicShip1.class, encoder));
 		encoder.registerProtocol(CodableType.CLIENT_WALKING_HANDLER_CREATOR.ordinal(), 
 				new FieldEncoder(ClientWalkingHandlerCreator.class, encoder));
+		encoder.registerProtocol(CodableType.SET_PLAYER_FACING_ANGLE_EVENT.ordinal(), 
+				new FieldEncoder(SetPlayerFacingAngleEvent.class, encoder));
 		return encoder;
 	}
 	
@@ -104,6 +107,8 @@ public class EclipseCoderFactory {
 				new FieldDecoder(BasicShip1.class, BasicShip1::new, decoder));
 		decoder.registerProtocol(CodableType.CLIENT_WALKING_HANDLER_CREATOR.ordinal(),
 				new FieldDecoder(ClientWalkingHandlerCreator.class, ClientWalkingHandlerCreator::new, decoder));
+		decoder.registerProtocol(CodableType.SET_PLAYER_FACING_ANGLE_EVENT.ordinal(),
+				new FieldDecoder(SetPlayerFacingAngleEvent.class, SetPlayerFacingAngleEvent::new, decoder));	
 		return decoder;
 	}
 	
