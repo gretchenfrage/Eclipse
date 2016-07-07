@@ -1,5 +1,6 @@
 package com.phoenixkahlo.eclipse.server;
 
+import java.io.IOException;
 import java.util.function.Function;
 
 import org.dyn4j.geometry.Vector2;
@@ -20,6 +21,7 @@ public class ServerDrivingHandler extends BasicServerControlHandler {
 		
 		registerReceiveMethod("receiveSetLinearThrust", int.class, Vector2.class);
 		registerReceiveMethod("receiveSetAngularThrust", int.class, byte.class);
+		registerReceiveMethod("receiveEscape");
 		
 		this.playerID = playerID;
 		this.shipID = shipID;
@@ -31,6 +33,14 @@ public class ServerDrivingHandler extends BasicServerControlHandler {
 	
 	public void receiveSetAngularThrust(int time, byte angularThrust) {
 		queueImpose(time, new SetShipAngularThrustEvent(shipID, angularThrust));
+	}
+	
+	public void receiveEscape() {
+		try {
+			getConnection().setAndBroadcastControlHandler(new ServerWalkingHandler(getConnection(), playerID));
+		} catch (IOException e) {
+			getConnection().disconnect(e);
+		}
 	}
 	
 	@Override

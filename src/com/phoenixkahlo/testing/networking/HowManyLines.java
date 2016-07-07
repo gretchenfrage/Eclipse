@@ -6,13 +6,14 @@ import java.util.Scanner;
 public class HowManyLines {
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(lines(new File("C:\\Users\\Phoenix\\Desktop\\Java\\Eclipse\\src")));
+		//System.out.println(lines(new File("C:\\Users\\Phoenix\\Desktop\\Java\\Eclipse\\src")));
+		System.out.println(lines(new File("C:\\Users\\Phoenix\\Desktop\\1.9.4.jar.src")));
 	}
 	
 	public static int lines(File file) throws Exception {
 		if (file.isDirectory()) {
-			if (file.getName().equals("testing"))
-				return 0;
+			//if (file.getName().equals("testing"))
+			//	return 0;
 			int sum = 0;
 			for (File sub : file.listFiles()) {
 				sum += lines(sub);

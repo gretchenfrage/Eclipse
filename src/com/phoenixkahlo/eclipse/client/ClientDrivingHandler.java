@@ -27,6 +27,7 @@ public class ClientDrivingHandler extends BasicClientControlHandler {
 		
 		registerBroadcastToken("setLinearThrust");
 		registerBroadcastToken("setAngularThrust");
+		registerBroadcastToken("escape");
 		
 		this.connection = connection;
 		this.playerID = playerID;
@@ -78,6 +79,15 @@ public class ClientDrivingHandler extends BasicClientControlHandler {
 			}
 			cachedAngularThrust = angularThrust;
 		}
+		// Escaping
+		if (input.isKeyPressed(Input.KEY_LSHIFT)) {
+			try {
+				broadcastEscape();
+			} catch (IOException e) {
+				connection.disconnect(e);
+				return;
+			}
+		}
 		
 		// Perspective
 		// Rotation
@@ -94,6 +104,10 @@ public class ClientDrivingHandler extends BasicClientControlHandler {
 	
 	private void broadcastSetAngularThrust(int time, byte angularThrust) throws IOException {
 		broadcast("setAngularThrust", time, angularThrust);
+	}
+	
+	private void broadcastEscape() throws IOException {
+		broadcast("escape");
 	}
 	
 	@Override
