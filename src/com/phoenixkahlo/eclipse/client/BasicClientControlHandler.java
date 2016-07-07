@@ -7,12 +7,12 @@ import com.phoenixkahlo.networking.FunctionBroadcaster;
 /**
  * Handles function registration.
  */
-public abstract class NetworkedClientControlHandler implements ClientControlHandler {
+public abstract class BasicClientControlHandler implements ClientControlHandler {
 
 	private FunctionBroadcaster broadcaster;
 	private int functionHeader;
 	
-	public NetworkedClientControlHandler(FunctionBroadcaster broadcaster, int functionHeader) {
+	public BasicClientControlHandler(FunctionBroadcaster broadcaster, int functionHeader) {
 		this.broadcaster = broadcaster;
 		this.functionHeader = functionHeader;
 	}

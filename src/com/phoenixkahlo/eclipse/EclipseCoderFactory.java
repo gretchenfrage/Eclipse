@@ -2,13 +2,17 @@ package com.phoenixkahlo.eclipse;
 
 import org.dyn4j.geometry.Vector2;
 
+import com.phoenixkahlo.eclipse.client.ClientDrivingHandlerCreator;
 import com.phoenixkahlo.eclipse.client.ClientWalkingHandlerCreator;
 import com.phoenixkahlo.eclipse.world.BasicPerspective;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
 import com.phoenixkahlo.eclipse.world.event.EntityDeletionEvent;
+import com.phoenixkahlo.eclipse.world.event.PlayerUseEvent;
 import com.phoenixkahlo.eclipse.world.event.SetBackgroundEvent;
 import com.phoenixkahlo.eclipse.world.event.SetPlayerFacingAngleEvent;
+import com.phoenixkahlo.eclipse.world.event.SetShipAngularThrustEvent;
+import com.phoenixkahlo.eclipse.world.event.SetShipLinearThrustEvent;
 import com.phoenixkahlo.eclipse.world.event.SetVelocityEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntitySprintingEvent;
@@ -70,6 +74,14 @@ public class EclipseCoderFactory {
 				new FieldEncoder(ClientWalkingHandlerCreator.class, encoder));
 		encoder.registerProtocol(CodableType.SET_PLAYER_FACING_ANGLE_EVENT.ordinal(), 
 				new FieldEncoder(SetPlayerFacingAngleEvent.class, encoder));
+		encoder.registerProtocol(CodableType.PLAYER_USE_EVENT.ordinal(), 
+				new FieldEncoder(PlayerUseEvent.class, encoder));
+		encoder.registerProtocol(CodableType.CLIENT_DRIVING_HANDLER_CREATOR.ordinal(),
+				new FieldEncoder(ClientDrivingHandlerCreator.class, encoder));
+		encoder.registerProtocol(CodableType.SET_SHIP_LINEAR_THRUST_EVENT.ordinal(), 
+				new FieldEncoder(SetShipLinearThrustEvent.class, encoder));
+		encoder.registerProtocol(CodableType.SET_SHIP_ANGULAR_THRUST_EVENT.ordinal(), 
+				new FieldEncoder(SetShipAngularThrustEvent.class, encoder));
 		return encoder;
 	}
 	
@@ -108,7 +120,15 @@ public class EclipseCoderFactory {
 		decoder.registerProtocol(CodableType.CLIENT_WALKING_HANDLER_CREATOR.ordinal(),
 				new FieldDecoder(ClientWalkingHandlerCreator.class, ClientWalkingHandlerCreator::new, decoder));
 		decoder.registerProtocol(CodableType.SET_PLAYER_FACING_ANGLE_EVENT.ordinal(),
-				new FieldDecoder(SetPlayerFacingAngleEvent.class, SetPlayerFacingAngleEvent::new, decoder));	
+				new FieldDecoder(SetPlayerFacingAngleEvent.class, SetPlayerFacingAngleEvent::new, decoder));
+		decoder.registerProtocol(CodableType.PLAYER_USE_EVENT.ordinal(), 
+				new FieldDecoder(PlayerUseEvent.class, PlayerUseEvent::new, decoder));
+		decoder.registerProtocol(CodableType.CLIENT_DRIVING_HANDLER_CREATOR.ordinal(), 
+				new FieldDecoder(ClientDrivingHandlerCreator.class, ClientDrivingHandlerCreator::new, decoder));
+		decoder.registerProtocol(CodableType.SET_SHIP_LINEAR_THRUST_EVENT.ordinal(), 
+				new FieldDecoder(SetShipLinearThrustEvent.class, SetShipLinearThrustEvent::new, decoder));
+		decoder.registerProtocol(CodableType.SET_SHIP_ANGULAR_THRUST_EVENT.ordinal(), 
+				new FieldDecoder(SetShipAngularThrustEvent.class, SetShipAngularThrustEvent::new, decoder));
 		return decoder;
 	}
 	

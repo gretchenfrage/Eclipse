@@ -62,6 +62,7 @@ public abstract class StandingEntity extends BodyTextureEntity {
 			platformOn.getBody().applyImpulse(vector.copy().multiply(-1), body.getWorldCenter());
 		}
 		
+		latestPlatformRotationChange = 0;
 		if (correctRotation) {
 			int currentPlatformID;
 			if (platformOn == null || platformOn.getBody() == null)

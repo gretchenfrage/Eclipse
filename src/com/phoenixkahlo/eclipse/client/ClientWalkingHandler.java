@@ -19,7 +19,7 @@ import com.phoenixkahlo.eclipse.world.impl.Player;
  * The main client control handler for walking, running, thrusting, shooting, 
  * clicking, etc.
  */
-public class ClientWalkingHandler extends NetworkedClientControlHandler {
+public class ClientWalkingHandler extends BasicClientControlHandler {
 
 	private static final double RADIANS_ROTATE_PER_TICK = 0.1;
 	private static final double SCALE_FACTOR_PER_TICK = 0.01;
@@ -38,6 +38,7 @@ public class ClientWalkingHandler extends NetworkedClientControlHandler {
 		registerBroadcastToken("setDirection");
 		registerBroadcastToken("setSprinting");
 		registerBroadcastToken("setAngle");
+		registerBroadcastToken("use");
 		
 		this.connection = connection;
 		this.entityID = entityID;
@@ -111,6 +112,15 @@ public class ClientWalkingHandler extends NetworkedClientControlHandler {
 				}
 			}
 		}
+		// Activation
+		if (entity != null && input.isKeyPressed(Input.KEY_SPACE)) {
+			try {
+				broadcastUse(time);
+			} catch (IOException e) {
+				connection.disconnect(e);
+				return;
+			}
+		}
 		
 		// Perspective
 		// Rotation
@@ -150,6 +160,10 @@ public class ClientWalkingHandler extends NetworkedClientControlHandler {
 	
 	private void broadcastSetAngle(int time, float angle) throws IOException {
 		broadcast("setAngle", time, angle);
+	}
+	
+	private void broadcastUse(int time) throws IOException {
+		broadcast("use", time);
 	}
 	
 }

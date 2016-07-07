@@ -1,12 +1,15 @@
 package com.phoenixkahlo.eclipse.world;
 
 import java.util.Random;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.Graphics;
 
+import com.phoenixkahlo.eclipse.server.ClientConnection;
+import com.phoenixkahlo.eclipse.server.ServerControlHandler;
 import com.phoenixkahlo.eclipse.world.impl.Player;
 
 /**
@@ -48,6 +51,11 @@ public abstract class EntityAdapter implements Entity {
 	
 	@Override
 	public Consumer<Player> getUseable(Vector2 position) {
+		return null;
+	}
+	
+	@Override
+	public BiFunction<ClientConnection, Integer, ServerControlHandler> getHandler(Vector2 position) {
 		return null;
 	}
 	
