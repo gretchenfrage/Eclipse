@@ -6,9 +6,8 @@ package com.phoenixkahlo.eclipse.world;
 public enum RenderLayer {
 
 	SHIP,
-	UNDER_PLAYER,
+	SUB_PLAYER,
 	PLAYER,
-	OVER_PLAYER,
-	GUI;
+	SUPER_PLAYER;
 	
 }

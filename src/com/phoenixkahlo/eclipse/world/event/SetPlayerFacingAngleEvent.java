@@ -3,14 +3,26 @@ package com.phoenixkahlo.eclipse.world.event;
 import java.util.function.Consumer;
 
 import com.phoenixkahlo.eclipse.world.WorldState;
-import com.phoenixkahlo.eclipse.world.impl.Player;
+import com.phoenixkahlo.eclipse.world.entity.Player;
+import com.phoenixkahlo.networking.DecodingProtocol;
+import com.phoenixkahlo.networking.EncodingProtocol;
+import com.phoenixkahlo.networking.FieldDecoder;
+import com.phoenixkahlo.networking.FieldEncoder;
 
 public class SetPlayerFacingAngleEvent implements Consumer<WorldState> {
 
+	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
+		return new FieldEncoder(SetPlayerFacingAngleEvent.class, subEncoder);
+	}
+	
+	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {
+		return new FieldDecoder(SetPlayerFacingAngleEvent.class, SetPlayerFacingAngleEvent::new, subDecoder);
+	}
+	
 	private int id;
 	private float angle;
 	
-	public SetPlayerFacingAngleEvent() {}
+	private SetPlayerFacingAngleEvent() {}
 	
 	public SetPlayerFacingAngleEvent(int id, float angle) {
 		this.id = id;

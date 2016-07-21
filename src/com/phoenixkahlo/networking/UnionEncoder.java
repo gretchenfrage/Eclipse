@@ -15,6 +15,8 @@ public class UnionEncoder implements EncodingProtocol {
 
 	@Override
 	public boolean canEncode(Object obj) {
+		if (obj == null)
+			return true;
 		for (EncodingProtocol encoder : encoders.keySet()) {
 			if (encoder.canEncode(obj)) return true;
 		}
@@ -24,7 +26,10 @@ public class UnionEncoder implements EncodingProtocol {
 	@Override
 	public void encode(Object obj, OutputStream out) throws IOException, IllegalArgumentException {
 		if (!canEncode(obj))
-			throw new IllegalArgumentException("unencodable object");
+			throw new IllegalArgumentException("unencodable object: " + obj);
+		SerializationUtils.writeBoolean(obj == null, out);
+		if (obj == null)
+			return;
 		for (EncodingProtocol encoder : encoders.keySet()) {
 			if (encoder.canEncode(obj)) {
 				SerializationUtils.writeInt(encoders.get(encoder), out);

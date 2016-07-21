@@ -17,6 +17,7 @@ public class TickerThread extends Thread {
 	@Override
 	public void run() {
 		long timeForNextTick = System.nanoTime();
+		// Active waiting because Thread.sleep only guarantees 100 ms accuracy
 		while (true) {
 			if (System.nanoTime() >= timeForNextTick) {
 				event.invoke();

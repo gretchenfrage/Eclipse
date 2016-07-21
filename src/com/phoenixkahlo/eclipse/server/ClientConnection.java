@@ -5,11 +5,10 @@ import java.io.InputStream;
 import java.net.Socket;
 import java.util.function.Consumer;
 
-import com.phoenixkahlo.eclipse.EclipseCoderFactory;
+import com.phoenixkahlo.eclipse.EclipseCodingProtocol;
 import com.phoenixkahlo.eclipse.QueueFunctionFactory;
 import com.phoenixkahlo.eclipse.client.ClientFunction;
 import com.phoenixkahlo.eclipse.server.event.ClientDisconnectionEvent;
-import com.phoenixkahlo.eclipse.server.event.ClientInitializationEvent;
 import com.phoenixkahlo.eclipse.server.event.ImposeEventEvent;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
@@ -26,7 +25,6 @@ public class ClientConnection {
 	private FunctionReceiver receiver;
 	private FunctionReceiverThread receiverThread;
 	private Server server;
-	private boolean isInitialized = false;
 	private ServerControlHandler controlHandler; // Nullable
 	
 	public ClientConnection(Socket socket, Server server) throws IOException {
@@ -34,21 +32,21 @@ public class ClientConnection {
 		this.server = server;
 		
 		// Setup network
-		broadcaster = new FunctionBroadcaster(socket.getOutputStream(), EclipseCoderFactory.makeEncoder());
+		broadcaster = new FunctionBroadcaster(socket.getOutputStream(), EclipseCodingProtocol.ENCODER);
 		broadcaster.registerEnumClass(ClientFunction.class);
 
 		InputStream in = socket.getInputStream();
 		in = new DisconnectionDetectionInputStream(in);
 		
-		receiver = new FunctionReceiver(in, EclipseCoderFactory.makeDecoder());
+		receiver = new FunctionReceiver(in, EclipseCodingProtocol.DECODER);
 		QueueFunctionFactory<Server> factory = new QueueFunctionFactory<Server>(server::queueEvent);
 		
-		receiver.registerFunction(ServerFunction.INIT_CLIENT.ordinal(),
-				factory.create(ClientInitializationEvent.class, new Object[] {this}, ClientConnection.class));
 		receiver.registerFunction(ServerFunction.IMPOSE_EVENT.ordinal(),
 				factory.create(ImposeEventEvent.class, int.class, Consumer.class));
 		receiver.registerFunction(ServerFunction.DISCONNECT.ordinal(),
 				new InstanceMethod(this, "disconnect"));
+		receiver.registerFunction(ServerFunction.REQUEST_SYNCHRONIZE_TIME.ordinal(),
+				new InstanceMethod(this, "synchronizeTime"));
 		
 		assert receiver.areAllOrdinalsRegistered(ServerFunction.class) : "Server function(s) not registered";
 		
@@ -75,19 +73,15 @@ public class ClientConnection {
 		broadcaster.broadcast(ClientFunction.IMPOSE_EVENT, time, event);
 	}
 	
+	public void broadcastRequestRequestSynchronizeTime() throws IOException {
+		broadcaster.broadcast(ClientFunction.REQUEST_REQUEST_SYNCHRONIZE_TIME);
+	}
+	
 	public void setAndBroadcastControlHandler(ServerControlHandler controlHandler) throws IOException {
 		if (this.controlHandler != null)
 			this.controlHandler.disable();
 		this.controlHandler = controlHandler;
 		broadcaster.broadcast(ClientFunction.CREATE_CONTROL_HANDLER, controlHandler.getClientHandlerCreator());
-	}
-	
-	public boolean isInitialized() {
-		return isInitialized;
-	}
-	
-	public void setIsInitialized() {
-		isInitialized = true;
 	}
 	
 	public FunctionReceiver getReceiver() {
@@ -96,6 +90,18 @@ public class ClientConnection {
 	
 	public Server getServer() {
 		return server;
+	}
+	
+	/**
+	 * Is receiver thread safe.
+	 */
+	public void synchronizeTime() {
+		// I think the lack of concurrency precautions is okay... I think...
+		try {
+			broadcastBringToTime(server.getContinuum().getTime());
+		} catch (IOException e) {
+			disconnect(e);
+		}
 	}
 	
 	/**

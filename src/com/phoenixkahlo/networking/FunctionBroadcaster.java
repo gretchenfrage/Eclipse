@@ -44,7 +44,7 @@ public class FunctionBroadcaster {
 	}
 	
 	/**
-	 * @return the randomly generated header
+	 * @return the randomly generated header.
 	 */
 	public int registerFunction(Object token) {
 		int header;
@@ -55,10 +55,13 @@ public class FunctionBroadcaster {
 		return header;
 	}
 	
-	public void broadcast(Object token, Object ... args) throws IOException,
+	/**
+	 * Is thread safe.
+	 */
+	public synchronized void broadcast(Object token, Object ... args) throws IOException,
 			IllegalArgumentException {
 		if (!headers.containsKey(token))
-			throw new IllegalArgumentException("unmapped token");
+			throw new IllegalArgumentException("unmapped token: " + token);
 		SerializationUtils.writeInt(headers.get(token), out);
 		for (Object arg : args) {
 			SerializationUtils.writeAny(arg, out, encoder);

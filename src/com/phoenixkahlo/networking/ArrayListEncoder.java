@@ -17,12 +17,17 @@ public class ArrayListEncoder implements EncodingProtocol {
 	
 	@Override
 	public boolean canEncode(Object obj) {
+		if (obj == null)
+			return true;
 		return obj instanceof ArrayList<?>;
 	}
 
 	@Override
 	public void encode(Object obj, OutputStream out) throws IOException, IllegalArgumentException {
 		if (!canEncode(obj)) throw new IllegalArgumentException();
+		SerializationUtils.writeBoolean(obj == null, out);
+		if (obj == null)
+			return;
 		ArrayList<?> list = (ArrayList<?>) obj;
 		arrayEncoder.encode(list.toArray(), out);
 	}

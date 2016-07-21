@@ -14,7 +14,7 @@ public class MathUtils {
 		return n > 0 ? n - n % multiple : n - multiple - n % multiple;
 	}
 
-	public static double max(double[] arr) {
+	public static double max(double... arr) {
 		double out = arr[0];
 		for (int i = 1; i < arr.length; i++) {
 			if (arr[i] > out)
@@ -23,7 +23,7 @@ public class MathUtils {
 		return out;
 	}
 
-	public static double min(double[] arr) {
+	public static double min(double... arr) {
 		double out = arr[0];
 		for (int i = 1; i < arr.length; i++) {
 			if (arr[i] < out)

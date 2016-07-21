@@ -24,6 +24,11 @@ public enum ClientFunction {
 	/**
 	 * args = {Function<ServerConnection, ControlHandler> function}
 	 */
-	CREATE_CONTROL_HANDLER;
+	CREATE_CONTROL_HANDLER,
+	/**
+	 * Requests the client to request the server to synchronize time.
+	 * args = {}
+	 */
+	REQUEST_REQUEST_SYNCHRONIZE_TIME;
 	
 }

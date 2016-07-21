@@ -18,39 +18,39 @@ public interface Perspective {
 	Vector2 worldToScreen(Vector2 worldCoords, Vector2 containerSize);
 	
 	default double getMinX(Vector2 containerSize) {
-		return MathUtils.min(new double[] {
+		return MathUtils.min(
 				screenToWorld(new Vector2(0, 0), containerSize).x,
 				screenToWorld(containerSize, containerSize).x,
 				screenToWorld(new Vector2(containerSize.x, 0), containerSize).x,
 				screenToWorld(new Vector2(0, containerSize.y), containerSize).x
-				});
+				);
 	}
 
 	default double getMinY(Vector2 containerSize) {
-		return MathUtils.min(new double[] {
+		return MathUtils.min(
 				screenToWorld(new Vector2(0, 0), containerSize).y,
 				screenToWorld(containerSize, containerSize).y,
 				screenToWorld(new Vector2(containerSize.x, 0), containerSize).y,
 				screenToWorld(new Vector2(0, containerSize.y), containerSize).y
-				});
+				);
 	}
 
 	default double getMaxX(Vector2 containerSize) {
-		return MathUtils.max(new double[] {
+		return MathUtils.max(
 				screenToWorld(new Vector2(0, 0), containerSize).x,
 				screenToWorld(containerSize, containerSize).x,
 				screenToWorld(new Vector2(containerSize.x, 0), containerSize).x,
 				screenToWorld(new Vector2(0, containerSize.y), containerSize).x
-				});
+				);
 	}
 
 	default double getMaxY(Vector2 containerSize) {
-		return MathUtils.max(new double[] {
+		return MathUtils.max(
 				screenToWorld(new Vector2(0, 0), containerSize).y,
 				screenToWorld(containerSize, containerSize).y,
 				screenToWorld(new Vector2(containerSize.x, 0), containerSize).y,
 				screenToWorld(new Vector2(0, containerSize.y), containerSize).y
-				});
+				);
 	}
 	
 }

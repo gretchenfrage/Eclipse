@@ -10,23 +10,33 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import com.phoenixkahlo.eclipse.EclipseCoderFactory;
+import com.phoenixkahlo.eclipse.EclipseCodingProtocol;
 import com.phoenixkahlo.networking.DecodingProtocol;
 import com.phoenixkahlo.networking.EncodingProtocol;
+import com.phoenixkahlo.networking.FieldDecoder;
+import com.phoenixkahlo.networking.FieldEncoder;
 import com.phoenixkahlo.networking.ProtocolViolationException;
 import com.phoenixkahlo.utils.BufferCollection;
 import com.phoenixkahlo.utils.GCBufferCollection;
 
 /**
- * Holds a gamestate and is responsible for recording it and retconning it.
+ * Holds a WorldState and is responsible for recording it and retconning it.
  */
 public class WorldStateContinuum {
+	
+	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
+		return new FieldEncoder(WorldStateContinuum.class, subEncoder);
+	}
+	
+	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {
+		return new FieldDecoder(WorldStateContinuum.class, WorldStateContinuum::new, subDecoder);
+	}
 	
 	private WorldState state;
 	private BufferCollection buffers;
 	private int time; // Time in ticks. Between calls to tick(), time is the time of the next tick.
-	private EncodingProtocol encoder = EclipseCoderFactory.ENCODER;
-	private DecodingProtocol decoder = EclipseCoderFactory.DECODER;
+	private EncodingProtocol encoder = EclipseCodingProtocol.ENCODER;
+	private DecodingProtocol decoder = EclipseCodingProtocol.DECODER;
 	// Events to be imposed on the game state at certain periods in time.
 	private Map<Integer, List<Consumer<WorldState>>> events = new HashMap<Integer, List<Consumer<WorldState>>>();
 	
@@ -64,7 +74,7 @@ public class WorldStateContinuum {
 	}
 	
 	/**
-	 * @param ifMissing supplies the correct gamestate if it no longer remembers that moment in 
+	 * @param ifMissing supplies the correct WorldState if it no longer remembers that moment in 
 	 * time by requesting it from the server. Nullable.
 	 * @throws NoSuchFieldException if ifMissing == null and state doesn't exist.
 	 */

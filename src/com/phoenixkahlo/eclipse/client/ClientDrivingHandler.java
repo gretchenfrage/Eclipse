@@ -8,14 +8,15 @@ import org.newdawn.slick.Input;
 
 import com.phoenixkahlo.eclipse.world.BasicPerspective;
 import com.phoenixkahlo.eclipse.world.Perspective;
-import com.phoenixkahlo.eclipse.world.Ship;
 import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
+import com.phoenixkahlo.eclipse.world.entity.Ship;
 
 public class ClientDrivingHandler extends BasicClientControlHandler {
 
+	private static final double SCALE_FACTOR_PER_TICK = 0.01;
+	
 	private ServerConnection connection;
 	private BasicPerspective perspective;
-	private int playerID;
 	private int shipID;
 	
 	// Just holds the direction of these, the ship determines the amount of actual thrust
@@ -30,7 +31,6 @@ public class ClientDrivingHandler extends BasicClientControlHandler {
 		registerBroadcastToken("escape");
 		
 		this.connection = connection;
-		this.playerID = playerID;
 		this.shipID = shipID;
 		
 		perspective = new BasicPerspective();
@@ -96,6 +96,11 @@ public class ClientDrivingHandler extends BasicClientControlHandler {
 		Vector2 shipPos = ship.getBody().getWorldCenter();
 		perspective.setX((float) shipPos.x);
 		perspective.setY((float) shipPos.y);
+		// Scale
+		if (input.isKeyDown(Input.KEY_R))
+			perspective.raiseScale(1 + SCALE_FACTOR_PER_TICK);
+		if (input.isKeyDown(Input.KEY_F))
+			perspective.raiseScale(1 - SCALE_FACTOR_PER_TICK);
 	}
 	
 	private void broadcastSetLinearThrust(int time, Vector2 linearThrust) throws IOException {

@@ -29,12 +29,12 @@ public class ReflectionUtils {
 	
 	public static Field getAnyField(Class<?> clazz, String name) {
 		return ArrayUtils.conditionSearch(getAllFields(clazz),
-				(Field field) -> field.getName().equals(name));
+				field -> field.getName().equals(name));
 	}
 	
 	public static Method getAnyMethod(Class<?> clazz, String name, Class<?>... argTypes) {
 		return ArrayUtils.conditionSearch(getAllMethods(clazz),
-				(Method method) -> method.getName().equals(name) &&
+				method -> method.getName().equals(name) &&
 				ArrayUtils.equals(method.getParameterTypes(), argTypes));
 	}
 	

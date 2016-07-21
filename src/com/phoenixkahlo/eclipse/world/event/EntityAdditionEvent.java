@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Consumer;
 
-import com.phoenixkahlo.eclipse.EclipseCoderFactory;
-import com.phoenixkahlo.eclipse.world.Entity;
+import com.phoenixkahlo.eclipse.EclipseCodingProtocol;
 import com.phoenixkahlo.eclipse.world.WorldState;
+import com.phoenixkahlo.eclipse.world.entity.Entity;
 import com.phoenixkahlo.networking.DecodingFinisher;
 import com.phoenixkahlo.networking.DecodingProtocol;
 import com.phoenixkahlo.networking.EncodingProtocol;
+import com.phoenixkahlo.networking.FieldDecoder;
+import com.phoenixkahlo.networking.FieldEncoder;
 import com.phoenixkahlo.networking.ProtocolViolationException;
 
 /**
@@ -20,12 +22,20 @@ import com.phoenixkahlo.networking.ProtocolViolationException;
  */
 public class EntityAdditionEvent implements Consumer<WorldState>, DecodingFinisher {
 
-	private static EncodingProtocol encoder = EclipseCoderFactory.ENCODER;
-	private static DecodingProtocol decoder = EclipseCoderFactory.DECODER;
+	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
+		return new FieldEncoder(EntityAdditionEvent.class, subEncoder);
+	}
+	
+	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {
+		return new FieldDecoder(EntityAdditionEvent.class, EntityAdditionEvent::new, subDecoder);
+	}
+	
+	private static EncodingProtocol encoder = EclipseCodingProtocol.ENCODER;
+	private static DecodingProtocol decoder = EclipseCodingProtocol.DECODER;
 	
 	private byte[] entityBytes;
 	
-	public EntityAdditionEvent() {}
+	private EntityAdditionEvent() {}
 	
 	public EntityAdditionEvent(Entity entity) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

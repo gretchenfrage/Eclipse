@@ -17,7 +17,9 @@ public class ArrayListDecoder implements DecodingProtocol {
 	}
 	
 	@Override
-	public Object decode(InputStream in) throws IOException, ProtocolViolationException {		
+	public Object decode(InputStream in) throws IOException, ProtocolViolationException {
+		if (SerializationUtils.readBoolean(in))
+			return null;
 		return new ArrayList<Object>(Arrays.asList((Object[]) arrayDecoder.decode(in)));
 	}
 

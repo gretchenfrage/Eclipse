@@ -8,12 +8,25 @@ import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.World;
 import org.dyn4j.geometry.Vector2;
 
+import com.phoenixkahlo.eclipse.world.entity.Entity;
 import com.phoenixkahlo.networking.DecodingFinisher;
+import com.phoenixkahlo.networking.DecodingProtocol;
+import com.phoenixkahlo.networking.EncodingProtocol;
+import com.phoenixkahlo.networking.FieldDecoder;
+import com.phoenixkahlo.networking.FieldEncoder;
 
 /**
  * The state of the world at an instance in time. Can be ticked.
  */
 public class WorldState implements DecodingFinisher {
+	
+	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
+		return new FieldEncoder(WorldState.class, subEncoder);
+	}
+	
+	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {
+		return new FieldDecoder(WorldState.class, WorldState::new, subDecoder);
+	}
 	
 	public static final int TICKS_PER_SECOND = 60;
 	public static final double SECONDS_PER_TICK = 1D / TICKS_PER_SECOND;
@@ -60,6 +73,10 @@ public class WorldState implements DecodingFinisher {
 		return null;
 	}
 	
+	public World getWorld() {
+		return world;
+	}
+	
 	public void tick() {
 		index = 0;
 		while (index < entities.size()) {
@@ -92,6 +109,11 @@ public class WorldState implements DecodingFinisher {
 			Body body = entity.getBody();
 			if (body != null) world.addBody(body);
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "state with entities: " + entities.toString();
 	}
 	
 }

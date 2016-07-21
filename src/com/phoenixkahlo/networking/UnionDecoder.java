@@ -15,9 +15,13 @@ public class UnionDecoder implements DecodingProtocol {
 	
 	@Override
 	public Object decode(InputStream in) throws IOException, ProtocolViolationException {
+		if (SerializationUtils.readBoolean(in))
+			return null;
 		int header = SerializationUtils.readInt(in);
 		DecodingProtocol decoder = decoders.get(header);
-		if (decoder == null) throw new ProtocolViolationException("header not found: " + header);
+		if (decoder == null)
+			throw new ProtocolViolationException("header not found: " + header + " on thread " +
+					Thread.currentThread());
 		return decoder.decode(in);
 	}
 

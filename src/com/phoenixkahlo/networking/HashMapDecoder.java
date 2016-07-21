@@ -18,6 +18,8 @@ public class HashMapDecoder implements DecodingProtocol {
 	@Override
 	public Object decode(InputStream in) throws IOException,
 			ProtocolViolationException {
+		if (SerializationUtils.readBoolean(in))
+			return null;
 		Object[] keys = (Object[]) keyArrayDecoder.decode(in);
 		Object[] values = (Object[]) valueArrayDecoder.decode(in);
 		Map<Object, Object> map = new HashMap<Object, Object>();

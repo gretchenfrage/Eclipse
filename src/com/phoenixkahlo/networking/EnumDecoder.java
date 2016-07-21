@@ -13,7 +13,15 @@ public class EnumDecoder implements DecodingProtocol {
 	
 	@Override
 	public Object decode(InputStream in) throws IOException, ProtocolViolationException {
-		return clazz.getEnumConstants()[SerializationUtils.readInt(in)];
+		int index;
+		int length = clazz.getEnumConstants().length;
+		if (length <= 256)
+			index = in.read();
+		else if (length <= Short.MAX_VALUE)
+			index = SerializationUtils.readShort(in);
+		else
+			index = SerializationUtils.readInt(in);
+		return clazz.getEnumConstants()[index];
 	}
 
 }

@@ -2,15 +2,27 @@ package com.phoenixkahlo.eclipse.world.event;
 
 import java.util.function.Consumer;
 
-import com.phoenixkahlo.eclipse.world.Entity;
 import com.phoenixkahlo.eclipse.world.WorldState;
-import com.phoenixkahlo.eclipse.world.impl.Player;
+import com.phoenixkahlo.eclipse.world.entity.Entity;
+import com.phoenixkahlo.eclipse.world.entity.Player;
+import com.phoenixkahlo.networking.DecodingProtocol;
+import com.phoenixkahlo.networking.EncodingProtocol;
+import com.phoenixkahlo.networking.FieldDecoder;
+import com.phoenixkahlo.networking.FieldEncoder;
 
 public class PlayerUseEvent implements Consumer<WorldState> 	{
 
+	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
+		return new FieldEncoder(PlayerUseEvent.class, subEncoder);
+	}
+	
+	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {
+		return new FieldDecoder(PlayerUseEvent.class, PlayerUseEvent::new, subDecoder);
+	}
+	
 	private int id;
 	
-	public PlayerUseEvent() {}
+	private PlayerUseEvent() {}
 	
 	public PlayerUseEvent(int id) {
 		this.id = id;

@@ -42,8 +42,12 @@ public abstract class BasicServerControlHandler implements ServerControlHandler 
 		return connection;
 	}
 	
+	protected void queue(Consumer<Server> event) {
+		connection.getServer().queueEvent(event);
+	}
+	
 	protected void queueImpose(int time, Consumer<WorldState> event) {
-		connection.getServer().queueEvent(new ImposeEventEvent(time, event));
+		queue(new ImposeEventEvent(time, event));
 	}
 	
 	@Override

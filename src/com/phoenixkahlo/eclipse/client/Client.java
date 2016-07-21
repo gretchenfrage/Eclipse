@@ -11,7 +11,7 @@ import com.phoenixkahlo.eclipse.world.WorldState;
  * The game.
  */
 public class Client extends StateBasedGame {
-
+	
 	public static void main(String[] args) {
 		new Client().start();
 	}
@@ -22,7 +22,7 @@ public class Client extends StateBasedGame {
 	
 	public void start() {
 		try {
-			AppGameContainer container = new AppGameContainer(this, 1000, 900, false);
+			AppGameContainer container = new AppGameContainer(this, 700, 700, false);
 			container.setTargetFrameRate(WorldState.TICKS_PER_SECOND);
 			container.setVSync(true);
 			container.setShowFPS(false);
@@ -35,7 +35,6 @@ public class Client extends StateBasedGame {
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
 		addState(new MainMenu());
-		
 		enterState(ClientGameState.MAIN_MENU.ordinal());
 	}
 

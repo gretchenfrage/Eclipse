@@ -24,9 +24,9 @@ public class ArrayEncoder implements EncodingProtocol {
 			return true;
 		if (!obj.getClass().isArray()) return false;		
 		Class<?> objComponentType = obj.getClass().getComponentType();
-		// Next line for if obj is primitive array and clazz is primitive class
-		if (itemClass.isAssignableFrom(objComponentType)) return true;
-		// Because Object.class.isAssignableFrom(int.class) == false
+		if (itemClass.isAssignableFrom(objComponentType))
+			return true;
+		// Check again because Object.class.isAssignableFrom(int.class) == false
 		if (objComponentType == short.class)
 			objComponentType = Short.class;
 		else if (objComponentType == int.class)

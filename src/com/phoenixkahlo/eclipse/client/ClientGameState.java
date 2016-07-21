@@ -6,6 +6,7 @@ package com.phoenixkahlo.eclipse.client;
 public enum ClientGameState {
 
 	SERVER_CONNECTION,
-	MAIN_MENU;
+	MAIN_MENU,
+	LOADING;
 	
 }

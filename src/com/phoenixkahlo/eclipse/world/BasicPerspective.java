@@ -4,8 +4,21 @@ import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
+import com.phoenixkahlo.networking.DecodingProtocol;
+import com.phoenixkahlo.networking.EncodingProtocol;
+import com.phoenixkahlo.networking.FieldDecoder;
+import com.phoenixkahlo.networking.FieldEncoder;
+
 public class BasicPerspective implements Perspective {
 
+	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
+		return new FieldEncoder(BasicPerspective.class, subEncoder);
+	}
+	
+	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {
+		return new FieldDecoder(BasicPerspective.class, BasicPerspective::new, subDecoder);
+	}
+	
 	private float x;
 	private float y;
 	private float scale;

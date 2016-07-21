@@ -16,22 +16,24 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-import com.phoenixkahlo.eclipse.EclipseCoderFactory;
+import com.phoenixkahlo.eclipse.EclipseCodingProtocol;
 import com.phoenixkahlo.eclipse.QueueFunctionFactory;
 import com.phoenixkahlo.eclipse.client.event.BringToTimeEvent;
 import com.phoenixkahlo.eclipse.client.event.CreateControlHandlerEvent;
 import com.phoenixkahlo.eclipse.client.event.ImposeEventEvent;
+import com.phoenixkahlo.eclipse.client.event.RequestSynchronizeTimeEvent;
 import com.phoenixkahlo.eclipse.client.event.SetTimeLogiclesslyEvent;
 import com.phoenixkahlo.eclipse.client.event.SetWorldStateEvent;
 import com.phoenixkahlo.eclipse.server.ServerFunction;
 import com.phoenixkahlo.eclipse.world.Background;
-import com.phoenixkahlo.eclipse.world.Entity;
 import com.phoenixkahlo.eclipse.world.Perspective;
 import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
+import com.phoenixkahlo.eclipse.world.entity.Entity;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
+import com.phoenixkahlo.utils.DisconnectionDetectionInputStream;
 
 /**
  * The client's state of being connected to the server.
@@ -64,11 +66,12 @@ public class ServerConnection extends BasicGameState {
 			disconnect(e);
 			return;
 		}
+		in = new DisconnectionDetectionInputStream(in);
 		
-		broadcaster = new FunctionBroadcaster(out, EclipseCoderFactory.makeEncoder());
+		broadcaster = new FunctionBroadcaster(out, EclipseCodingProtocol.ENCODER);
 		broadcaster.registerEnumClass(ServerFunction.class);
 
-		FunctionReceiver receiver = new FunctionReceiver(in, EclipseCoderFactory.makeDecoder());
+		FunctionReceiver receiver = new FunctionReceiver(in, EclipseCodingProtocol.DECODER);
 		QueueFunctionFactory<ServerConnection> factory =
 				new QueueFunctionFactory<ServerConnection>(this::queueEvent);
 		
@@ -82,6 +85,9 @@ public class ServerConnection extends BasicGameState {
 				factory.create(BringToTimeEvent.class, int.class));
 		receiver.registerFunction(ClientFunction.CREATE_CONTROL_HANDLER.ordinal(),
 				factory.create(CreateControlHandlerEvent.class, Function.class));
+		receiver.registerFunction(ClientFunction.REQUEST_REQUEST_SYNCHRONIZE_TIME.ordinal(),
+				factory.create(RequestSynchronizeTimeEvent.class));
+		
 		
 		assert receiver.areAllOrdinalsRegistered(ClientFunction.class) : "Client function(s) not registered";
 		
@@ -89,13 +95,6 @@ public class ServerConnection extends BasicGameState {
 		receiverThread.start();
 		
 		System.out.println("Connected with " + socket);
-		
-		// Call for setup
-		try {
-			broadcaster.broadcast(ServerFunction.INIT_CLIENT);
-		} catch (IOException e) {
-			disconnect(e);
-		}
 	}
 	
 	private void queueEvent(Consumer<ServerConnection> event) {
@@ -184,6 +183,10 @@ public class ServerConnection extends BasicGameState {
 		return broadcaster;
 	}
 	
+	public void broadcastRequestSynchronizeTime() throws IOException {
+		broadcaster.broadcast(ServerFunction.REQUEST_SYNCHRONIZE_TIME);
+	}
+	
 	@Override
 	public int getID() {
 		return ClientGameState.SERVER_CONNECTION.ordinal();
@@ -208,4 +211,9 @@ public class ServerConnection extends BasicGameState {
 	public void setControlHandler(ClientControlHandler controlHandler) {
 		this.controlHandler = controlHandler;
 	}
+	
+	public WorldStateContinuum getContinuum() {
+		return continuum;
+	}
+	
 }

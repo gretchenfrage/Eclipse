@@ -6,16 +6,17 @@ package com.phoenixkahlo.eclipse.server;
 public enum ServerFunction {
 
 	/**
-	 * args = {}
-	 */
-	INIT_CLIENT,
-	/**
 	 * args = {int time, Consumer<WorldState> event}
 	 */
 	IMPOSE_EVENT,
 	/**
 	 * args = {}
 	 */
-	DISCONNECT;
+	DISCONNECT,
+	/**
+	 * Requests the server to tell the client to bring the continuum to thr correct time.
+	 * args = {}
+	 */
+	REQUEST_SYNCHRONIZE_TIME;
 	
 }

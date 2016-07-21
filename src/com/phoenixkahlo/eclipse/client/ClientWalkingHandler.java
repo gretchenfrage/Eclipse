@@ -7,13 +7,13 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 
 import com.phoenixkahlo.eclipse.world.BasicPerspective;
-import com.phoenixkahlo.eclipse.world.Entity;
 import com.phoenixkahlo.eclipse.world.Perspective;
 import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
+import com.phoenixkahlo.eclipse.world.entity.Entity;
+import com.phoenixkahlo.eclipse.world.entity.Player;
 import com.phoenixkahlo.eclipse.world.event.SetPlayerFacingAngleEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntitySprintingEvent;
-import com.phoenixkahlo.eclipse.world.impl.Player;
 
 /**
  * The main client control handler for walking, running, thrusting, shooting, 
@@ -21,7 +21,7 @@ import com.phoenixkahlo.eclipse.world.impl.Player;
  */
 public class ClientWalkingHandler extends BasicClientControlHandler {
 
-	private static final double RADIANS_ROTATE_PER_TICK = 0.1;
+	private static final double RADIANS_ROTATE_PER_TICK = 0.06;
 	private static final double SCALE_FACTOR_PER_TICK = 0.01;
 	
 	private ServerConnection connection;
@@ -39,6 +39,9 @@ public class ClientWalkingHandler extends BasicClientControlHandler {
 		registerBroadcastToken("setSprinting");
 		registerBroadcastToken("setAngle");
 		registerBroadcastToken("use");
+		registerBroadcastToken("useWeapon");
+		
+		registerBroadcastToken("printState");
 		
 		this.connection = connection;
 		this.entityID = entityID;
@@ -59,6 +62,7 @@ public class ClientWalkingHandler extends BasicClientControlHandler {
 	public void update(Input input, WorldStateContinuum continuum, GameContainer container) {
 		int time = continuum.getTime();
 		Player entity = (Player) continuum.getState().getEntity(entityID);
+		Vector2 containerSize = new Vector2(container.getWidth(), container.getHeight());
 		
 		// Broadcasting stuff
 		// Moving direction
@@ -121,6 +125,25 @@ public class ClientWalkingHandler extends BasicClientControlHandler {
 				return;
 			}
 		}
+		// Weapon
+		if (entity != null && input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
+			Vector2 target = new Vector2(input.getMouseX(), input.getMouseY());
+			target = perspective.screenToWorld(target, containerSize);
+			try {
+				broadcastUseWeapon(time, target);
+			} catch (IOException e) {
+				connection.disconnect(e);
+				return;
+			}
+		}
+		
+		if (input.isKeyPressed(Input.KEY_P))
+			try {
+				broadcast("printState");
+				System.out.println(connection.getContinuum().getState());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		
 		// Perspective
 		// Rotation
@@ -164,6 +187,10 @@ public class ClientWalkingHandler extends BasicClientControlHandler {
 	
 	private void broadcastUse(int time) throws IOException {
 		broadcast("use", time);
+	}
+	
+	private void broadcastUseWeapon(int time, Vector2 target) throws IOException {
+		broadcast("useWeapon", time, target);
 	}
 	
 }
