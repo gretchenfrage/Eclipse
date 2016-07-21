@@ -47,6 +47,7 @@ public class ParsedShip extends Ship {
 		System.out.println("PARSING");
 		try {
 			ParseTable table = (ParseTable) Parser.parse(schematic.getFile());
+			System.out.println(table);
 			
 			// Image
 			ParseTable textureData = table.getTable("texture");

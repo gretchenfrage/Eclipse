@@ -24,7 +24,7 @@ public class NumberParser implements TokenParser {
 		boolean done = false;
 		while (!done) {
 			char c = (char) reader.read();
-			if (isLegalDouble(builder.toString() + c)) {
+			if (c == '-' || c == '.' || isLegalDouble(builder.toString() + c)) {
 				builder.append(c);
 			} else {
 				reader.unread(c);
