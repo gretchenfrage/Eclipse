@@ -130,7 +130,7 @@ public class ParsedShip extends Ship {
 			else
 				System.out.println("Warning: backward thrust not set for " + this);
 			if (table.has("angular_thrust"))
-				setAngularThrustMultiplier(table.getDouble("angularThrust"));
+				setAngularThrustMultiplier(table.getDouble("angular_thrust"));
 			else
 				System.out.println("Warning: angular thrust not set for " + this);
 			
