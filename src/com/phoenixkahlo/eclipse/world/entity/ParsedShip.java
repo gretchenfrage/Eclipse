@@ -15,7 +15,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class ParsedShip extends Ship {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(ParsedShip.class, subEncoder);
+		return new FieldEncoder(ParsedShip.class, ParsedShip::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

@@ -13,7 +13,7 @@ import com.phoenixkahlo.utils.GeomUtils;
 public class BasicShip1 extends Ship {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(BasicShip1.class, subEncoder);
+		return new FieldEncoder(BasicShip1.class, BasicShip1::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

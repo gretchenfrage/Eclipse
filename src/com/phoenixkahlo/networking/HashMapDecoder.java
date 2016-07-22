@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class HashMapDecoder implements DecodingProtocol {
 
-	private DecodingProtocol keyArrayDecoder;
-	private DecodingProtocol valueArrayDecoder;
+	private ArrayDecoder keyArrayDecoder;
+	private ArrayDecoder valueArrayDecoder;
 	
 	public HashMapDecoder(DecodingProtocol keyItemDecoder, DecodingProtocol valueItemDecoder) {
 		keyArrayDecoder = new ArrayDecoder(Object.class, keyItemDecoder);
@@ -27,6 +27,12 @@ public class HashMapDecoder implements DecodingProtocol {
 			map.put(keys[i], values[i]);
 		}
 		return map;
+	}
+
+	@Override
+	public EncodingProtocol toEncoder() {
+		return new HashMapEncoder(keyArrayDecoder.getItemDecoder().toEncoder(), 
+				valueArrayDecoder.getItemDecoder().toEncoder());
 	}
 
 }

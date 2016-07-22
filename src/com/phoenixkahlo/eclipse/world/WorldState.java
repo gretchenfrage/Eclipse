@@ -21,7 +21,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class WorldState implements DecodingFinisher {
 	
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(WorldState.class, subEncoder);
+		return new FieldEncoder(WorldState.class, WorldState::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

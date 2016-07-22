@@ -31,4 +31,13 @@ public class ArrayDecoder implements DecodingProtocol {
 		return arr;
 	}
 
+	@Override
+	public EncodingProtocol toEncoder() {
+		return new ArrayEncoder(clazz, itemDecoder.toEncoder());
+	}
+	
+	public DecodingProtocol getItemDecoder() {
+		return itemDecoder;
+	}
+
 }

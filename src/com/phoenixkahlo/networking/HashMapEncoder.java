@@ -6,8 +6,8 @@ import java.util.HashMap;
 
 public class HashMapEncoder implements EncodingProtocol {
 
-	private EncodingProtocol keyArrayEncoder;
-	private EncodingProtocol valueArrayEncoder;
+	private ArrayEncoder keyArrayEncoder;
+	private ArrayEncoder valueArrayEncoder;
 	
 	public HashMapEncoder(EncodingProtocol keyItemEncoder, EncodingProtocol valueItemEncoder) {
 		keyArrayEncoder = new ArrayEncoder(Object.class, keyItemEncoder);
@@ -32,6 +32,12 @@ public class HashMapEncoder implements EncodingProtocol {
 		Object[] values = map.values().toArray();
 		keyArrayEncoder.encode(keys, out);
 		valueArrayEncoder.encode(values, out);
+	}
+
+	@Override
+	public DecodingProtocol toDecoder() {
+		return new HashMapDecoder(keyArrayEncoder.getItemEncoder().toDecoder(),
+				valueArrayEncoder.getItemEncoder().toDecoder());
 	}
 
 }

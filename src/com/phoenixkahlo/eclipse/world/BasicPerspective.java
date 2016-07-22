@@ -12,7 +12,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class BasicPerspective implements Perspective {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(BasicPerspective.class, subEncoder);
+		return new FieldEncoder(BasicPerspective.class, BasicPerspective::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

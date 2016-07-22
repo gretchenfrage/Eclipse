@@ -12,7 +12,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class SetBackgroundEvent implements Consumer<WorldState> {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(SetBackgroundEvent.class, subEncoder);
+		return new FieldEncoder(SetBackgroundEvent.class, SetBackgroundEvent::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

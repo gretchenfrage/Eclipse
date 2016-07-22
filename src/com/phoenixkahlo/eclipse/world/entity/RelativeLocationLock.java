@@ -11,7 +11,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class RelativeLocationLock extends BasicEntity {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(RelativeLocationLock.class, subEncoder);
+		return new FieldEncoder(RelativeLocationLock.class, RelativeLocationLock::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

@@ -23,7 +23,7 @@ import com.phoenixkahlo.networking.ProtocolViolationException;
 public class EntityAdditionEvent implements Consumer<WorldState>, DecodingFinisher {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(EntityAdditionEvent.class, subEncoder);
+		return new FieldEncoder(EntityAdditionEvent.class, EntityAdditionEvent::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

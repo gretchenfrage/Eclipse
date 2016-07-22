@@ -10,7 +10,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class SpaceBackground extends BasicBackground {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(SpaceBackground.class, subEncoder);
+		return new FieldEncoder(SpaceBackground.class, SpaceBackground::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

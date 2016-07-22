@@ -12,7 +12,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class SetPlayerFacingAngleEvent implements Consumer<WorldState> {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(SetPlayerFacingAngleEvent.class, subEncoder);
+		return new FieldEncoder(SetPlayerFacingAngleEvent.class, SetPlayerFacingAngleEvent::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

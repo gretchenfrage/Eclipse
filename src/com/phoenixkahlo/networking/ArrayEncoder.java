@@ -59,4 +59,13 @@ public class ArrayEncoder implements EncodingProtocol {
 		}
 	}
 
+	@Override
+	public DecodingProtocol toDecoder() {
+		return new ArrayDecoder(itemClass, itemEncoder.toDecoder());
+	}
+
+	public EncodingProtocol getItemEncoder() {
+		return itemEncoder;
+	}
+	
 }

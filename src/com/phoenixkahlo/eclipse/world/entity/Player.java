@@ -25,7 +25,7 @@ import com.phoenixkahlo.utils.MathUtils;
 public class Player extends WalkingEntity {
 	
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(Player.class, subEncoder);
+		return new FieldEncoder(Player.class, Player::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

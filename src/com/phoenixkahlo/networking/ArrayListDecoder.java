@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public class ArrayListDecoder implements DecodingProtocol {
 
-	private DecodingProtocol arrayDecoder;
+	private ArrayDecoder arrayDecoder;
 	
 	public ArrayListDecoder(DecodingProtocol itemDecoder) {
 		arrayDecoder = new ArrayDecoder(Object.class, itemDecoder);
@@ -23,4 +23,9 @@ public class ArrayListDecoder implements DecodingProtocol {
 		return new ArrayList<Object>(Arrays.asList((Object[]) arrayDecoder.decode(in)));
 	}
 
+	@Override
+	public EncodingProtocol toEncoder() {
+		return new ArrayListEncoder(arrayDecoder.getItemDecoder().toEncoder());
+	}
+	
 }

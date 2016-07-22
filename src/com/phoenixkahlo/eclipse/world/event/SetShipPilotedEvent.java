@@ -12,7 +12,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class SetShipPilotedEvent implements Consumer<WorldState> {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(SetShipPilotedEvent.class, subEncoder);
+		return new FieldEncoder(SetShipPilotedEvent.class, SetShipPilotedEvent::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

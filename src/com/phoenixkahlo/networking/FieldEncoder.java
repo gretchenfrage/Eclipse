@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import com.phoenixkahlo.utils.ReflectionUtils;
 
@@ -21,20 +22,33 @@ public class FieldEncoder implements EncodingProtocol {
 	private final Class<?> clazz;
 	private final EncodingProtocol subEncoder; // Nullable
 	private final Predicate<Field> condition;
+	private Supplier<?> supplier;
 	
-	public FieldEncoder(Class<?> clazz, EncodingProtocol subEncoder, Predicate<Field> condition) {
+	public <E> FieldEncoder(Class<E> clazz, Supplier<E> supplier, EncodingProtocol subEncoder, Predicate<Field> condition) {
 		this.clazz = clazz;
+		this.supplier = supplier;
 		this.subEncoder = subEncoder;
 		this.condition = condition;
 	}
 	
-	public FieldEncoder(Class<?> clazz, EncodingProtocol subEncoder) {
-		this(clazz, subEncoder, (Field field) -> !Modifier.isTransient(field.getModifiers()) && 
+	public <E> FieldEncoder(Class<E> clazz, Supplier<E> supplier, EncodingProtocol subEncoder) {
+		this(clazz, supplier, subEncoder, (Field field) -> !Modifier.isTransient(field.getModifiers()) && 
 				!Modifier.isStatic(field.getModifiers()));
 	}
 	
-	public FieldEncoder(Class<?> clazz) {
-		this(clazz, null);
+	public <E> FieldEncoder(Class<E> clazz, Supplier<E> supplier) {
+		this(clazz, supplier, null);
+	}
+	
+	/**
+	 * Exists only for, and should only be used for, FieldDecoder.toDecoder()
+	 */
+	FieldEncoder(Class<?> clazz, Supplier<?> supplier, EncodingProtocol subEncoder, Predicate<Field> condition, 
+			Void differentiator) {
+		this.clazz = clazz;
+		this.supplier = supplier;
+		this.subEncoder = subEncoder;
+		this.condition = condition;
 	}
 	
 	@Override
@@ -92,6 +106,11 @@ public class FieldEncoder implements EncodingProtocol {
 		for (Object item : list)
 			if (item == obj) return true;
 		return false;
+	}
+
+	@Override
+	public DecodingProtocol toDecoder() {
+		return new FieldDecoder(clazz, supplier, subEncoder.toDecoder(), condition, null);
 	}
 	
 }

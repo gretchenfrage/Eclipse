@@ -13,7 +13,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class Dummy extends HurtableWalkingEntity {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(Dummy.class, subEncoder);
+		return new FieldEncoder(Dummy.class, Dummy::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

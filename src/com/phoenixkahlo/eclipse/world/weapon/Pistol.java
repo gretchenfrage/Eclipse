@@ -8,7 +8,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class Pistol extends Gun {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(Pistol.class, subEncoder);
+		return new FieldEncoder(Pistol.class, Pistol::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

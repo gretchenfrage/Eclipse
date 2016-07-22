@@ -11,7 +11,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class EntityDeletionEvent implements Consumer<WorldState> {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(EntityDeletionEvent.class, subEncoder);
+		return new FieldEncoder(EntityDeletionEvent.class, EntityDeletionEvent::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

@@ -25,7 +25,7 @@ import com.phoenixkahlo.utils.GCBufferCollection;
 public class WorldStateContinuum {
 	
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(WorldStateContinuum.class, subEncoder);
+		return new FieldEncoder(WorldStateContinuum.class, WorldStateContinuum::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

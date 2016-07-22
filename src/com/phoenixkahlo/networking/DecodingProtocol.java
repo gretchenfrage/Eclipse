@@ -7,4 +7,6 @@ public interface DecodingProtocol {
 
 	Object decode(InputStream in) throws IOException, ProtocolViolationException;
 	
+	EncodingProtocol toEncoder();
+	
 }

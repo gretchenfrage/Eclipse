@@ -38,4 +38,14 @@ public class ReflectionUtils {
 				ArrayUtils.equals(method.getParameterTypes(), argTypes));
 	}
 	
+	public static void setConstant(Class<?> clazz, String name, Object value) throws IllegalArgumentException {
+		try {
+			Field field = clazz.getField(name);
+			field.setAccessible(true);
+			field.set(null, value);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
 }

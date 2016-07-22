@@ -10,7 +10,8 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class ClientDrivingHandlerCreator implements Function<ServerConnection, ClientControlHandler> {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(ClientDrivingHandlerCreator.class, subEncoder);
+		return new FieldEncoder(ClientDrivingHandlerCreator.class, ClientDrivingHandlerCreator::new, 
+				subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

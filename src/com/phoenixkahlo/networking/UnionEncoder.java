@@ -8,9 +8,11 @@ import java.util.Map;
 public class UnionEncoder implements EncodingProtocol {
 
 	private Map<EncodingProtocol, Integer> encoders = new HashMap<EncodingProtocol, Integer>();
+	private UnionDecoder toDecoder; // Should be invalidated (nullified) upon modifications
 	
 	public void registerProtocol(int header, EncodingProtocol encoder) {
 		encoders.put(encoder, header);
+		toDecoder = null;
 	}
 
 	@Override
@@ -38,6 +40,17 @@ public class UnionEncoder implements EncodingProtocol {
 			}
 		}
 		throw new IllegalArgumentException();
+	}
+
+	@Override
+	public DecodingProtocol toDecoder() {
+		if (toDecoder == null) {
+			toDecoder = new UnionDecoder();
+			for (Map.Entry<EncodingProtocol, Integer> entry : encoders.entrySet()) {
+				toDecoder.registerProtocol(entry.getValue(), entry.getKey().toDecoder());
+			}
+		}
+		return toDecoder;
 	}
 	
 }

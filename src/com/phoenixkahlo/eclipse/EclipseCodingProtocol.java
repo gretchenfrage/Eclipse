@@ -40,6 +40,7 @@ import com.phoenixkahlo.networking.FieldDecoder;
 import com.phoenixkahlo.networking.FieldEncoder;
 import com.phoenixkahlo.networking.UnionDecoder;
 import com.phoenixkahlo.networking.UnionEncoder;
+import com.phoenixkahlo.utils.ReflectionUtils;
 
 /**
  * A class of ~evil static state~ providing the networking protocol. 
@@ -50,11 +51,27 @@ public class EclipseCodingProtocol {
 
 	private EclipseCodingProtocol() {}
 	
-	public static final UnionEncoder ENCODER = new UnionEncoder();
-	public static final UnionDecoder DECODER = new UnionDecoder();
+	private static UnionEncoder union = new UnionEncoder();
+	
+	public static final UnionEncoder ENCODER = union;
+	public static final DecodingProtocol DECODER = null;
 	
 	private static int id = 0;
 	
+	private static void register(EncodingProtocol encoder) {
+		ENCODER.registerProtocol(id, encoder);
+		id++;
+	}
+	
+	private static void mkreg(Function<EncodingProtocol, EncodingProtocol> function) {
+		register(function.apply(ENCODER));
+	}
+	
+	private static void finish() {
+		ReflectionUtils.setConstant(EclipseCodingProtocol.class, "DECODER", ENCODER.toDecoder());
+	}
+	
+	/*
 	private static void register(EncodingProtocol encoder, DecodingProtocol decoder) {
 		ENCODER.registerProtocol(id, encoder);
 		DECODER.registerProtocol(id, decoder);
@@ -65,7 +82,7 @@ public class EclipseCodingProtocol {
 			Function<DecodingProtocol, DecodingProtocol> decoderCreator) {
 		register(encoderCreator.apply(ENCODER), decoderCreator.apply(DECODER));
 	}
-	
+	*/
 	static {
 		register(new ArrayEncoder(byte.class), new ArrayDecoder(byte.class));
 		mkreg(ArrayListEncoder::new, ArrayListDecoder::new);
@@ -95,7 +112,38 @@ public class EclipseCodingProtocol {
 		mkreg(PlayerUseWeaponEvent::makeEncoder, PlayerUseWeaponEvent::makeDecoder);
 		mkreg(Dummy::makeEncoder, Dummy::makeDecoder);
 		mkreg(ParsedShip::makeEncoder, ParsedShip::makeDecoder);
-		register(new FieldEncoder(Vector2.class), new FieldDecoder(Vector2.class, Vector2::new));
+		register(new FieldEncoder(Vector2.class, Vector2::new), new FieldDecoder(Vector2.class, Vector2::new));
+		/*
+		register(new ArrayEncoder(byte.class), new ArrayDecoder(byte.class));
+		mkreg(ArrayListEncoder::new, ArrayListDecoder::new);
+		mkreg(ClientDrivingHandlerCreator::makeEncoder, ClientDrivingHandlerCreator::makeDecoder);
+		mkreg(ClientWalkingHandlerCreator::makeEncoder, ClientWalkingHandlerCreator::makeDecoder);
+		mkreg(BasicPerspective::makeEncoder, BasicPerspective::makeDecoder);
+		mkreg(WorldState::makeEncoder, WorldState::makeDecoder);
+		mkreg(EntityAdditionEvent::makeEncoder, EntityAdditionEvent::makeDecoder);
+		mkreg(EntityDeletionEvent::makeEncoder, EntityDeletionEvent::makeDecoder);
+		mkreg(PlayerUseEvent::makeEncoder, PlayerUseEvent::makeDecoder);
+		mkreg(SetBackgroundEvent::makeEncoder, SetBackgroundEvent::makeDecoder);
+		mkreg(SetPlayerFacingAngleEvent::makeEncoder, SetPlayerFacingAngleEvent::makeDecoder);
+		mkreg(SetShipAngularThrustEvent::makeEncoder, SetShipAngularThrustEvent::makeDecoder);
+		mkreg(SetShipLinearThrustEvent::makeEncoder, SetShipLinearThrustEvent::makeDecoder);
+		mkreg(SetShipPilotedEvent::makeEncoder, SetShipPilotedEvent::makeDecoder);
+		mkreg(SetVelocityEvent::makeEncoder, SetVelocityEvent::makeDecoder);
+		mkreg(SetWalkingEntityDirectionEvent::makeEncoder, SetWalkingEntityDirectionEvent::makeDecoder);
+		mkreg(SetWalkingEntitySprintingEvent::makeEncoder, SetWalkingEntitySprintingEvent::makeDecoder);
+		mkreg(Ball::makeEncoder, Ball::makeDecoder);
+		mkreg(BasicShip1::makeEncoder, BasicShip1::makeDecoder);
+		mkreg(Player::makeEncoder, Player::makeDecoder);
+		mkreg(RelativeLocationLock::makeEncoder, RelativeLocationLock::makeDecoder);
+		mkreg(RelativePlayerFacingAngleLock::makeEncoder, RelativePlayerFacingAngleLock::makeDecoder);
+		mkreg(SpaceBackground::makeEncoder, SpaceBackground::makeDecoder);
+		mkreg(Pistol::makeEncoder, Pistol::makeDecoder);
+		mkreg(PlayerSetWeaponEvent::makeEncoder, PlayerSetWeaponEvent::makeDecoder);
+		mkreg(PlayerUseWeaponEvent::makeEncoder, PlayerUseWeaponEvent::makeDecoder);
+		mkreg(Dummy::makeEncoder, Dummy::makeDecoder);
+		mkreg(ParsedShip::makeEncoder, ParsedShip::makeDecoder);
+		register(new FieldEncoder(Vector2.class, Vector2::new), new FieldDecoder(Vector2.class, Vector2::new));
+		*/
 	}
 	
 }

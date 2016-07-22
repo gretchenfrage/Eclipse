@@ -14,7 +14,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class PlayerUseWeaponEvent implements Consumer<WorldState> {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(PlayerUseWeaponEvent.class, subEncoder);
+		return new FieldEncoder(PlayerUseWeaponEvent.class, PlayerUseWeaponEvent::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

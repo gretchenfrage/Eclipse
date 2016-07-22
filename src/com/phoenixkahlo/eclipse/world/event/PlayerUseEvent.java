@@ -13,7 +13,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class PlayerUseEvent implements Consumer<WorldState> 	{
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(PlayerUseEvent.class, subEncoder);
+		return new FieldEncoder(PlayerUseEvent.class, PlayerUseEvent::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

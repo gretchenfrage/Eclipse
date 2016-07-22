@@ -22,7 +22,15 @@ import com.phoenixkahlo.utils.ArrayUtils;
 
 /**
  * Each ParsedShipTemplate is derived from a cornsnake file and can be imposed on a ship which 
- * will bring the ship to the schematic's specifications. 
+ * will bring the ship to the schematic's specifications. The cornsnake file should contain a 
+ * table, which may contain various elements. The master table may contains a table "texture", 
+ * which must contain a string "image" representing the short path of an ImageResource, and 
+ * a number "width". The "texture" table may contains numbers "height" and "angle". The master 
+ * table may contain "walls" and "floor", both lists of polygons (expressed as a list of 
+ * vector2s (expressed as a list of two numbers)). The master table may contain numbers "mass" 
+ * and "inertia", and a vector2 "center" (of mass). The master table may contain numbers 
+ * "foward_thrust", "backward_thrust", "strafe_thrust", and "angular_thrust". The master table 
+ * may contain a polygon "helm" and a vector2 "helm_pos". 
  */
 public enum ParsedShipTemplate {
 
@@ -31,7 +39,6 @@ public enum ParsedShipTemplate {
 	private List<Consumer<Ship>> consumers = new ArrayList<Consumer<Ship>>();
 	
 	ParsedShipTemplate(String path) {
-		System.out.println("beginning to parse schematic");
 		try {
 			File file = new File(ParsedShipTemplate.class.getClassLoader().getResource(
 					"resources/schematics/" + path + ".cos").toURI());
@@ -128,13 +135,10 @@ public enum ParsedShipTemplate {
 		} catch (URISyntaxException | ParseException | IOException e) {
 			throw new RuntimeException(e);
 		}
-		System.out.println("finished parsing schematic");
 	}
 	
 	public void apply(Ship ship) {
-		for (Consumer<Ship> consumer : consumers) {
-			consumer.accept(ship);
-		}
+		consumers.forEach(consumer -> consumer.accept(ship));
 	}
 	
 	private static Polygon[] parsePolygons(ParseList data) {

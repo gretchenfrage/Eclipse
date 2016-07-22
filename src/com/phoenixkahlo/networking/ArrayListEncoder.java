@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class ArrayListEncoder implements EncodingProtocol {
 
-	private EncodingProtocol arrayEncoder;
+	private ArrayEncoder arrayEncoder;
 	
 	public ArrayListEncoder(EncodingProtocol itemEncoder) {
 		arrayEncoder = new ArrayEncoder(Object.class, itemEncoder);
@@ -30,6 +30,11 @@ public class ArrayListEncoder implements EncodingProtocol {
 			return;
 		ArrayList<?> list = (ArrayList<?>) obj;
 		arrayEncoder.encode(list.toArray(), out);
+	}
+
+	@Override
+	public DecodingProtocol toDecoder() {
+		return new ArrayListDecoder(arrayEncoder.getItemEncoder().toDecoder());
 	}
 
 }

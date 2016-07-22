@@ -14,7 +14,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class Ball extends BodyTextureEntity {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(Ball.class, subEncoder);
+		return new FieldEncoder(Ball.class, Ball::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

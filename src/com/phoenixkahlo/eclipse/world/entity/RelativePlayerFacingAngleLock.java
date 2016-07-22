@@ -9,7 +9,8 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class RelativePlayerFacingAngleLock extends BasicEntity {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(RelativePlayerFacingAngleLock.class, subEncoder);
+		return new FieldEncoder(RelativePlayerFacingAngleLock.class, 
+				RelativePlayerFacingAngleLock::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

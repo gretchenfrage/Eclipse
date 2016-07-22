@@ -14,7 +14,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class SetShipLinearThrustEvent implements Consumer<WorldState> {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(SetShipLinearThrustEvent.class, subEncoder);
+		return new FieldEncoder(SetShipLinearThrustEvent.class, SetShipLinearThrustEvent::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

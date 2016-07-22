@@ -14,7 +14,8 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class SetWalkingEntityDirectionEvent implements Consumer<WorldState> {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(SetWalkingEntityDirectionEvent.class, subEncoder);
+		return new FieldEncoder(SetWalkingEntityDirectionEvent.class, 
+				SetWalkingEntityDirectionEvent::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

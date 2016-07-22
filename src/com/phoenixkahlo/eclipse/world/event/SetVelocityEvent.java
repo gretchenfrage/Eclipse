@@ -13,7 +13,7 @@ import com.phoenixkahlo.networking.FieldEncoder;
 public class SetVelocityEvent implements Consumer<WorldState> {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(SetVelocityEvent.class, subEncoder);
+		return new FieldEncoder(SetVelocityEvent.class, SetVelocityEvent::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {

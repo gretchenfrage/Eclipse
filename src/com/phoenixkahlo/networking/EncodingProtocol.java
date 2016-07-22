@@ -9,4 +9,6 @@ public interface EncodingProtocol {
 	
 	void encode(Object obj, OutputStream out) throws IOException, IllegalArgumentException;
 	
+	DecodingProtocol toDecoder();
+	
 }

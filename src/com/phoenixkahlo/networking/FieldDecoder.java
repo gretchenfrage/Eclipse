@@ -19,9 +19,11 @@ public class FieldDecoder implements DecodingProtocol {
 	private final Field[] fields;
 	private final DecodingProtocol subDecoder; // Nullable
 	private final Predicate<Field> condition;
+	private Class<?> clazz;
 	
 	public <E> FieldDecoder(Class<E> clazz, Supplier<E> supplier, DecodingProtocol subDecoder, 
 			Predicate<Field> condition) {
+		this.clazz = clazz;
 		this.supplier = supplier;
 		this.subDecoder = subDecoder;
 		this.condition = condition; 
@@ -37,6 +39,19 @@ public class FieldDecoder implements DecodingProtocol {
 	
 	public <E> FieldDecoder(Class<E> clazz, Supplier<E> supplier) {
 		this(clazz, supplier, null);
+	}
+	
+	/**
+	 * Exists only for, and should only be used for, FieldEncoder.toDecoder()
+	 */
+	FieldDecoder(Class<?> clazz, Supplier<?> supplier, DecodingProtocol subDecoder, Predicate<Field> condition, Void differentiator) {
+		this.clazz = clazz;
+		this.supplier = supplier;
+		this.subDecoder = subDecoder;
+		this.condition = condition;
+		fields = ReflectionUtils.getAllFields(clazz);
+		for (Field field : fields)
+			field.setAccessible(true);
 	}
 	
 	@Override
@@ -61,6 +76,11 @@ public class FieldDecoder implements DecodingProtocol {
 			}
 			return obj;
 		}
+	}
+
+	@Override
+	public EncodingProtocol toEncoder() {
+		return new FieldEncoder(clazz, supplier, subDecoder.toEncoder(), condition, null);
 	}
 	
 }
