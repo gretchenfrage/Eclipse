@@ -110,7 +110,10 @@ public class FieldEncoder implements EncodingProtocol {
 
 	@Override
 	public DecodingProtocol toDecoder() {
-		return new FieldDecoder(clazz, supplier, subEncoder.toDecoder(), condition, null);
+		if (subEncoder == null)
+			return new FieldDecoder(clazz, supplier, null, condition, null);
+		else
+			return new FieldDecoder(clazz, supplier, subEncoder.toDecoder(), condition, null);
 	}
 	
 }

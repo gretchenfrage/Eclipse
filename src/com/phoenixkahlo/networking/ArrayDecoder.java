@@ -33,7 +33,10 @@ public class ArrayDecoder implements DecodingProtocol {
 
 	@Override
 	public EncodingProtocol toEncoder() {
-		return new ArrayEncoder(clazz, itemDecoder.toEncoder());
+		if (itemDecoder == null)
+			return new ArrayEncoder(clazz);
+		else
+			return new ArrayEncoder(clazz, itemDecoder.toEncoder());
 	}
 	
 	public DecodingProtocol getItemDecoder() {

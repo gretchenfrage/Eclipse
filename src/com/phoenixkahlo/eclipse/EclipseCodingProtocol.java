@@ -30,17 +30,13 @@ import com.phoenixkahlo.eclipse.world.event.SetVelocityEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
 import com.phoenixkahlo.eclipse.world.event.SetWalkingEntitySprintingEvent;
 import com.phoenixkahlo.eclipse.world.weapon.Pistol;
-import com.phoenixkahlo.networking.ArrayDecoder;
 import com.phoenixkahlo.networking.ArrayEncoder;
-import com.phoenixkahlo.networking.ArrayListDecoder;
 import com.phoenixkahlo.networking.ArrayListEncoder;
 import com.phoenixkahlo.networking.DecodingProtocol;
 import com.phoenixkahlo.networking.EncodingProtocol;
-import com.phoenixkahlo.networking.FieldDecoder;
 import com.phoenixkahlo.networking.FieldEncoder;
 import com.phoenixkahlo.networking.UnionDecoder;
 import com.phoenixkahlo.networking.UnionEncoder;
-import com.phoenixkahlo.utils.ReflectionUtils;
 
 /**
  * A class of ~evil static state~ providing the networking protocol. 
@@ -51,24 +47,29 @@ public class EclipseCodingProtocol {
 
 	private EclipseCodingProtocol() {}
 	
-	private static UnionEncoder union = new UnionEncoder();
-	
-	public static final UnionEncoder ENCODER = union;
-	public static final DecodingProtocol DECODER = null;
-	
+	private static UnionEncoder encoder = new UnionEncoder();
+	private static DecodingProtocol decoder = new UnionDecoder();
 	private static int id = 0;
 	
 	private static void register(EncodingProtocol encoder) {
-		ENCODER.registerProtocol(id, encoder);
+		EclipseCodingProtocol.encoder.registerProtocol(id, encoder);
 		id++;
 	}
 	
 	private static void mkreg(Function<EncodingProtocol, EncodingProtocol> function) {
-		register(function.apply(ENCODER));
+		register(function.apply(encoder));
 	}
 	
 	private static void finish() {
-		ReflectionUtils.setConstant(EclipseCodingProtocol.class, "DECODER", ENCODER.toDecoder());
+		decoder = encoder.toDecoder();
+	}
+	
+	public static EncodingProtocol getEncoder() {
+		return encoder;
+	}
+	
+	public static DecodingProtocol getDecoder() {
+		return decoder;
 	}
 	
 	/*
@@ -84,35 +85,36 @@ public class EclipseCodingProtocol {
 	}
 	*/
 	static {
-		register(new ArrayEncoder(byte.class), new ArrayDecoder(byte.class));
-		mkreg(ArrayListEncoder::new, ArrayListDecoder::new);
-		mkreg(ClientDrivingHandlerCreator::makeEncoder, ClientDrivingHandlerCreator::makeDecoder);
-		mkreg(ClientWalkingHandlerCreator::makeEncoder, ClientWalkingHandlerCreator::makeDecoder);
-		mkreg(BasicPerspective::makeEncoder, BasicPerspective::makeDecoder);
-		mkreg(WorldState::makeEncoder, WorldState::makeDecoder);
-		mkreg(EntityAdditionEvent::makeEncoder, EntityAdditionEvent::makeDecoder);
-		mkreg(EntityDeletionEvent::makeEncoder, EntityDeletionEvent::makeDecoder);
-		mkreg(PlayerUseEvent::makeEncoder, PlayerUseEvent::makeDecoder);
-		mkreg(SetBackgroundEvent::makeEncoder, SetBackgroundEvent::makeDecoder);
-		mkreg(SetPlayerFacingAngleEvent::makeEncoder, SetPlayerFacingAngleEvent::makeDecoder);
-		mkreg(SetShipAngularThrustEvent::makeEncoder, SetShipAngularThrustEvent::makeDecoder);
-		mkreg(SetShipLinearThrustEvent::makeEncoder, SetShipLinearThrustEvent::makeDecoder);
-		mkreg(SetShipPilotedEvent::makeEncoder, SetShipPilotedEvent::makeDecoder);
-		mkreg(SetVelocityEvent::makeEncoder, SetVelocityEvent::makeDecoder);
-		mkreg(SetWalkingEntityDirectionEvent::makeEncoder, SetWalkingEntityDirectionEvent::makeDecoder);
-		mkreg(SetWalkingEntitySprintingEvent::makeEncoder, SetWalkingEntitySprintingEvent::makeDecoder);
-		mkreg(Ball::makeEncoder, Ball::makeDecoder);
-		mkreg(BasicShip1::makeEncoder, BasicShip1::makeDecoder);
-		mkreg(Player::makeEncoder, Player::makeDecoder);
-		mkreg(RelativeLocationLock::makeEncoder, RelativeLocationLock::makeDecoder);
-		mkreg(RelativePlayerFacingAngleLock::makeEncoder, RelativePlayerFacingAngleLock::makeDecoder);
-		mkreg(SpaceBackground::makeEncoder, SpaceBackground::makeDecoder);
-		mkreg(Pistol::makeEncoder, Pistol::makeDecoder);
-		mkreg(PlayerSetWeaponEvent::makeEncoder, PlayerSetWeaponEvent::makeDecoder);
-		mkreg(PlayerUseWeaponEvent::makeEncoder, PlayerUseWeaponEvent::makeDecoder);
-		mkreg(Dummy::makeEncoder, Dummy::makeDecoder);
-		mkreg(ParsedShip::makeEncoder, ParsedShip::makeDecoder);
-		register(new FieldEncoder(Vector2.class, Vector2::new), new FieldDecoder(Vector2.class, Vector2::new));
+		register(new ArrayEncoder(byte.class));
+		mkreg(ArrayListEncoder::new);
+		mkreg(ClientDrivingHandlerCreator::makeEncoder);
+		mkreg(ClientWalkingHandlerCreator::makeEncoder);
+		mkreg(BasicPerspective::makeEncoder);
+		mkreg(WorldState::makeEncoder);
+		mkreg(EntityAdditionEvent::makeEncoder);
+		mkreg(EntityDeletionEvent::makeEncoder);
+		mkreg(PlayerUseEvent::makeEncoder);
+		mkreg(SetBackgroundEvent::makeEncoder);
+		mkreg(SetPlayerFacingAngleEvent::makeEncoder);
+		mkreg(SetShipAngularThrustEvent::makeEncoder);
+		mkreg(SetShipLinearThrustEvent::makeEncoder);
+		mkreg(SetShipPilotedEvent::makeEncoder);
+		mkreg(SetVelocityEvent::makeEncoder);
+		mkreg(SetWalkingEntityDirectionEvent::makeEncoder);
+		mkreg(SetWalkingEntitySprintingEvent::makeEncoder);
+		mkreg(Ball::makeEncoder);
+		mkreg(BasicShip1::makeEncoder);
+		mkreg(Player::makeEncoder);
+		mkreg(RelativeLocationLock::makeEncoder);
+		mkreg(RelativePlayerFacingAngleLock::makeEncoder);
+		mkreg(SpaceBackground::makeEncoder);
+		mkreg(Pistol::makeEncoder);
+		mkreg(PlayerSetWeaponEvent::makeEncoder);
+		mkreg(PlayerUseWeaponEvent::makeEncoder);
+		mkreg(Dummy::makeEncoder);
+		mkreg(ParsedShip::makeEncoder);
+		register(new FieldEncoder(Vector2.class, Vector2::new));
+		finish();
 		/*
 		register(new ArrayEncoder(byte.class), new ArrayDecoder(byte.class));
 		mkreg(ArrayListEncoder::new, ArrayListDecoder::new);

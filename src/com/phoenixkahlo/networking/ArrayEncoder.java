@@ -6,7 +6,7 @@ import java.lang.reflect.Array;
 
 public class ArrayEncoder implements EncodingProtocol {
 
-	private Class<?> itemClass; // If this encodes int[]s, clazz == int.class
+	private Class<?> itemClass; // If this encodes int[]s, itemClass == int.class
 	private EncodingProtocol itemEncoder; // Nullable
 	
 	public ArrayEncoder(Class<?> itemClass, EncodingProtocol itemEncoder) {
@@ -61,7 +61,10 @@ public class ArrayEncoder implements EncodingProtocol {
 
 	@Override
 	public DecodingProtocol toDecoder() {
-		return new ArrayDecoder(itemClass, itemEncoder.toDecoder());
+		if (itemEncoder == null)
+			return new ArrayDecoder(itemClass);
+		else
+			return new ArrayDecoder(itemClass, itemEncoder.toDecoder());
 	}
 
 	public EncodingProtocol getItemEncoder() {
