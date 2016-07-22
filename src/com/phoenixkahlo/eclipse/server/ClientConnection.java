@@ -32,13 +32,13 @@ public class ClientConnection {
 		this.server = server;
 		
 		// Setup network
-		broadcaster = new FunctionBroadcaster(socket.getOutputStream(), EclipseCodingProtocol.ENCODER);
+		broadcaster = new FunctionBroadcaster(socket.getOutputStream(), EclipseCodingProtocol.getEncoder());
 		broadcaster.registerEnumClass(ClientFunction.class);
 
 		InputStream in = socket.getInputStream();
 		in = new DisconnectionDetectionInputStream(in);
 		
-		receiver = new FunctionReceiver(in, EclipseCodingProtocol.DECODER);
+		receiver = new FunctionReceiver(in, EclipseCodingProtocol.getDecoder());
 		QueueFunctionFactory<Server> factory = new QueueFunctionFactory<Server>(server::queueEvent);
 		
 		receiver.registerFunction(ServerFunction.IMPOSE_EVENT.ordinal(),

@@ -35,8 +35,8 @@ public class WorldStateContinuum {
 	private WorldState state;
 	private BufferCollection buffers;
 	private int time; // Time in ticks. Between calls to tick(), time is the time of the next tick.
-	private EncodingProtocol encoder = EclipseCodingProtocol.ENCODER;
-	private DecodingProtocol decoder = EclipseCodingProtocol.DECODER;
+	private EncodingProtocol encoder = EclipseCodingProtocol.getEncoder();
+	private DecodingProtocol decoder = EclipseCodingProtocol.getDecoder();
 	// Events to be imposed on the game state at certain periods in time.
 	private Map<Integer, List<Consumer<WorldState>>> events = new HashMap<Integer, List<Consumer<WorldState>>>();
 	

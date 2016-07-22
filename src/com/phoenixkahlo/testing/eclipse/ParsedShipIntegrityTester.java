@@ -19,13 +19,13 @@ public class ParsedShipIntegrityTester {
 		ParsedShip ship = new ParsedShip(ParsedShipTemplate.BASIC_SHIP_1);
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		OutputStream out = new PrintingOutputStream(bout);
-		EclipseCodingProtocol.ENCODER.encode(ship, out);
+		EclipseCodingProtocol.getEncoder().encode(ship, out);
 		
 		System.out.println("----------");
 		
 		InputStream in = new ByteArrayInputStream(bout.toByteArray());
 		in = new PrintingInputStream(in);
-		EclipseCodingProtocol.DECODER.decode(in);
+		EclipseCodingProtocol.getDecoder().decode(in);
 		System.out.println("testing remaining");
 		for (int i = 0; i < 10; i++) {
 			in.read();

@@ -30,9 +30,6 @@ public class EntityAdditionEvent implements Consumer<WorldState>, DecodingFinish
 		return new FieldDecoder(EntityAdditionEvent.class, EntityAdditionEvent::new, subDecoder);
 	}
 	
-	private static EncodingProtocol encoder = EclipseCodingProtocol.ENCODER;
-	private static DecodingProtocol decoder = EclipseCodingProtocol.DECODER;
-	
 	private byte[] entityBytes;
 	
 	private EntityAdditionEvent() {}
@@ -40,7 +37,7 @@ public class EntityAdditionEvent implements Consumer<WorldState>, DecodingFinish
 	public EntityAdditionEvent(Entity entity) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
-			encoder.encode(entity, out);
+			EclipseCodingProtocol.getEncoder().encode(entity, out);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -50,7 +47,7 @@ public class EntityAdditionEvent implements Consumer<WorldState>, DecodingFinish
 	@Override
 	public void accept(WorldState state) {
 		try {
-			state.addEntity((Entity) decoder.decode(new ByteArrayInputStream(entityBytes)));
+			state.addEntity((Entity) EclipseCodingProtocol.getDecoder().decode(new ByteArrayInputStream(entityBytes)));
 		} catch (IOException | ProtocolViolationException e) {
 			for (byte b : entityBytes) {
 				System.out.println("b:" + b);
@@ -65,7 +62,7 @@ public class EntityAdditionEvent implements Consumer<WorldState>, DecodingFinish
 	@Override
 	public void finishDecoding(InputStream in) throws ProtocolViolationException {
 		try {
-			Object obj = decoder.decode(new ByteArrayInputStream(entityBytes));
+			Object obj = EclipseCodingProtocol.getDecoder().decode(new ByteArrayInputStream(entityBytes));
 			if (!(obj instanceof Entity))
 				throw new ProtocolViolationException("entityBytes doesn't decode to Entity");
 		} catch (IOException e) {

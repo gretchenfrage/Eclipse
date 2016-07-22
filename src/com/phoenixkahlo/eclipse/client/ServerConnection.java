@@ -68,10 +68,10 @@ public class ServerConnection extends BasicGameState {
 		}
 		in = new DisconnectionDetectionInputStream(in);
 		
-		broadcaster = new FunctionBroadcaster(out, EclipseCodingProtocol.ENCODER);
+		broadcaster = new FunctionBroadcaster(out, EclipseCodingProtocol.getEncoder());
 		broadcaster.registerEnumClass(ServerFunction.class);
 
-		FunctionReceiver receiver = new FunctionReceiver(in, EclipseCodingProtocol.DECODER);
+		FunctionReceiver receiver = new FunctionReceiver(in, EclipseCodingProtocol.getDecoder());
 		QueueFunctionFactory<ServerConnection> factory =
 				new QueueFunctionFactory<ServerConnection>(this::queueEvent);
 		

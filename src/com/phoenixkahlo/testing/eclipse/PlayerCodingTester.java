@@ -17,9 +17,9 @@ public class PlayerCodingTester {
 		Player player = new Player();
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		OutputStream out = new PrintingOutputStream(bout);
-		EclipseCodingProtocol.ENCODER.encode(player, out);
+		EclipseCodingProtocol.getEncoder().encode(player, out);
 		InputStream in = new ByteArrayInputStream(bout.toByteArray());
-		EclipseCodingProtocol.DECODER.decode(in);
+		EclipseCodingProtocol.getDecoder().decode(in);
 	}
 
 }
