@@ -52,6 +52,9 @@ public class EntityAdditionEvent implements Consumer<WorldState>, DecodingFinish
 		try {
 			state.addEntity((Entity) decoder.decode(new ByteArrayInputStream(entityBytes)));
 		} catch (IOException | ProtocolViolationException e) {
+			for (byte b : entityBytes) {
+				System.out.println("b:" + b);
+			}
 			throw new RuntimeException(e);
 		}
 	}

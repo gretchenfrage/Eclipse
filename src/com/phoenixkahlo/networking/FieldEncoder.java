@@ -70,8 +70,9 @@ public class FieldEncoder implements EncodingProtocol {
 		for (Field field : ReflectionUtils.getAllFields(clazz)) {
 			field.setAccessible(true);
 			try {
-				if (condition.test(field))
+				if (condition.test(field)) {
 					SerializationUtils.writeAny(field.get(obj), out, subEncoder);
+				}
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}

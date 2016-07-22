@@ -46,7 +46,6 @@ public abstract class BodyEntity extends BasicEntity implements EncodingFinisher
 	
 	@Override
 	public void finishDecoding(InputStream in) throws IOException {
-		System.out.println("BodyEntity.finishDecoding() in " + this);
 		body.getTransform().setTranslationX(readDouble(in));
 		body.getTransform().setTranslationY(readDouble(in));
 		body.getTransform().setRotation(readDouble(in));

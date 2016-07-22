@@ -19,7 +19,7 @@ public abstract class BodyTextureEntity extends BodyEntity {
 	private transient RenderLayer layer = RenderLayer.PLAYER;
 	private transient Color color; // Nullable
 	
-	protected void injectTexture(Image image, float width, float height, float renderAngle) {
+	public void injectTexture(Image image, float width, float height, float renderAngle) {
 		this.image = image;
 		this.width = width;
 		this.height = height;
@@ -29,16 +29,16 @@ public abstract class BodyTextureEntity extends BodyEntity {
 	/**
 	 * Null safe. 
 	 */
-	protected void injectTexture(Image image, float width, float renderAngle) {
+	public void injectTexture(Image image, float width, float renderAngle) {
 		if (image != null)
 			injectTexture(image, width, width / image.getWidth() * image.getHeight(), renderAngle);
 	}
 	
-	protected void injectTexture(Image image, float width) {
+	public void injectTexture(Image image, float width) {
 		injectTexture(image, width, 0);
 	}
 	
-	protected void setRenderLayer(RenderLayer layer) {
+	public void setRenderLayer(RenderLayer layer) {
 		this.layer = layer;
 	}
 	

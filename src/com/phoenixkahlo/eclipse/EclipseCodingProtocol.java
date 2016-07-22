@@ -11,7 +11,6 @@ import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.eclipse.world.entity.Ball;
 import com.phoenixkahlo.eclipse.world.entity.BasicShip1;
 import com.phoenixkahlo.eclipse.world.entity.Dummy;
-import com.phoenixkahlo.eclipse.world.entity.FileResource;
 import com.phoenixkahlo.eclipse.world.entity.ParsedShip;
 import com.phoenixkahlo.eclipse.world.entity.Player;
 import com.phoenixkahlo.eclipse.world.entity.RelativeLocationLock;
@@ -37,8 +36,6 @@ import com.phoenixkahlo.networking.ArrayListDecoder;
 import com.phoenixkahlo.networking.ArrayListEncoder;
 import com.phoenixkahlo.networking.DecodingProtocol;
 import com.phoenixkahlo.networking.EncodingProtocol;
-import com.phoenixkahlo.networking.EnumDecoder;
-import com.phoenixkahlo.networking.EnumEncoder;
 import com.phoenixkahlo.networking.FieldDecoder;
 import com.phoenixkahlo.networking.FieldEncoder;
 import com.phoenixkahlo.networking.UnionDecoder;
@@ -67,10 +64,6 @@ public class EclipseCodingProtocol {
 	private static void mkreg(Function<EncodingProtocol, EncodingProtocol> encoderCreator,
 			Function<DecodingProtocol, DecodingProtocol> decoderCreator) {
 		register(encoderCreator.apply(ENCODER), decoderCreator.apply(DECODER));
-	}
-	
-	private static void regEnum(Class<? extends Enum<?>> clazz) {
-		register(new EnumEncoder(clazz), new EnumDecoder(clazz));
 	}
 	
 	static {
@@ -103,7 +96,6 @@ public class EclipseCodingProtocol {
 		mkreg(Dummy::makeEncoder, Dummy::makeDecoder);
 		mkreg(ParsedShip::makeEncoder, ParsedShip::makeDecoder);
 		register(new FieldEncoder(Vector2.class), new FieldDecoder(Vector2.class, Vector2::new));
-		regEnum(FileResource.class);
 	}
 	
 }

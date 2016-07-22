@@ -9,8 +9,8 @@ import com.phoenixkahlo.eclipse.server.Server;
 import com.phoenixkahlo.eclipse.server.ServerControlHandler;
 import com.phoenixkahlo.eclipse.server.ServerWalkingHandler;
 import com.phoenixkahlo.eclipse.world.entity.Entity;
-import com.phoenixkahlo.eclipse.world.entity.FileResource;
 import com.phoenixkahlo.eclipse.world.entity.ParsedShip;
+import com.phoenixkahlo.eclipse.world.entity.ParsedShipTemplate;
 import com.phoenixkahlo.eclipse.world.entity.Player;
 import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
 import com.phoenixkahlo.eclipse.world.weapon.Pistol;
@@ -45,7 +45,7 @@ public class ClientConnectionEvent implements Consumer<Server> {
 			connection.setAndBroadcastControlHandler(handler);
 			
 			// Make stuff (temporary code)
-			Entity ship = new ParsedShip(FileResource.BASIC_SHIP_1);
+			Entity ship = new ParsedShip(ParsedShipTemplate.BASIC_SHIP_1);
 			server.imposeEvent(new EntityAdditionEvent(ship));
 			
 			// Make final time synchronize request

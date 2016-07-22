@@ -25,7 +25,7 @@ public class FieldDecoder implements DecodingProtocol {
 		this.supplier = supplier;
 		this.subDecoder = subDecoder;
 		this.condition = condition; 
-		fields = ReflectionUtils.getAllFields(clazz);//clazz.getDeclaredFields();
+		fields = ReflectionUtils.getAllFields(clazz);
 		for (Field field : fields)
 			field.setAccessible(true);
 	}
@@ -48,8 +48,9 @@ public class FieldDecoder implements DecodingProtocol {
 			// Decode fields
 			for (Field field : fields) {
 				try {
-					if (condition.test(field))
+					if (condition.test(field)) {
 						field.set(obj, SerializationUtils.readType(field.getType(), in, subDecoder));
+					}
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					throw new RuntimeException(e);
 				}

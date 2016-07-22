@@ -3,6 +3,7 @@ package com.phoenixkahlo.networking;
 import java.io.IOException;
 import java.io.OutputStream;
 
+@Deprecated
 public class EnumEncoder implements EncodingProtocol {
 
 	private Class<?> clazz;
@@ -20,13 +21,8 @@ public class EnumEncoder implements EncodingProtocol {
 	public void encode(Object obj, OutputStream out) throws IOException, IllegalArgumentException {
 		if (!canEncode(obj))
 			throw new IllegalArgumentException();
-		int length = clazz.getEnumConstants().length;
-		if (length <= 256)
-			out.write(((Enum<?>) obj).ordinal());
-		else if (length <= Short.MAX_VALUE)
-			SerializationUtils.writeShort((short) ((Enum<?>) obj).ordinal(), out);
-		else
-			SerializationUtils.writeInt(((Enum<?>) obj).ordinal(), out);
+		System.out.println("EnumEncoder encoding " + obj);
+		System.out.println("EnumEncoder finished encoding " + obj);
 	}
 	
 }
