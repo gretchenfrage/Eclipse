@@ -55,6 +55,12 @@ public class WorldState implements DecodingFinisher {
 		if (body != null) world.removeBody(body);
 	}
 	
+	public void removeAllEntities() {
+		while (entities.size() > 0) {
+			removeEntity(entities.get(0));
+		}
+	}
+	
 	/**
 	 * @return a copy of the list of entities.
 	 */

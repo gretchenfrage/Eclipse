@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import com.phoenixkahlo.networking.FieldDecoder;
 import com.phoenixkahlo.networking.FieldEncoder;
 import com.phoenixkahlo.networking.ProtocolViolationException;
 import com.phoenixkahlo.utils.BufferCollection;
+import com.phoenixkahlo.utils.CheckSum;
 import com.phoenixkahlo.utils.GCBufferCollection;
 
 /**
@@ -33,10 +35,10 @@ public class WorldStateContinuum {
 	}
 	
 	private WorldState state;
-	private BufferCollection buffers;
+	private transient BufferCollection buffers;
 	private int time; // Time in ticks. Between calls to tick(), time is the time of the next tick.
-	private EncodingProtocol encoder = EclipseCodingProtocol.getEncoder();
-	private DecodingProtocol decoder = EclipseCodingProtocol.getDecoder();
+	private transient EncodingProtocol encoder = EclipseCodingProtocol.getEncoder();
+	private transient DecodingProtocol decoder = EclipseCodingProtocol.getDecoder();
 	// Events to be imposed on the game state at certain periods in time.
 	private Map<Integer, List<Consumer<WorldState>>> events = new HashMap<Integer, List<Consumer<WorldState>>>();
 	
@@ -48,6 +50,27 @@ public class WorldStateContinuum {
 	
 	public WorldState getState() {
 		return state;
+	}
+	
+	/**
+	 * Nullable if doesn't remember that time.
+	 */
+	public CheckSum getChecksum(int time) {
+		try (InputStream in = buffers.readBuffer(time)) {
+			if (in == null)
+				return null;
+			return new CheckSum(in);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public WorldState getState(int time) {
+		try (InputStream in = buffers.readBuffer(time)) {
+			return (WorldState) decoder.decode(in);
+		} catch (IOException | ProtocolViolationException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public int getTime() {
@@ -110,6 +133,14 @@ public class WorldStateContinuum {
 			while (time < currentTime)
 				tick();
 		}
+	}
+	
+	public int getOldestRememberedTime() {
+		return Arrays.stream(buffers.getRemeberedKeys()).mapToInt(i -> (int) i).min().getAsInt();
+	}
+	
+	public List<Consumer<WorldState>> getEvents(int time) {
+		return events.get(time);
 	}
 	
 	/**

@@ -10,11 +10,14 @@ import com.phoenixkahlo.eclipse.QueueFunctionFactory;
 import com.phoenixkahlo.eclipse.client.ClientFunction;
 import com.phoenixkahlo.eclipse.server.event.ClientDisconnectionEvent;
 import com.phoenixkahlo.eclipse.server.event.ImposeEventEvent;
+import com.phoenixkahlo.eclipse.server.event.VerifyChecksumEvent;
 import com.phoenixkahlo.eclipse.world.WorldState;
+import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
 import com.phoenixkahlo.networking.InstanceMethod;
+import com.phoenixkahlo.utils.CheckSum;
 import com.phoenixkahlo.utils.DisconnectionDetectionInputStream;
 
 public class ClientConnection {
@@ -47,6 +50,8 @@ public class ClientConnection {
 				new InstanceMethod(this, "disconnect"));
 		receiver.registerFunction(ServerFunction.REQUEST_SYNCHRONIZE_TIME.ordinal(),
 				new InstanceMethod(this, "synchronizeTime"));
+		receiver.registerFunction(ServerFunction.VERIFY_CHECKSUM.ordinal(),
+				factory.create(VerifyChecksumEvent.class, this, ClientConnection.class, int.class, CheckSum.class));
 		
 		assert receiver.areAllOrdinalsRegistered(ServerFunction.class) : "Server function(s) not registered";
 		
@@ -57,20 +62,20 @@ public class ClientConnection {
 		receiverThread.start();
 	}
 	
-	public void broadcastSetTimeLogiclessly(int time) throws IOException {
-		broadcaster.broadcast(ClientFunction.SET_TIME_LOGICLESSLY, time);
+	public void broadcastSetContinuum(WorldStateContinuum continuum) throws IOException {
+		broadcaster.broadcast(ClientFunction.SET_CONTINUUM, continuum);
 	}
 	
 	public void broadcastBringToTime(int time) throws IOException {
 		broadcaster.broadcast(ClientFunction.BRING_TO_TIME, time);
 	}
 	
-	public void broadcastSetWorldState(WorldState state) throws IOException {
-		broadcaster.broadcast(ClientFunction.SET_WORLD_STATE, state);
-	}
-	
 	public void broadcastImposeEvent(int time, Consumer<WorldState> event) throws IOException {
 		broadcaster.broadcast(ClientFunction.IMPOSE_EVENT, time, event);
+	}
+	
+	public void broadcastRequestVerifyChecksum(int time) throws IOException {
+		broadcaster.broadcast(ClientFunction.REQUEST_VERIFY_CHECKSUM, time);
 	}
 	
 	public void broadcastRequestRequestSynchronizeTime() throws IOException {

@@ -8,20 +8,23 @@ import com.phoenixkahlo.eclipse.client.ClientDrivingHandlerCreator;
 import com.phoenixkahlo.eclipse.client.ClientWalkingHandlerCreator;
 import com.phoenixkahlo.eclipse.world.BasicPerspective;
 import com.phoenixkahlo.eclipse.world.WorldState;
+import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
 import com.phoenixkahlo.eclipse.world.entity.Ball;
 import com.phoenixkahlo.eclipse.world.entity.BasicShip1;
 import com.phoenixkahlo.eclipse.world.entity.Dummy;
+import com.phoenixkahlo.eclipse.world.entity.Entity;
 import com.phoenixkahlo.eclipse.world.entity.ParsedShip;
 import com.phoenixkahlo.eclipse.world.entity.Player;
 import com.phoenixkahlo.eclipse.world.entity.RelativeLocationLock;
 import com.phoenixkahlo.eclipse.world.entity.RelativePlayerFacingAngleLock;
 import com.phoenixkahlo.eclipse.world.entity.SpaceBackground;
-import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
-import com.phoenixkahlo.eclipse.world.event.EntityDeletionEvent;
+import com.phoenixkahlo.eclipse.world.event.AddEntityEvent;
 import com.phoenixkahlo.eclipse.world.event.PlayerSetWeaponEvent;
 import com.phoenixkahlo.eclipse.world.event.PlayerUseEvent;
 import com.phoenixkahlo.eclipse.world.event.PlayerUseWeaponEvent;
+import com.phoenixkahlo.eclipse.world.event.RemoveEntityEvent;
 import com.phoenixkahlo.eclipse.world.event.SetBackgroundEvent;
+import com.phoenixkahlo.eclipse.world.event.SetEntitiesEvent;
 import com.phoenixkahlo.eclipse.world.event.SetPlayerFacingAngleEvent;
 import com.phoenixkahlo.eclipse.world.event.SetShipAngularThrustEvent;
 import com.phoenixkahlo.eclipse.world.event.SetShipLinearThrustEvent;
@@ -35,8 +38,10 @@ import com.phoenixkahlo.networking.ArrayListEncoder;
 import com.phoenixkahlo.networking.DecodingProtocol;
 import com.phoenixkahlo.networking.EncodingProtocol;
 import com.phoenixkahlo.networking.FieldEncoder;
+import com.phoenixkahlo.networking.HashMapEncoder;
 import com.phoenixkahlo.networking.UnionDecoder;
 import com.phoenixkahlo.networking.UnionEncoder;
+import com.phoenixkahlo.utils.CheckSum;
 
 /**
  * A class of ~evil static state~ providing the networking protocol. 
@@ -72,27 +77,18 @@ public class EclipseCodingProtocol {
 		return decoder;
 	}
 	
-	/*
-	private static void register(EncodingProtocol encoder, DecodingProtocol decoder) {
-		ENCODER.registerProtocol(id, encoder);
-		DECODER.registerProtocol(id, decoder);
-		id++;
-	}
-	
-	private static void mkreg(Function<EncodingProtocol, EncodingProtocol> encoderCreator,
-			Function<DecodingProtocol, DecodingProtocol> decoderCreator) {
-		register(encoderCreator.apply(ENCODER), decoderCreator.apply(DECODER));
-	}
-	*/
 	static {
 		register(new ArrayEncoder(byte.class));
+		register(new ArrayEncoder(int.class));
+		register(new ArrayEncoder(Entity.class, encoder));
 		mkreg(ArrayListEncoder::new);
+		register(new HashMapEncoder(encoder, encoder));
 		mkreg(ClientDrivingHandlerCreator::makeEncoder);
 		mkreg(ClientWalkingHandlerCreator::makeEncoder);
 		mkreg(BasicPerspective::makeEncoder);
 		mkreg(WorldState::makeEncoder);
-		mkreg(EntityAdditionEvent::makeEncoder);
-		mkreg(EntityDeletionEvent::makeEncoder);
+		mkreg(AddEntityEvent::makeEncoder);
+		mkreg(RemoveEntityEvent::makeEncoder);
 		mkreg(PlayerUseEvent::makeEncoder);
 		mkreg(SetBackgroundEvent::makeEncoder);
 		mkreg(SetPlayerFacingAngleEvent::makeEncoder);
@@ -113,39 +109,11 @@ public class EclipseCodingProtocol {
 		mkreg(PlayerUseWeaponEvent::makeEncoder);
 		mkreg(Dummy::makeEncoder);
 		mkreg(ParsedShip::makeEncoder);
+		mkreg(WorldStateContinuum::makeEncoder);
+		mkreg(CheckSum::makeEncoder);
+		mkreg(SetEntitiesEvent::makeEncoder);
 		register(new FieldEncoder(Vector2.class, Vector2::new));
 		finish();
-		/*
-		register(new ArrayEncoder(byte.class), new ArrayDecoder(byte.class));
-		mkreg(ArrayListEncoder::new, ArrayListDecoder::new);
-		mkreg(ClientDrivingHandlerCreator::makeEncoder, ClientDrivingHandlerCreator::makeDecoder);
-		mkreg(ClientWalkingHandlerCreator::makeEncoder, ClientWalkingHandlerCreator::makeDecoder);
-		mkreg(BasicPerspective::makeEncoder, BasicPerspective::makeDecoder);
-		mkreg(WorldState::makeEncoder, WorldState::makeDecoder);
-		mkreg(EntityAdditionEvent::makeEncoder, EntityAdditionEvent::makeDecoder);
-		mkreg(EntityDeletionEvent::makeEncoder, EntityDeletionEvent::makeDecoder);
-		mkreg(PlayerUseEvent::makeEncoder, PlayerUseEvent::makeDecoder);
-		mkreg(SetBackgroundEvent::makeEncoder, SetBackgroundEvent::makeDecoder);
-		mkreg(SetPlayerFacingAngleEvent::makeEncoder, SetPlayerFacingAngleEvent::makeDecoder);
-		mkreg(SetShipAngularThrustEvent::makeEncoder, SetShipAngularThrustEvent::makeDecoder);
-		mkreg(SetShipLinearThrustEvent::makeEncoder, SetShipLinearThrustEvent::makeDecoder);
-		mkreg(SetShipPilotedEvent::makeEncoder, SetShipPilotedEvent::makeDecoder);
-		mkreg(SetVelocityEvent::makeEncoder, SetVelocityEvent::makeDecoder);
-		mkreg(SetWalkingEntityDirectionEvent::makeEncoder, SetWalkingEntityDirectionEvent::makeDecoder);
-		mkreg(SetWalkingEntitySprintingEvent::makeEncoder, SetWalkingEntitySprintingEvent::makeDecoder);
-		mkreg(Ball::makeEncoder, Ball::makeDecoder);
-		mkreg(BasicShip1::makeEncoder, BasicShip1::makeDecoder);
-		mkreg(Player::makeEncoder, Player::makeDecoder);
-		mkreg(RelativeLocationLock::makeEncoder, RelativeLocationLock::makeDecoder);
-		mkreg(RelativePlayerFacingAngleLock::makeEncoder, RelativePlayerFacingAngleLock::makeDecoder);
-		mkreg(SpaceBackground::makeEncoder, SpaceBackground::makeDecoder);
-		mkreg(Pistol::makeEncoder, Pistol::makeDecoder);
-		mkreg(PlayerSetWeaponEvent::makeEncoder, PlayerSetWeaponEvent::makeDecoder);
-		mkreg(PlayerUseWeaponEvent::makeEncoder, PlayerUseWeaponEvent::makeDecoder);
-		mkreg(Dummy::makeEncoder, Dummy::makeDecoder);
-		mkreg(ParsedShip::makeEncoder, ParsedShip::makeDecoder);
-		register(new FieldEncoder(Vector2.class, Vector2::new), new FieldDecoder(Vector2.class, Vector2::new));
-		*/
 	}
 	
 }

@@ -13,8 +13,8 @@ import com.phoenixkahlo.eclipse.world.entity.Entity;
 import com.phoenixkahlo.eclipse.world.entity.RelativeLocationLock;
 import com.phoenixkahlo.eclipse.world.entity.RelativePlayerFacingAngleLock;
 import com.phoenixkahlo.eclipse.world.entity.Ship;
-import com.phoenixkahlo.eclipse.world.event.EntityAdditionEvent;
-import com.phoenixkahlo.eclipse.world.event.EntityDeletionEvent;
+import com.phoenixkahlo.eclipse.world.event.AddEntityEvent;
+import com.phoenixkahlo.eclipse.world.event.RemoveEntityEvent;
 import com.phoenixkahlo.eclipse.world.event.SetShipAngularThrustEvent;
 import com.phoenixkahlo.eclipse.world.event.SetShipLinearThrustEvent;
 import com.phoenixkahlo.eclipse.world.event.SetShipPilotedEvent;
@@ -43,11 +43,11 @@ public class ServerDrivingHandler extends BasicServerControlHandler {
 		
 		Entity locationLock = new RelativeLocationLock(playerID, shipID, ship.getHelmPos());
 		locationLockID = locationLock.getID();
-		server.imposeEvent(new EntityAdditionEvent(locationLock));
+		server.imposeEvent(new AddEntityEvent(locationLock));
 		
 		Entity angleLock = new RelativePlayerFacingAngleLock(playerID, shipID, -MathUtils.PI_F / 2);
 		angleLockID = angleLock.getID();
-		server.imposeEvent(new EntityAdditionEvent(angleLock));
+		server.imposeEvent(new AddEntityEvent(angleLock));
 		
 		server.imposeEvent(new SetShipPilotedEvent(shipID, true));
 	}
@@ -77,8 +77,8 @@ public class ServerDrivingHandler extends BasicServerControlHandler {
 		
 		int time = getConnection().getServer().getContinuum().getTime();
 		
-		queueImpose(time, new EntityDeletionEvent(locationLockID));
-		queueImpose(time, new EntityDeletionEvent(angleLockID));
+		queueImpose(time, new RemoveEntityEvent(locationLockID));
+		queueImpose(time, new RemoveEntityEvent(angleLockID));
 		queueImpose(time, new SetShipPilotedEvent(shipID, false));
 	}
 	

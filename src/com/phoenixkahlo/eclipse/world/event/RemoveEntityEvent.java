@@ -8,21 +8,21 @@ import com.phoenixkahlo.networking.EncodingProtocol;
 import com.phoenixkahlo.networking.FieldDecoder;
 import com.phoenixkahlo.networking.FieldEncoder;
 
-public class EntityDeletionEvent implements Consumer<WorldState> {
+public class RemoveEntityEvent implements Consumer<WorldState> {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(EntityDeletionEvent.class, EntityDeletionEvent::new, subEncoder);
+		return new FieldEncoder(RemoveEntityEvent.class, RemoveEntityEvent::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {
-		return new FieldDecoder(EntityDeletionEvent.class, EntityDeletionEvent::new, subDecoder);
+		return new FieldDecoder(RemoveEntityEvent.class, RemoveEntityEvent::new, subDecoder);
 	}
 	
 	private int id;
 	
-	private EntityDeletionEvent() {}
+	private RemoveEntityEvent() {}
 	
-	public EntityDeletionEvent(int id) {
+	public RemoveEntityEvent(int id) {
 		this.id = id;
 	}
 	

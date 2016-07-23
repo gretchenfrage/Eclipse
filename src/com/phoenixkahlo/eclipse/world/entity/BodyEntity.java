@@ -8,9 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.dyn4j.dynamics.Body;
-import org.dyn4j.dynamics.BodyFixture;
-import org.dyn4j.geometry.Convex;
 
+import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.networking.DecodingFinisher;
 import com.phoenixkahlo.networking.EncodingFinisher;
 
@@ -19,16 +18,20 @@ import com.phoenixkahlo.networking.EncodingFinisher;
  */
 public abstract class BodyEntity extends BasicEntity implements EncodingFinisher, DecodingFinisher {
 	
-	private transient Body body = new Body();
+	private transient Body body;
+	
+	protected abstract void setupBody(Body body);
+	
+	protected void createBody() {
+		body = new Body();
+		setupBody(body);
+	}
+	
+	@Override
+	public void postTick(WorldState state) {
+		super.postTick(state);
+	}
 
-	protected void addBodyFixture(BodyFixture fixture) {
-		body.addFixture(fixture);
-	}
-	
-	protected void addConvexFixture(Convex convex) {
-		addBodyFixture(new BodyFixture(convex));
-	}
-	
 	@Override
 	public Body getBody() {
 		return body;

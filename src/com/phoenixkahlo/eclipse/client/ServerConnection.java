@@ -22,8 +22,8 @@ import com.phoenixkahlo.eclipse.client.event.BringToTimeEvent;
 import com.phoenixkahlo.eclipse.client.event.CreateControlHandlerEvent;
 import com.phoenixkahlo.eclipse.client.event.ImposeEventEvent;
 import com.phoenixkahlo.eclipse.client.event.RequestSynchronizeTimeEvent;
-import com.phoenixkahlo.eclipse.client.event.SetTimeLogiclesslyEvent;
-import com.phoenixkahlo.eclipse.client.event.SetWorldStateEvent;
+import com.phoenixkahlo.eclipse.client.event.RequestVerifyChecksumEvent;
+import com.phoenixkahlo.eclipse.client.event.SetContinuumEvent;
 import com.phoenixkahlo.eclipse.server.ServerFunction;
 import com.phoenixkahlo.eclipse.world.Background;
 import com.phoenixkahlo.eclipse.world.Perspective;
@@ -33,6 +33,7 @@ import com.phoenixkahlo.eclipse.world.entity.Entity;
 import com.phoenixkahlo.networking.FunctionBroadcaster;
 import com.phoenixkahlo.networking.FunctionReceiver;
 import com.phoenixkahlo.networking.FunctionReceiverThread;
+import com.phoenixkahlo.utils.CheckSum;
 import com.phoenixkahlo.utils.DisconnectionDetectionInputStream;
 
 /**
@@ -75,10 +76,8 @@ public class ServerConnection extends BasicGameState {
 		QueueFunctionFactory<ServerConnection> factory =
 				new QueueFunctionFactory<ServerConnection>(this::queueEvent);
 		
-		receiver.registerFunction(ClientFunction.SET_TIME_LOGICLESSLY.ordinal(), 
-				factory.create(SetTimeLogiclesslyEvent.class, int.class));
-		receiver.registerFunction(ClientFunction.SET_WORLD_STATE.ordinal(), 
-				factory.create(SetWorldStateEvent.class, WorldState.class));
+		receiver.registerFunction(ClientFunction.SET_CONTINUUM.ordinal(),
+				factory.create(SetContinuumEvent.class, WorldStateContinuum.class));
 		receiver.registerFunction(ClientFunction.IMPOSE_EVENT.ordinal(),
 				factory.create(ImposeEventEvent.class, int.class, Consumer.class));
 		receiver.registerFunction(ClientFunction.BRING_TO_TIME.ordinal(),
@@ -87,6 +86,8 @@ public class ServerConnection extends BasicGameState {
 				factory.create(CreateControlHandlerEvent.class, Function.class));
 		receiver.registerFunction(ClientFunction.REQUEST_REQUEST_SYNCHRONIZE_TIME.ordinal(),
 				factory.create(RequestSynchronizeTimeEvent.class));
+		receiver.registerFunction(ClientFunction.REQUEST_VERIFY_CHECKSUM.ordinal(),
+				factory.create(RequestVerifyChecksumEvent.class, int.class));
 		
 		
 		assert receiver.areAllOrdinalsRegistered(ClientFunction.class) : "Client function(s) not registered";
@@ -187,6 +188,15 @@ public class ServerConnection extends BasicGameState {
 		broadcaster.broadcast(ServerFunction.REQUEST_SYNCHRONIZE_TIME);
 	}
 	
+	/**
+	 * Will ignore if continuum doesn't remember that checksum.
+	 */
+	public void verifyChecksum(int time) throws IOException {
+		CheckSum checksum = continuum.getChecksum(time);
+		if (checksum != null)
+			broadcaster.broadcast(ServerFunction.VERIFY_CHECKSUM, time, checksum);
+	}
+	
 	@Override
 	public int getID() {
 		return ClientGameState.SERVER_CONNECTION.ordinal();
@@ -214,6 +224,10 @@ public class ServerConnection extends BasicGameState {
 	
 	public WorldStateContinuum getContinuum() {
 		return continuum;
+	}
+
+	public void setContinuum(WorldStateContinuum continuum) {
+		this.continuum = continuum;
 	}
 	
 }

@@ -17,6 +17,10 @@ public enum ServerFunction {
 	 * Requests the server to tell the client to bring the continuum to thr correct time.
 	 * args = {}
 	 */
-	REQUEST_SYNCHRONIZE_TIME;
+	REQUEST_SYNCHRONIZE_TIME,
+	/**
+	 * args = {int time, CheckSum worldStateChecksum}
+	 */
+	VERIFY_CHECKSUM
 	
 }

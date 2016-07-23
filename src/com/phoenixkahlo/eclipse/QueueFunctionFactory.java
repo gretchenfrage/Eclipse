@@ -19,6 +19,10 @@ public class QueueFunctionFactory<E> {
 		}
 	}
 	
+	public QueueFunction<E> create(Class<? extends Consumer<E>> clazz, Object extraArg, Class<?>... argTypes) {
+		return create(clazz, new Object[] {extraArg}, argTypes);
+	}
+	
 	public QueueFunction<E> create(Class<? extends Consumer<E>> clazz, Class<?>... argTypes) 
 			throws IllegalArgumentException {
 		return create(clazz, new Object[0], argTypes);

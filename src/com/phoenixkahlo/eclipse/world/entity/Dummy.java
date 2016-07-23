@@ -1,5 +1,6 @@
 package com.phoenixkahlo.eclipse.world.entity;
 
+import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.MassType;
@@ -19,11 +20,16 @@ public class Dummy extends HurtableWalkingEntity {
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {
 		return new FieldDecoder(Dummy.class, Dummy::new, subDecoder);
 	}
-	
+
 	public Dummy() {
 		injectTexture(ImageResource.BALL_1.image(), 1);
-		addBodyFixture(new BodyFixture(new Circle(0.5)));
-		getBody().setMass(MassType.FIXED_ANGULAR_VELOCITY);
+		createBody();
+	}
+
+	@Override
+	protected void setupBody(Body body) {
+		body.addFixture(new BodyFixture(new Circle(0.5)));
+		body.setMass(MassType.FIXED_ANGULAR_VELOCITY);
 	}
 	
 }

@@ -3,6 +3,8 @@ package com.phoenixkahlo.eclipse.world.entity;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.dyn4j.dynamics.Body;
+
 import com.phoenixkahlo.networking.DecodingProtocol;
 import com.phoenixkahlo.networking.EncodingProtocol;
 import com.phoenixkahlo.networking.FieldDecoder;
@@ -29,12 +31,19 @@ public class ParsedShip extends Ship {
 	public ParsedShip(ParsedShipTemplate schematic) {
 		this.schematic = schematic;
 		schematic.apply(this);
+		createBody();
 	}
 	
 	@Override
 	public void finishDecoding(InputStream in) throws IOException {
+		createBody();
 		super.finishDecoding(in);
 		schematic.apply(this);
+	}
+
+	@Override
+	protected void setupBody(Body body) {
+		schematic.apply(body);
 	}
 	
 }

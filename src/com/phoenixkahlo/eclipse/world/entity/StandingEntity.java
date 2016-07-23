@@ -9,7 +9,7 @@ import com.phoenixkahlo.eclipse.world.WorldState;
  * It stands on things.
  */
 public abstract class StandingEntity extends BodyTextureEntity {
-	
+
 	/**
 	 * Correcting rotation without fixed angular velocity can be weird.
 	 */

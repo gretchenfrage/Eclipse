@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
@@ -34,18 +34,16 @@ public class Player extends WalkingEntity {
 	
 	private double facingAngle;
 	private Weapon weapon; // Nullable
-	
+
 	public Player() {
 		injectTexture(ImageResource.HUMAN_2.image(), 1);
-		addBodyFixture(new BodyFixture(new Circle(0.5)));
-		getBody().setMass(MassType.FIXED_ANGULAR_VELOCITY);
 		setWalkSpeed(10);
 		setThrustForce(0.25F);
 		setCanThrust(true);
 		setSprintWalkingMultiplier(2);
 		setSprintThrustingMultiplier(2);
-		
 		setBaseRenderAngle(-MathUtils.PI_F / 2);
+		createBody();
 	}
 	
 	public void setFacingAngle(double facingAngle) {
@@ -77,6 +75,12 @@ public class Player extends WalkingEntity {
 		super.finishDecoding(in);
 		
 		setBaseRenderAngle(SerializationUtils.readFloat(in));
+	}
+
+	@Override
+	protected void setupBody(Body body) {
+		body.addFixture(new Circle(0.5));
+		body.setMass(MassType.FIXED_ANGULAR_VELOCITY);
 	}
 	
 }

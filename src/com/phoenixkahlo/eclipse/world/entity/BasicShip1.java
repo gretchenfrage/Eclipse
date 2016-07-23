@@ -1,5 +1,6 @@
 package com.phoenixkahlo.eclipse.world.entity;
 
+import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Rectangle;
 
@@ -19,18 +20,10 @@ public class BasicShip1 extends Ship {
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {
 		return new FieldDecoder(BasicShip1.class, BasicShip1::new, subDecoder);
 	}
-	
+
 	public BasicShip1() {
 		// Create texture
 		injectTexture(ImageResource.BASIC_SHIP_1.image(), 10);
-		// Create walls
-		addConvexFixture(GeomUtils.makeRect(-5, -5, -4, 5));
-		addConvexFixture(GeomUtils.makeRect(4, -5, 5, 5));
-		addConvexFixture(GeomUtils.makeRect(-5, -5, 5, -4));
-		addConvexFixture(GeomUtils.makeRect(-5, 4, -2, 5));
-		addConvexFixture(GeomUtils.makeRect(2, 4, 5, 5));
-		// Create mass
-		getBody().setMass(MassType.NORMAL);
 		// Create floor
 		addArea(new Rectangle(10, 10));
 		// Create areas
@@ -40,6 +33,18 @@ public class BasicShip1 extends Ship {
 		setBackwardThrustMultiplier(250);
 		setStrafeThrustMultiplier(350);
 		setAngularThrustMultiplier(400);
+		// Create body
+		createBody();
+	}
+	
+	@Override
+	protected void setupBody(Body body) {
+		body.addFixture(GeomUtils.makeRect(-5, -5, -4, 5));
+		body.addFixture(GeomUtils.makeRect(4, -5, 5, 5));
+		body.addFixture(GeomUtils.makeRect(-5, -5, 5, -4));
+		body.addFixture(GeomUtils.makeRect(-5, 4, -2, 5));
+		body.addFixture(GeomUtils.makeRect(2, 4, 5, 5));
+		body.setMass(MassType.NORMAL);
 	}
 	
 }

@@ -16,7 +16,7 @@ public abstract class WalkingEntity extends StandingEntity {
 	private transient float sprintThrustingMultiplier = 1;
 	private Vector2 direction = new Vector2(0, 0);
 	private boolean sprinting = false;
-	
+
 	@Override
 	public void preTick(WorldState state) {
 		super.preTick(state);

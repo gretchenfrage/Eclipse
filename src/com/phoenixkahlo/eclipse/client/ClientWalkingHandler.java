@@ -11,9 +11,6 @@ import com.phoenixkahlo.eclipse.world.Perspective;
 import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
 import com.phoenixkahlo.eclipse.world.entity.Entity;
 import com.phoenixkahlo.eclipse.world.entity.Player;
-import com.phoenixkahlo.eclipse.world.event.SetPlayerFacingAngleEvent;
-import com.phoenixkahlo.eclipse.world.event.SetWalkingEntityDirectionEvent;
-import com.phoenixkahlo.eclipse.world.event.SetWalkingEntitySprintingEvent;
 
 /**
  * The main client control handler for walking, running, thrusting, shooting, 
@@ -79,7 +76,7 @@ public class ClientWalkingHandler extends BasicClientControlHandler {
 		if (!direction.equals(cachedDirection)) {
 			try {
 				broadcastSetDirection(time, direction);
-				connection.imposeEvent(time, new SetWalkingEntityDirectionEvent(entityID, direction));
+				//connection.imposeEvent(time, new SetWalkingEntityDirectionEvent(entityID, direction));
 				cachedDirection = direction;
 			} catch (IOException e) {
 				connection.disconnect(e);
@@ -91,7 +88,7 @@ public class ClientWalkingHandler extends BasicClientControlHandler {
 		if (sprinting != cachedSprinting) {
 			try {
 				broadcastSetSprinting(time, sprinting);
-				connection.imposeEvent(time, new SetWalkingEntitySprintingEvent(entityID, sprinting));
+				//connection.imposeEvent(time, new SetWalkingEntitySprintingEvent(entityID, sprinting));
 				cachedSprinting = sprinting;
 			} catch (IOException e) {
 				connection.disconnect(e);
@@ -108,7 +105,7 @@ public class ClientWalkingHandler extends BasicClientControlHandler {
 			if (angle != cachedAngle) {
 				try {
 					broadcastSetAngle(time, angle);
-					connection.imposeEvent(time, new SetPlayerFacingAngleEvent(entityID, angle));
+					//connection.imposeEvent(time, new SetPlayerFacingAngleEvent(entityID, angle));
 					cachedAngle = angle;
 				} catch (IOException e) {
 					connection.disconnect(e);

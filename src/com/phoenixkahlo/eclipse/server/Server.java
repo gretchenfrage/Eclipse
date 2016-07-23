@@ -24,7 +24,7 @@ public class Server {
 		new Server(Integer.parseInt(args[0])).start();
 	}
 
-	private static final int TICKS_PER_TIME_SYNCHRONIZE = 300;
+	private static final int TICKS_PER_SYNCHRONIZE = 300;
 	
 	private ClientWaiter waiter;
 	private List<Consumer<Server>> eventQueue = new ArrayList<Consumer<Server>>();
@@ -50,10 +50,18 @@ public class Server {
 		// Tick continuum
 		continuum.tick();
 		// Maybe synchronize client time
-		if (continuum.getTime() % TICKS_PER_TIME_SYNCHRONIZE == 0) {
+		if (continuum.getTime() % TICKS_PER_SYNCHRONIZE == 0) {
 			for (int i = clients.size() - 1; i >= 0; i--) {
 				try {
 					clients.get(i).broadcastBringToTime(continuum.getTime());
+				} catch (IOException e) {
+					disconnectClient(clients.get(i), e.toString());
+				}
+			}
+		} else if (continuum.getTime() % TICKS_PER_SYNCHRONIZE == TICKS_PER_SYNCHRONIZE / 2) {
+			for (int i = clients.size() - 1; i >= 0; i--) {
+				try {
+					clients.get(i).broadcastRequestVerifyChecksum(continuum.getTime() - 30);
 				} catch (IOException e) {
 					disconnectClient(clients.get(i), e.toString());
 				}

@@ -1,6 +1,6 @@
 package com.phoenixkahlo.eclipse.world.entity;
 
-import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.MassType;
 
@@ -20,11 +20,16 @@ public class Ball extends BodyTextureEntity {
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {
 		return new FieldDecoder(Ball.class, Ball::new, subDecoder);
 	}
-	
+
 	public Ball() {
-		addBodyFixture(new BodyFixture(new Circle(1)));
 		injectTexture(ImageResource.BALL_1.image(), 2);
-		getBody().setMass(MassType.NORMAL);
+		createBody();
+	}
+	
+	@Override
+	protected void setupBody(Body body) {
+		body.addFixture(new Circle(1));
+		body.setMass(MassType.NORMAL);
 	}
 
 	@Override

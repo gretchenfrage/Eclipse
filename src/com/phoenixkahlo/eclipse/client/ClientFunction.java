@@ -8,15 +8,7 @@ public enum ClientFunction {
 	/**
 	 * args = {int time}
 	 */
-	SET_TIME_LOGICLESSLY,
-	/**
-	 * args = {int time}
-	 */
 	BRING_TO_TIME,
-	/**
-	 * args = {WorldState state}
-	 */
-	SET_WORLD_STATE,
 	/**
 	 * args = {int time, Consumer<WorldState> event}
 	 */
@@ -29,6 +21,14 @@ public enum ClientFunction {
 	 * Requests the client to request the server to synchronize time.
 	 * args = {}
 	 */
-	REQUEST_REQUEST_SYNCHRONIZE_TIME;
+	REQUEST_REQUEST_SYNCHRONIZE_TIME,
+	/**
+	 * args = {WorldStateContinuum continuum}
+	 */
+	SET_CONTINUUM,
+	/**
+	 * args = {int time}
+	 */
+	REQUEST_VERIFY_CHECKSUM
 	
 }

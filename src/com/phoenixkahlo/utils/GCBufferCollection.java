@@ -61,5 +61,9 @@ public class GCBufferCollection implements BufferCollection {
 		}
 	}
 
+	@Override
+	public Object[] getRemeberedKeys() {
+		return orderedKeys.toArray();
+	}
 
 }

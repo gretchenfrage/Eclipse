@@ -20,21 +20,21 @@ import com.phoenixkahlo.networking.ProtocolViolationException;
  * Holds the entity in serialized byte[] form so that it can decode a fresh copy with each
  * invocation.
  */
-public class EntityAdditionEvent implements Consumer<WorldState>, DecodingFinisher {
+public class AddEntityEvent implements Consumer<WorldState>, DecodingFinisher {
 
 	public static EncodingProtocol makeEncoder(EncodingProtocol subEncoder) {
-		return new FieldEncoder(EntityAdditionEvent.class, EntityAdditionEvent::new, subEncoder);
+		return new FieldEncoder(AddEntityEvent.class, AddEntityEvent::new, subEncoder);
 	}
 	
 	public static DecodingProtocol makeDecoder(DecodingProtocol subDecoder) {
-		return new FieldDecoder(EntityAdditionEvent.class, EntityAdditionEvent::new, subDecoder);
+		return new FieldDecoder(AddEntityEvent.class, AddEntityEvent::new, subDecoder);
 	}
 	
 	private byte[] entityBytes;
 	
-	private EntityAdditionEvent() {}
+	private AddEntityEvent() {}
 	
-	public EntityAdditionEvent(Entity entity) {
+	public AddEntityEvent(Entity entity) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
 			EclipseCodingProtocol.getEncoder().encode(entity, out);

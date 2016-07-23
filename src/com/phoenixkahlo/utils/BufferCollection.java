@@ -21,4 +21,6 @@ public interface BufferCollection {
 	 */
 	InputStream readBuffer(Object key);
 	
+	Object[] getRemeberedKeys();
+	
 }
