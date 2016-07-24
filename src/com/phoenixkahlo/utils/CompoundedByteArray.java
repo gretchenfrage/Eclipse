@@ -6,18 +6,25 @@ package com.phoenixkahlo.utils;
 public class CompoundedByteArray {
 
 	private int[] arr;
-	private int size;
+	private int length;
 	
 	public CompoundedByteArray(int size) {
-		this.size = size;
+		this.length = size;
 		if (size % 4 == 0)
 			arr = new int[size / 4];
 		else
 			arr = new int[size / 4 + 1];
 	}
 	
+	public CompoundedByteArray(byte[] arr) {
+		this(arr.length);
+		for (int i = 0; i < arr.length; i++) {
+			set(i, arr[i]);
+		}
+	}
+	
 	public byte get(int index) throws ArrayIndexOutOfBoundsException {
-		if (index >= size)
+		if (index >= length)
 			throw new ArrayIndexOutOfBoundsException();
 		int compound = arr[index / 4];
 		int remainder = index % 4;
@@ -36,7 +43,7 @@ public class CompoundedByteArray {
 	}
 	
 	public void set(int index, byte n) throws ArrayIndexOutOfBoundsException {
-		if (index >= size)
+		if (index >= length)
 			throw new ArrayIndexOutOfBoundsException();
 		int remainder = index % 4;
 		index /= 4;
@@ -54,6 +61,14 @@ public class CompoundedByteArray {
 			arr[index] &= 0x00FFFFFF;
 			arr[index] |= n << 24;
 		}
+	}
+	
+	public byte[] toArray() {
+		byte[] out = new byte[length];
+		for (int i = 0; i < length; i++) {
+			out[i] = get(i);
+		}
+		return out;
 	}
 	
 }

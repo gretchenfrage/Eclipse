@@ -24,7 +24,7 @@ public class Server {
 		new Server(Integer.parseInt(args[0])).start();
 	}
 
-	private static final int TICKS_PER_SYNCHRONIZE = 300;
+	private static final int TICKS_PER_SYNCHRONIZE = 6;
 	
 	private ClientWaiter waiter;
 	private List<Consumer<Server>> eventQueue = new ArrayList<Consumer<Server>>();

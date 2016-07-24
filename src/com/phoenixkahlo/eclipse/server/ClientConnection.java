@@ -51,7 +51,7 @@ public class ClientConnection {
 		receiver.registerFunction(ServerFunction.REQUEST_SYNCHRONIZE_TIME.ordinal(),
 				new InstanceMethod(this, "synchronizeTime"));
 		receiver.registerFunction(ServerFunction.VERIFY_CHECKSUM.ordinal(),
-				factory.create(VerifyChecksumEvent.class, this, ClientConnection.class, int.class, CheckSum.class));
+				factory.create(VerifyChecksumEvent.class, int.class, CheckSum.class));
 		
 		assert receiver.areAllOrdinalsRegistered(ServerFunction.class) : "Server function(s) not registered";
 		

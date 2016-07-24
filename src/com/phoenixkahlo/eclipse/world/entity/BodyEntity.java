@@ -9,7 +9,6 @@ import java.io.OutputStream;
 
 import org.dyn4j.dynamics.Body;
 
-import com.phoenixkahlo.eclipse.world.WorldState;
 import com.phoenixkahlo.networking.DecodingFinisher;
 import com.phoenixkahlo.networking.EncodingFinisher;
 
@@ -27,11 +26,6 @@ public abstract class BodyEntity extends BasicEntity implements EncodingFinisher
 		setupBody(body);
 	}
 	
-	@Override
-	public void postTick(WorldState state) {
-		super.postTick(state);
-	}
-
 	@Override
 	public Body getBody() {
 		return body;

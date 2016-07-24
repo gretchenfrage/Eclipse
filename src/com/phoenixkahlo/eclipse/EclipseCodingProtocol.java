@@ -12,7 +12,6 @@ import com.phoenixkahlo.eclipse.world.WorldStateContinuum;
 import com.phoenixkahlo.eclipse.world.entity.Ball;
 import com.phoenixkahlo.eclipse.world.entity.BasicShip1;
 import com.phoenixkahlo.eclipse.world.entity.Dummy;
-import com.phoenixkahlo.eclipse.world.entity.Entity;
 import com.phoenixkahlo.eclipse.world.entity.ParsedShip;
 import com.phoenixkahlo.eclipse.world.entity.Player;
 import com.phoenixkahlo.eclipse.world.entity.RelativeLocationLock;
@@ -42,6 +41,7 @@ import com.phoenixkahlo.networking.HashMapEncoder;
 import com.phoenixkahlo.networking.UnionDecoder;
 import com.phoenixkahlo.networking.UnionEncoder;
 import com.phoenixkahlo.utils.CheckSum;
+import com.phoenixkahlo.utils.CompoundedByteArray;
 
 /**
  * A class of ~evil static state~ providing the networking protocol. 
@@ -80,7 +80,6 @@ public class EclipseCodingProtocol {
 	static {
 		register(new ArrayEncoder(byte.class));
 		register(new ArrayEncoder(int.class));
-		register(new ArrayEncoder(Entity.class, encoder));
 		mkreg(ArrayListEncoder::new);
 		register(new HashMapEncoder(encoder, encoder));
 		mkreg(ClientDrivingHandlerCreator::makeEncoder);
@@ -113,6 +112,7 @@ public class EclipseCodingProtocol {
 		mkreg(CheckSum::makeEncoder);
 		mkreg(SetEntitiesEvent::makeEncoder);
 		register(new FieldEncoder(Vector2.class, Vector2::new));
+		register(new FieldEncoder(CompoundedByteArray.class, () -> new CompoundedByteArray(0), encoder));
 		finish();
 	}
 	

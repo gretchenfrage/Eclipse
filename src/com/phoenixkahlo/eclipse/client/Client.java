@@ -22,7 +22,7 @@ public class Client extends StateBasedGame {
 	
 	public void start() {
 		try {
-			AppGameContainer container = new AppGameContainer(this, 700, 700, false);
+			AppGameContainer container = new AppGameContainer(this, 1200, 700, false);
 			container.setTargetFrameRate(WorldState.TICKS_PER_SECOND);
 			container.setVSync(true);
 			container.setShowFPS(false);
