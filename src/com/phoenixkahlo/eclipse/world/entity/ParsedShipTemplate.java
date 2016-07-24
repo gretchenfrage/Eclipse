@@ -1,8 +1,9 @@
 package com.phoenixkahlo.eclipse.world.entity;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -42,9 +43,9 @@ public enum ParsedShipTemplate {
 	
 	ParsedShipTemplate(String path) {
 		try {
-			File file = new File(ParsedShipTemplate.class.getClassLoader().getResource(
-					"resources/schematics/" + path + ".cos").toURI());
-			ParseTable table = (ParseTable) Parser.parse(file);
+			InputStream in = ParsedShipTemplate.class.getClassLoader().getResourceAsStream(
+					"resources/schematics/" + path + ".cos");
+			ParseTable table = (ParseTable) Parser.parse(new InputStreamReader(in, Charset.forName("UTF8")));
 			
 			// Image
 			ParseTable textureData = table.getTable("texture");
@@ -134,7 +135,7 @@ public enum ParsedShipTemplate {
 				shipConsumers.add(ship -> ship.setHelmArea(parsePolygon(table.getList("helm"))));
 			if (table.has("helm_pos"))
 				shipConsumers.add(ship -> ship.setHelmPos(parseVector(table.getList("helm_pos"))));
-		} catch (URISyntaxException | ParseException | IOException e) {
+		} catch (ParseException | IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
