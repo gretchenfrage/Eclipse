@@ -1,5 +1,7 @@
 package com.phoenixkahlo.physics;
 
+import com.phoenixkahlo.utils.MathUtils;
+
 public class Vector2f {
 	
 	public float x;
@@ -54,7 +56,11 @@ public class Vector2f {
 	public float shortestAngle(Vector2f other) {
 		float angle = direction();
 		float otherAngle = other.direction();
-		if (angle > 
+		return (float) MathUtils.min(
+				Math.abs(angle - otherAngle), 
+				Math.abs((angle + 2 * Math.PI) - otherAngle), 
+				Math.abs((angle - 2 * Math.PI) - otherAngle)
+				);
 	}
 	
 }

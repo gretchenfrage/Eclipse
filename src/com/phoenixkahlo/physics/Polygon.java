@@ -8,6 +8,9 @@ public class Polygon {
 		this.convexes = convexes;
 	}
 	
+	/**
+	 * @param vertices the vertices for a single convex.
+	 */
 	public Polygon(Vector2f vertices) {
 		this(new Convex(vertices));
 	}

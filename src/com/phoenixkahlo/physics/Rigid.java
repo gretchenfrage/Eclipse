@@ -17,7 +17,9 @@ public class Rigid {
 	}
 	
 	public void applyForce(Vector2f force, Vector2f location) {
-		applyTorque(force.magnitude() * worldToLocal(location).magnitude()
+		applyTorque(force.magnitude() * worldToLocal(location).magnitude() * 
+				(float) Math.sin(force.shortestAngle(worldToLocal(location))));
+		applyForce(force);
 	}
 	
 	public void applyForce(Vector2f force) {
@@ -34,6 +36,14 @@ public class Rigid {
 	
 	public Vector2f worldToLocal(Vector2f world) {
 		return world.subtract(location);
+	}
+	
+	public void translate(Vector2f translation) {
+		location.add(translation);
+	}
+	
+	public void changeAngle(float theta) {
+		angle += theta;
 	}
 	
 	public Vector2f getVelocity() {
@@ -74,6 +84,10 @@ public class Rigid {
 
 	public void setMass(float mass) {
 		this.mass = mass;
+	}
+	
+	public Polygon getShape() {
+		return shape;
 	}
 	
 }
