@@ -73,6 +73,9 @@ public class Vector2f {
 		return (float) Math.sqrt(Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2));
 	}
 	
+	/**
+	 * @return the shortest positive difference between the direction property of this and other. 
+	 */
 	public float shortestAngle(Vector2f other) {
 		float angle = direction();
 		float otherAngle = other.direction();
@@ -81,6 +84,18 @@ public class Vector2f {
 				Math.abs((angle + 2 * Math.PI) - otherAngle), 
 				Math.abs((angle - 2 * Math.PI) - otherAngle)
 				);
+	}
+	
+	public float directionRelativeTo(Vector2f other) {
+		subtract(other);
+		float direction = direction();
+		add(other);
+		return direction;
+	}
+	
+	@Override
+	public String toString() {
+		return "(" + x + ", " + y + ")";
 	}
 	
 }

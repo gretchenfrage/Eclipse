@@ -16,28 +16,23 @@ public class Segment {
 	/**
 	 * Creates non-vertical segment.
 	 */
-	public Segment(float a, float b, float min, float max) {
-		this.a = a;
-		this.b = b;
-		this.min = min;
-		this.max = max;
-	}
-	
-	public float getMin() {
-		return min;
-	}
-	
-	public float getMax() {
-		return max;
+	public Segment(float slope, float yIntercept, float xMin, float xMax) {
+		this.a = slope;
+		this.b = yIntercept;
+		this.min = xMin;
+		this.max = xMax;
 	}
 	
 	/**
 	 * Creates vertical segment.
 	 */
-	public Segment(float x, float min, float max) {
-		this(Float.NaN, x, min, max);
+	public Segment(float x, float yMin, float yMax) {
+		this(Float.NaN, x, yMin, yMax);
 	}
 	
+	/**
+	 * Creates segment between 2 points.
+	 */
 	public Segment(Vector2f p1, Vector2f p2) throws IllegalArgumentException {
 		if (p1.x == p2.x) {
 			a = Float.NaN;
@@ -63,6 +58,15 @@ public class Segment {
 			}
 		}
 	}
+	
+	public float getMin() {
+		return min;
+	}
+	
+	public float getMax() {
+		return max;
+	}
+	
 	
 	/**
 	 * Calculate as if this were a line. Returns NaN if vertical.

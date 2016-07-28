@@ -6,15 +6,16 @@ import java.util.List;
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Shape;
 
-import com.phoenixkahlo.utils.MathUtils;
+import com.phoenixkahlo.utils.LambdaUtils;
 
 public class Convex {
 
 	private Vector2f[] vertices;
 	private Shape slickShape;
 	private float area;
-	private float maxRadius;
-	private Segment[] segmentsCache;
+	
+	private Vector2f[] translateVertices;
+	private Segment[] translateFaces;
 	
 	public Convex(Vector2f... vertices) {
 		this.vertices = vertices;
@@ -34,91 +35,103 @@ public class Convex {
 					vertices[i].y * vertices[(i + 1) % vertices.length].x;
 		}
 		area /= 2;
-		
-		// Cache max radius
-		maxRadius = MathUtils.max(vertices, Vector2f::magnitude);
-	}
-	
-	/**
-	 * Please don't modify.
-	 */
-	public Vector2f[] getVertices() {
-		return vertices;
 	}
 	
 	public float area() {
 		return area;
 	}
 	
-	public boolean couldIntersect(Convex other, Vector2f otherTranslate) {
-		return otherTranslate.magnitude() < maxRadius + other.maxRadius;
-	}
-	
 	public Shape toSlickShape() {
 		return slickShape;
 	}
 	
-	public void cacheSegments(Vector2f translation, float rotation) {
-		Vector2f[] transformed = new Vector2f[vertices.length];
-		for (int i = 0; i < transformed.length; i++) {
-			transformed[i] = vertices[i].copy().rotate(rotation).add(translation);
+	public void cacheTransform(Vector2f translation, float rotation) {
+		translateVertices = new Vector2f[vertices.length];
+		for (int i = 0; i < translateVertices.length; i++) {
+			translateVertices[i] = vertices[i].copy().rotate(rotation).add(translation);
 		}
-		segmentsCache = new Segment[vertices.length];
-		for (int i = 0; i < segmentsCache.length; i++) {
-			segmentsCache[i] = new Segment(transformed[i], transformed[(i + 1) % transformed.length]);
+		translateFaces = new Segment[vertices.length];
+		for (int i = 0; i < translateFaces.length; i++) {
+			translateFaces[i] = new Segment(translateVertices[i], 
+					translateVertices[(i + 1) % translateVertices.length]);
 		}
 	}
 	
-	public void invalidateSegmentsCache() {
-		segmentsCache = null;
-	}
-	
-	public Segment[] getSegmentsCache() {
-		return segmentsCache;
+	public void invalidateTransform() {
+		translateVertices = null;
+		translateFaces = null;
 	}
 	
 	/**
-	 * Depends on segment cache.
+	 * Translation cache dependent.
 	 */
 	public boolean contains(Vector2f point) {
+		if (translateVertices == null)
+			throw new IllegalStateException("Transform must be cached");
+		
 		int intersections = 0;
-		for (Segment segment : segmentsCache) {
-			if (segment.isVertical()) {
-				if (point.y > segment.getMin() && point.y < segment.getMax())
-					intersections++;
-			} else {
-				float x = segment.xAt(point.y);
-				if (x > segment.getMin() && x < segment.getMax())
-					intersections++;
-			}
+		Segment ray = new Segment(0, point.y, point.x, Float.MAX_VALUE);
+		for (Segment face : translateFaces) {
+			if (face.intersects(ray))
+				intersections++;
 		}
 		return intersections % 2 == 1;
 	}
 	
 	/**
-	 * Depends of segment cache.
-	 * Nullable.
+	 * Translation cache dependent. Nullable.
 	 */
-	public Polygon intersection(Convex other) {
-		// Find a vertex of other that is contained within this
-		int vertexID = 0;
-		while (!contains(other.getVertices()[vertexID]) && vertexID < other.getVertices().length)
-			vertexID++;
-		if (vertexID >= other.getVertices().length)
-			// No intersection case
-			return null;
+	public Convex intersection(Convex other) {
+		if (translateVertices == null)
+			throw new IllegalStateException("Transform must be cached");
 		
-		Convex tracing = other; // The convex we're currently tracing
-		Convex notTracing = this; // The convex we're currently not tracing
-		int startID = vertexID; // The vertex index of other that we started with
-		List<Vector2f> intersectionVertices = new ArrayList<Vector2f>(); // Vertices of intersection polygon
-		
-		do {
-			Segment traceSegment = tracing.getSegmentsCache()[vertexID];
-			for (int i = 0; i < notTracing.getSegmentsCache().length; i++) {
-				
+		List<Vector2f> intersectionVertices = new ArrayList<Vector2f>();
+		// Any intersection between faces will be within the intersection polygon
+		for (Segment thisFace : translateFaces) {
+			for (Segment otherFace : other.translateFaces) {
+				Vector2f intersection = thisFace.intersection(otherFace);
+				if (intersection != null) {
+					System.out.println("adding " + intersection + ", an intersection");
+					intersectionVertices.add(intersection);
+				}
 			}
-		} while (!(vertexID == startID) && tracing == other);
+		}
+		// Any vertex of this contained within other will be within the intersection polygon
+		for (Vector2f vertex : this.translateVertices) {
+			if (other.contains(vertex)) {
+				System.out.println("adding " + vertex + ", contained by other");
+				intersectionVertices.add(vertex);
+			}
+		}
+		// Any vertex of other contained within this will be within the intersection polygon
+		for (Vector2f vertex : other.translateVertices) {
+			if (this.contains(vertex)) {
+				System.out.println("adding " + vertex + ", contained by this");
+				intersectionVertices.add(vertex);
+			}
+		}
+		// Sort
+		Vector2f within = average(intersectionVertices);
+		intersectionVertices.sort(LambdaUtils.compare(
+				vector -> (double) vector.directionRelativeTo(within)
+				));
+		
+		if (intersectionVertices.isEmpty())
+			return null;
+		else
+			return new Convex(intersectionVertices.toArray(new Vector2f[intersectionVertices.size()]));
+	}
+	
+	private static Vector2f average(List<Vector2f> points) {
+		float x = 0;
+		float y = 0;
+		for (Vector2f vertex : points) {
+			x += vertex.x;
+			y += vertex.y;
+		}
+		x /= points.size();
+		y /= points.size();
+		return new Vector2f(x, y);
 	}
 	
 }

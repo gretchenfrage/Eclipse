@@ -17,8 +17,7 @@ public class ReflectionUtils {
 		else
 			return ArrayUtils.concatenate(
 					getAllFields(clazz.getSuperclass()),
-					clazz.getDeclaredFields(),
-					Field.class);
+					clazz.getDeclaredFields());
 	}
 	
 	/**
@@ -30,8 +29,7 @@ public class ReflectionUtils {
 		else
 			return ArrayUtils.concatenate(
 					getAllMethods(clazz.getSuperclass()),
-					clazz.getDeclaredMethods(),
-					Method.class);
+					clazz.getDeclaredMethods());
 	}
 	
 	/**
