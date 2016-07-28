@@ -14,6 +14,10 @@ public class Vector2f {
 		this.y = y;
 	}
 	
+	public Vector2f copy() {
+		return new Vector2f(x, y);
+	}
+	
 	public Vector2f add(Vector2f other) {
 		x += other.x;
 		y += other.y;
@@ -35,6 +39,22 @@ public class Vector2f {
 	public Vector2f divide(float scalar) {
 		x /= scalar;
 		y /= scalar;
+		return this;
+	}
+	
+	public Vector2f rotate(float theta) {
+		float direction = direction();
+		float magnitude = magnitude();
+		direction += theta;
+		x = (float) Math.cos(direction) * magnitude;
+		y = (float) Math.sin(direction) * magnitude;
+		return this;
+	}
+	
+	public Vector2f rotate(float theta, Vector2f around) {
+		subtract(around);
+		rotate(theta);
+		add(around);
 		return this;
 	}
 	
