@@ -32,11 +32,11 @@ public class CollisionTest extends BasicGame {
 	
 	@Override
 	public void init(GameContainer container) throws SlickException {
-		Rigid rigid = new Rigid(new Polygon(
+		Rigid rigid = new Rigid(new Polygon(new Convex(
 				new Vector2f(-1, -1),
 				new Vector2f(1, -1),
 				new Vector2f(0, 1)
-				));
+				)));
 		box.addRigid(rigid);
 		rigid.applyForce(new Vector2f(0.1F, 0), new Vector2f(-8, -8));
 	}

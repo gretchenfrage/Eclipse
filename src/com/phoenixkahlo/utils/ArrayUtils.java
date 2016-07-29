@@ -1,6 +1,7 @@
 package com.phoenixkahlo.utils;
 
 import java.lang.reflect.Array;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class ArrayUtils {
@@ -17,6 +18,14 @@ public class ArrayUtils {
 			out[arr1.length + i] = arr2[i];
 		}
 		return out;
+	}
+	
+	public static boolean contains(Object[] arr, Object obj) {
+		for (Object item : arr) {
+			if (item.equals(obj))
+				return true;
+		}
+		return false;
 	}
 	
 	public static <E> E[] append(E[] arr1, E obj) {
@@ -55,6 +64,41 @@ public class ArrayUtils {
 			copy[i] = arr[i];
 		}
 		return copy;
+	}
+	
+	public static <A, B> B[] map(A[] arr, Function<A, B> function, Class<B> clazz) {
+		@SuppressWarnings("unchecked")
+		B[] out = (B[]) Array.newInstance(clazz, arr.length);
+		for (int i = 0; i < out.length; i++) {
+			out[i] = function.apply(arr[i]);
+		}
+		return out;
+	}
+	
+	public static <E> E greatestProperty(E[] arr, Function<E, Double> property) {
+		E greatestItem = arr[0];
+		double greatestValue = property.apply(arr[0]);
+		for (int i = 1; i < arr.length; i++) {
+			double value = property.apply(arr[i]);
+			if (value > greatestValue) {
+				greatestItem = arr[i];
+				greatestValue = value;
+			}
+		}
+		return greatestItem;
+	}
+	
+	public static <E> E leastProperty(E[] arr, Function<E, Double> property) {
+		E greatestItem = arr[0];
+		double greatestValue = property.apply(arr[0]);
+		for (int i = 1; i < arr.length; i++) {
+			double value = property.apply(arr[i]);
+			if (value < greatestValue) {
+				greatestItem = arr[i];
+				greatestValue = value;
+			}
+		}
+		return greatestItem;
 	}
 	
 }

@@ -14,9 +14,9 @@ public class IntersectionTest extends BasicGame {
 
 	public static void main(String[] args) throws SlickException {
 		AppGameContainer container = new AppGameContainer(new IntersectionTest(), 700, 700, false);
-		container.setShowFPS(false);
-		container.setTargetFrameRate(60);
-		container.setMinimumLogicUpdateInterval(1000 / 60);
+		//container.setShowFPS(false);
+		//container.setTargetFrameRate(60);
+		//container.setMinimumLogicUpdateInterval(1000 / 60);
 		container.start();
 	}
 	
@@ -35,9 +35,14 @@ public class IntersectionTest extends BasicGame {
 	
 	@Override
 	public void init(GameContainer container) throws SlickException {
+		update(container, 0);
+	}
+
+	@Override
+	public void render(GameContainer container, Graphics g) throws SlickException {
 		c1 = new Convex(
 				new Vector2f(1, -1),
-				new Vector2f(1, 1),
+				new Vector2f(5, 1),
 				new Vector2f(0, 2),
 				new Vector2f(-2, 2),
 				new Vector2f(-3, 1),
@@ -49,9 +54,9 @@ public class IntersectionTest extends BasicGame {
 				new Vector2f(-1, -1),
 				new Vector2f(0, -2),
 				new Vector2f(2, -2),
-				new Vector2f(3, -1),
+				new Vector2f(3.5F, -1),
 				new Vector2f(3, 1),
-				new Vector2f(2, 2),
+				new Vector2f(2, 3),
 				new Vector2f(0, 2),
 				new Vector2f(-1, 1)
 				);
@@ -60,10 +65,7 @@ public class IntersectionTest extends BasicGame {
 		c2.cacheTransform(c2Translation, c2Rotation);
 		
 		intersection = c1.intersection(c2);
-	}
-
-	@Override
-	public void render(GameContainer container, Graphics g) throws SlickException {
+		
 		g.translate(container.getWidth() / 2, container.getHeight() / 2);
 		g.scale(30, 30);
 		

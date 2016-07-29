@@ -59,6 +59,20 @@ public class Segment {
 		}
 	}
 	
+	/**
+	 * Constructs a segment that has the slope slope and passes through point.
+	 */
+	public Segment(float slope, Vector2f point, float min, float max) {
+		this.a = slope;
+		this.min = min;
+		this.max = max;
+		if (Float.isNaN(slope)){
+			b = point.x;
+		} else {
+			b = -a * point.x + point.y;
+		}
+	}
+	
 	public float getMin() {
 		return min;
 	}
@@ -92,6 +106,45 @@ public class Segment {
 	
 	public boolean isBelow(Vector2f point) {
 		return point.y < yAt(point.x);
+	}
+	
+	/**
+	 * @return the point on this segment closest to point. 
+	 */
+	public Vector2f closestPointTo(Vector2f point) {
+		if (isVertical()) {
+			if (point.y > max)
+				return new Vector2f(b, max);
+			else if (point.y < min)
+				return new Vector2f(b, min);
+			else
+				return new Vector2f(b, point.y);
+		} else if (a == 0) {
+			if (point.x > max)
+				return new Vector2f(max, b);
+			else if (point.x < min)
+				return new Vector2f(min, b);
+			else
+				return new Vector2f(point.x, b);
+		} else {
+			Segment line = new Segment(a / -1, point, -Float.MAX_VALUE, Float.MAX_VALUE);
+			Vector2f intersection = simpleIntersection(line);
+			if (intersection.x > max) {
+				return new Vector2f(max, yAt(max));
+			} else if (intersection.x < min) {
+				return new Vector2f(min, yAt(min));
+			} else {
+				return intersection;
+			}
+		}
+	}
+	
+	/**
+	 * Ignores limits and assumes neither lines are vertical.
+	 */
+	private Vector2f simpleIntersection(Segment other) {
+		float x = (other.b - b) / (a - other.a);
+		return new Vector2f(x, yAt(x));
 	}
 	
 	/**
@@ -131,8 +184,7 @@ public class Segment {
 				// They're parallel
 				return null;
 			} else {
-				float x = (other.b - b) / (a - other.a);
-				Vector2f intersection = new Vector2f(x, yAt(x));
+				Vector2f intersection = simpleIntersection(other);
 				if (intersection.x < min || intersection.x < other.min || 
 						intersection.x > max || intersection.x > other.max) {
 					// They don't intersect
