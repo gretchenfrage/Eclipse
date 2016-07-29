@@ -1,5 +1,8 @@
 package com.phoenixkahlo.physics;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Polygon {
 
 	private Convex[] convexes;
@@ -15,6 +18,9 @@ public class Polygon {
 		this(new Convex(vertices));
 	}
 	
+	/**
+	 * Please don't modify.
+	 */
 	public Convex[] getConvexes() {
 		return convexes;
 	}
@@ -24,6 +30,24 @@ public class Polygon {
 		for (Convex convex : convexes)
 			sum += convex.area();
 		return sum;
+	}
+	
+	/**
+	 * Nullable.
+	 */
+	public Polygon intersection(Polygon other) {
+		List<Convex> list = new ArrayList<Convex>();
+		for (Convex convex1 : convexes) {
+			for (Convex convex2 : other.getConvexes()) {
+				Convex intersection = convex1.intersection(convex2);
+				if (intersection != null)
+					list.add(intersection);
+			}
+		}
+		if (list.isEmpty())
+			return null;
+		else
+			return new Polygon(list.toArray(new Convex[list.size()]));
 	}
 	
 }

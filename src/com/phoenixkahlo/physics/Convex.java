@@ -20,7 +20,7 @@ public class Convex {
 	public Convex(Vector2f... vertices) {
 		this.vertices = vertices;
 		
-		// Cache slick shape
+		// Slick shape
 		float[] fvertices = new float[vertices.length * 2];
 		for (int i = 0; i < vertices.length; i++) {
 			fvertices[i * 2] = vertices[i].x;
@@ -28,7 +28,7 @@ public class Convex {
 		}
 		slickShape = new Polygon(fvertices);
 		
-		// Cache area
+		// Area
 		area = 0;
 		for (int i = 0; i < vertices.length; i++) {
 			area += vertices[i].x * vertices[(i + 1) % vertices.length].y - 
@@ -45,6 +45,10 @@ public class Convex {
 		return slickShape;
 	}
 	
+	/**
+	 * Caches a transformed version of all vertices and segments which will be used to 
+	 * increase performance for some calculations. 
+	 */
 	public void cacheTransform(Vector2f translation, float rotation) {
 		translateVertices = new Vector2f[vertices.length];
 		for (int i = 0; i < translateVertices.length; i++) {
@@ -57,6 +61,11 @@ public class Convex {
 		}
 	}
 	
+	/**
+	 * Uncaches the transformed version of vertices and segments, causing subsequent calls 
+	 * to methods which depend of that cache to throw IllegalStateExceptions until a 
+	 * further call to cacheTransform. 
+	 */
 	public void invalidateTransform() {
 		translateVertices = null;
 		translateFaces = null;
@@ -69,13 +78,21 @@ public class Convex {
 		if (translateVertices == null)
 			throw new IllegalStateException("Transform must be cached");
 		
-		int intersections = 0;
-		Segment ray = new Segment(0, point.y, point.x, Float.MAX_VALUE);
+		// The random ray direction helps avoid a weird glitch
+		return perimiterIntersections(GeometryFactory.makeRay(
+				point, (float) (Math.random() * Math.PI * 2))) % 2 == 1;
+	}
+	
+	/**
+	 * Translation cache dependent.
+	 */
+	private int perimiterIntersections(Segment segment) {
+		int count = 0;
 		for (Segment face : translateFaces) {
-			if (face.intersects(ray))
-				intersections++;
+			if (face.intersects(segment))
+				count++;
 		}
-		return intersections % 2 == 1;
+		return count;
 	}
 	
 	/**
@@ -91,7 +108,6 @@ public class Convex {
 			for (Segment otherFace : other.translateFaces) {
 				Vector2f intersection = thisFace.intersection(otherFace);
 				if (intersection != null) {
-					System.out.println("adding " + intersection + ", an intersection");
 					intersectionVertices.add(intersection);
 				}
 			}
@@ -99,14 +115,12 @@ public class Convex {
 		// Any vertex of this contained within other will be within the intersection polygon
 		for (Vector2f vertex : this.translateVertices) {
 			if (other.contains(vertex)) {
-				System.out.println("adding " + vertex + ", contained by other");
 				intersectionVertices.add(vertex);
 			}
 		}
 		// Any vertex of other contained within this will be within the intersection polygon
 		for (Vector2f vertex : other.translateVertices) {
 			if (this.contains(vertex)) {
-				System.out.println("adding " + vertex + ", contained by this");
 				intersectionVertices.add(vertex);
 			}
 		}

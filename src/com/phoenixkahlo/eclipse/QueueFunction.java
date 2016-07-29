@@ -26,7 +26,7 @@ public class QueueFunction<E> implements Function {
 	
 	@Override
 	public void invoke(Object... args) throws ProtocolViolationException {
-		args = ArrayUtils.concatenate(extraArgs, args, Object.class);
+		args = ArrayUtils.concatenate(extraArgs, args);
 		Consumer<E> event = null; 
 		try {
 			event = constructor.newInstance(args);

@@ -24,11 +24,11 @@ public class IntersectionTest extends BasicGame {
 		super("Physics Test");
 	}
 	
-	private Vector2f c1Translation = new Vector2f(0, 0);
-	private float c1Rotation = 0;
+	private Vector2f c1Translation = new Vector2f(0.5F, 0.5F);
+	private float c1Rotation = 1;
 	private Convex c1;
-	private Vector2f c2Translation = new Vector2f(0, 0);
-	private float c2Rotation = 0;
+	private Vector2f c2Translation = new Vector2f(0, 0.3F);
+	private float c2Rotation = 7;
 	private Convex c2;
 	
 	private Convex intersection;
@@ -69,16 +69,16 @@ public class IntersectionTest extends BasicGame {
 		
 		g.setColor(Color.red);
 		g.translate(c1Translation.x, c1Translation.y);
-		g.rotate(0, 0, c1Rotation);
+		g.rotate(0, 0, (float) Math.toDegrees(c1Rotation));
 		g.fill(c1.toSlickShape());
-		g.rotate(0, 0, -c1Rotation);
+		g.rotate(0, 0, -(float) Math.toDegrees(c1Rotation));
 		g.translate(-c1Translation.x, -c1Translation.y);
 		
 		g.setColor(Color.green);
 		g.translate(c2Translation.x, c2Translation.y);
-		g.rotate(0, 0, c2Rotation);
+		g.rotate(0, 0, (float) Math.toDegrees(c2Rotation));
 		g.fill(c2.toSlickShape());
-		g.rotate(0, 0, -c2Rotation);
+		g.rotate(0, 0, -(float) Math.toDegrees(c2Rotation));
 		g.translate(-c2Translation.x, -c2Translation.y);
 		
 		g.setColor(Color.magenta);

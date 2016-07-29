@@ -27,6 +27,8 @@ public class PhysicsBox {
 			rigid.translate(rigid.getVelocity());
 			rigid.changeAngle(rigid.getAngularVelocity());
 		}
+		
+		
 	}
 	
 }
