@@ -98,4 +98,24 @@ public class Vector2f {
 		return "(" + x + ", " + y + ")";
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Vector2f) {
+			Vector2f vector = (Vector2f) obj;
+			return vector.x == this.x && vector.y == this.y;
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		int result = 17;
+		result *= 23;
+		result += Float.floatToIntBits(x);
+		result *= 23;
+		result += Float.floatToIntBits(y);
+		return result;
+	}
+	
 }

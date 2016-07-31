@@ -9,20 +9,22 @@ import org.newdawn.slick.geom.Shape;
 
 import com.phoenixkahlo.utils.ArrayUtils;
 import com.phoenixkahlo.utils.LambdaUtils;
+import com.phoenixkahlo.utils.MathUtils;
 
 public class Convex {
 
 	private Vector2f[] vertices;
 	private Shape slickShape;
 	private float area;
+	private float maxRadius;
+	private Vector2f translation;
 	
 	private Vector2f[] transformVertices;
 	private Segment[] transformFaces;
 	
 	public Convex(Vector2f... vertices) {
 		this.vertices = vertices;
-		cacheSlickShape();
-		cacheArea();
+		cacheData();
 	}
 	
 	public Convex(float... vertices) {
@@ -32,26 +34,34 @@ public class Convex {
 		for (int i = 0; i < vertices.length / 2; i++) {
 			this.vertices[i] = new Vector2f(vertices[i * 2], vertices[i * 2 + 1]);
 		}
-		cacheSlickShape();
-		cacheArea();
+		cacheData();
 	}
 	
-	private void cacheSlickShape() {
+	private void cacheData() {
+		// Slick shape
 		float[] fvertices = new float[vertices.length * 2];
 		for (int i = 0; i < vertices.length; i++) {
 			fvertices[i * 2] = vertices[i].x;
 			fvertices[i * 2 + 1] = vertices[i].y;
 		}
 		slickShape = new Polygon(fvertices);
-	}
-	
-	private void cacheArea() {
+		// Area
 		area = 0;
 		for (int i = 0; i < vertices.length; i++) {
 			area += vertices[i].x * vertices[(i + 1) % vertices.length].y - 
 					vertices[i].y * vertices[(i + 1) % vertices.length].x;
 		}
 		area /= 2;
+		
+		// Max radius
+		maxRadius = MathUtils.max(vertices, Vector2f::magnitude);
+	}
+	
+	/**
+	 * Untransformed. Please don't modify.
+	 */
+	public Vector2f[] getVertices() {
+		return vertices;
 	}
 	
 	public float area() {
@@ -67,6 +77,8 @@ public class Convex {
 	 * increase performance for some calculations. 
 	 */
 	public void cacheTransform(Vector2f translation, float rotation) {
+		this.translation = translation;
+		
 		transformVertices = new Vector2f[vertices.length];
 		for (int i = 0; i < transformVertices.length; i++) {
 			transformVertices[i] = vertices[i].copy().rotate(rotation).add(translation);
@@ -113,6 +125,10 @@ public class Convex {
 	 * Translation cache dependent. Nullable.
 	 */
 	public Convex intersection(Convex other) {
+		// Quickly return null if no possibility of intersection.
+		if (translation.distance(other.translation) > maxRadius + other.maxRadius)
+			return null;
+		
 		List<Vector2f> intersectionVertices = new ArrayList<Vector2f>();
 		// Any intersection between faces will be within the intersection polygon
 		for (Segment thisFace : transformFaces) {
@@ -174,8 +190,11 @@ public class Convex {
 		return ArrayUtils.contains(vertices, vertex);
 	}
 	
+	/**
+	 * Translation cache dependent
+	 */
 	public Vector2f closestPerimiterPointTo(Vector2f point) {
-		return ArrayUtils.leastProperty(ArrayUtils.map(transformFaces, 
+		return ArrayUtils.minProperty(ArrayUtils.map(transformFaces, 
 				segment -> segment.closestPointTo(point), Vector2f.class), 
 				item -> (double) item.distance(point));
 	}

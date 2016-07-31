@@ -75,7 +75,7 @@ public class ArrayUtils {
 		return out;
 	}
 	
-	public static <E> E greatestProperty(E[] arr, Function<E, Double> property) {
+	public static <E> E maxProperty(E[] arr, Function<E, Double> property) {
 		E greatestItem = arr[0];
 		double greatestValue = property.apply(arr[0]);
 		for (int i = 1; i < arr.length; i++) {
@@ -88,7 +88,7 @@ public class ArrayUtils {
 		return greatestItem;
 	}
 	
-	public static <E> E leastProperty(E[] arr, Function<E, Double> property) {
+	public static <E> E minProperty(E[] arr, Function<E, Double> property) {
 		E greatestItem = arr[0];
 		double greatestValue = property.apply(arr[0]);
 		for (int i = 1; i < arr.length; i++) {
