@@ -17,7 +17,7 @@ public class Polygon {
 	
 	private Segment[] transformFaces;
 	
-	public Polygon(Vector2f[] perimiter, Convex... convexes) {
+	private Polygon(Vector2f[] perimiter, Convex... convexes) {
 		this.convexes = convexes;
 		this.perimiter = perimiter;
 		
@@ -29,40 +29,45 @@ public class Polygon {
 		
 		// Find perimiter
 		List<Vector2f> perimiter = new ArrayList<Vector2f>();
-		Vector2f start = furthestVertex(convexes); // The vertex the perimiter started with
-		/*
-		 *  The direction of current relative to latest should have the minimum positive 
-		 *  difference with idealDirection.
-		 */
-		float idealDirection = start.direction();
-		Vector2f latest = start;
+		Vector2f start = furthestVertex(convexes);
+		Vector2f last = start;
+		Vector2f current = nextPerimiterVertex(start.direction(), start, convexes);
+		perimiter.add(current);
 		do {
-			Set<Vector2f> connectedSet = connectedVertices(latest, convexes);
-			float minimumPositiveDifference = Float.MAX_VALUE;
-			Vector2f bestFoundVertex = null;
-			for (Vector2f vertex : connectedSet) {
-				float relativeDirection = vertex.directionRelativeTo(latest);
-				float positiveDifference = MathUtils.positiveDifference(idealDirection, relativeDirection);
-				if (positiveDifference < minimumPositiveDifference) {
-					minimumPositiveDifference = positiveDifference;
-					bestFoundVertex = vertex;
-				}
-			}
-			
-			perimiter.add(bestFoundVertex);
-			idealDirection = latest.directionRelativeTo(bestFoundVertex);
-			latest = bestFoundVertex;
-		} while (!start.equals(latest));
+			Vector2f next = nextPerimiterVertex(last, current, convexes);
+			perimiter.add(next);
+			last = current;
+			current = next;
+		} while (!current.equals(start));
 		this.perimiter = perimiter.toArray(new Vector2f[perimiter.size()]);
 		
 		cacheData();
 	}
 	
-	public static Vector2f nextPerimiterVertex(Vector2f last, Vector2f current) {
-		return null;
+	/**
+	 * Traces in direction of positive theta.
+	 */
+	private static Vector2f nextPerimiterVertex(float targetTheta, Vector2f current, Convex[] convexes) {
+		float minDifference = Float.MAX_VALUE;
+		Vector2f bestVertex = null;
+		for (Vector2f vertex : connectedVertices(current, convexes)) {
+			float difference = MathUtils.positiveDifference(vertex.directionRelativeTo(current), targetTheta);
+			if (difference < minDifference && difference > 0) {
+				minDifference = difference;
+				bestVertex = vertex;
+			}
+		}
+		return bestVertex;
 	}
 	
-	public static Set<Vector2f> connectedVertices(Vector2f start, Convex[] convexes) {
+	/**
+	 * Traces in direction of positive theta.
+	 */
+	private static Vector2f nextPerimiterVertex(Vector2f last, Vector2f current, Convex[] convexes) {
+		return nextPerimiterVertex(last.directionRelativeTo(current), current, convexes);
+	}
+	
+	private static Set<Vector2f> connectedVertices(Vector2f start, Convex[] convexes) {
 		Set<Vector2f> out = new HashSet<Vector2f>();
 		for (Convex convex : convexes) {
 			Vector2f[] vertices = convex.getVertices();
@@ -76,7 +81,7 @@ public class Polygon {
 		return out;
 	}
 	
-	public static Vector2f furthestVertex(Convex[] convexes) {
+	private static Vector2f furthestVertex(Convex[] convexes) {
 		Vector2f furthest = null;
 		float maxMagnitude = -Float.MAX_VALUE;
 		for (Convex convex : convexes) {

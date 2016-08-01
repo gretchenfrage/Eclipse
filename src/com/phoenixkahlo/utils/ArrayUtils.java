@@ -101,4 +101,32 @@ public class ArrayUtils {
 		return greatestItem;
 	}
 	
+	public static <E> E maxProperty(Function<Integer, E> getter, Function<E, Double> property, int length) {
+		E greatestItem = getter.apply(0);
+		double greatestValue = property.apply(greatestItem);
+		for (int i = 1; i < length; i++) {
+			E item = getter.apply(i);
+			double value = property.apply(item);
+			if (value > greatestValue) {
+				greatestItem = item;
+				greatestValue = value;
+			}
+		}
+		return greatestItem;
+	}
+	
+	public static <E> E minProperty(Function<Integer, E> getter, Function<E, Double> property, int length) {
+		E greatestItem = getter.apply(0);
+		double greatestValue = property.apply(greatestItem);
+		for (int i = 1; i < length; i++) {
+			E item = getter.apply(i);
+			double value = property.apply(item);
+			if (value < greatestValue) {
+				greatestItem = item;
+				greatestValue = value;
+			}
+		}
+		return greatestItem;
+	}
+	
 }

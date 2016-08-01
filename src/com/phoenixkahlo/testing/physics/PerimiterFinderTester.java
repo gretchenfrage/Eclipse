@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 import com.phoenixkahlo.physics.Convex;
 import com.phoenixkahlo.physics.Polygon;
-import com.phoenixkahlo.physics.Vector2f;
 
 public class PerimiterFinderTester {
 
@@ -30,9 +29,6 @@ public class PerimiterFinderTester {
 				);
 		Polygon poly = new Polygon(c1, c2, c3);
 		System.out.println(Arrays.toString(poly.getPerimiter()));
-
-		Convex[] convexes = {c1, c2, c3};
-		System.out.println(Polygon.connectedVertices(new Vector2f(3, 4), convexes));
 	}
 	
 }

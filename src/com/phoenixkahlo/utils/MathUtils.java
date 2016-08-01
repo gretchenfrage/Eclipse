@@ -15,8 +15,11 @@ public class MathUtils {
 		return n > 0 ? n - n % multiple : n - multiple - n % multiple;
 	}
 	
+	/**
+	 * @return the shortest positive angle theta1 - theta2.
+	 */
 	public static float positiveDifference(float theta1, float theta2) {
-		float difference = (theta2 - theta1) % PI_F * 2;
+		float difference = (theta1 - theta2) % (PI_F * 2);
 		if (difference >= 0)
 			return difference;
 		else
