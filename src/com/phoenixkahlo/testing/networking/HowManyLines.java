@@ -9,7 +9,7 @@ public class HowManyLines {
 	public static void main(String[] args) throws Exception {
 		//System.out.println(lines(new File("C:\\Users\\Phoenix\\Desktop\\Java\\Eclipse\\src")));
 		//System.out.println(lines(new File("/Users/Phoenix/Desktop/Java/Eclipse/src")));
-		System.out.println(lines(new File("/home/phoenix/Desktop/Java/Eclipse/src")));
+		//System.out.println(lines(new File("/home/phoenix/Desktop/Java/Eclipse/src")));
 	}
 	
 	public static int lines(File file) {

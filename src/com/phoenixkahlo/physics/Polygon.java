@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.phoenixkahlo.utils.ArrayUtils;
 import com.phoenixkahlo.utils.MathUtils;
 
 public class Polygon {
@@ -179,6 +180,15 @@ public class Polygon {
 			return null;
 		else
 			return new Polygon(list.toArray(new Convex[list.size()]));
+	}
+	
+	/**
+	 * Translation cache dependent
+	 */
+	public Vector2f closestPerimiterPointTo(Vector2f point) {
+		return ArrayUtils.minProperty(ArrayUtils.map(transformFaces, 
+				segment -> segment.closestPointTo(point), Vector2f.class), 
+				item -> (double) item.distance(point));
 	}
 	
 }
