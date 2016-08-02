@@ -130,6 +130,28 @@ public class Polygon {
 	}
 	
 	/**
+	 * Translation cache dependent.
+	 */
+	public Vector2f centroid() {
+		return GeometryUtils.average(ArrayUtils.map(convexes, Convex::centroid, Vector2f.class));
+	}
+	
+	/**
+	 * Caches a lack of transformation.
+	 */
+	public void cacheNoTransform() {
+		this.translation = new Vector2f(0, 0);
+		
+		for (Convex convex : convexes)
+			convex.cacheNoTransform();
+		transformFaces = new Segment[perimiter.length];
+		for (int i = 0; i < transformFaces.length; i++) {
+			transformFaces[i] = new Segment(perimiter[i], 
+					perimiter[(i + 1) % perimiter.length]);
+		}
+	}
+	
+	/**
 	 * Caches a transformed version of all vertices and segments which will be used to 
 	 * increase performance for some calculations. 
 	 */

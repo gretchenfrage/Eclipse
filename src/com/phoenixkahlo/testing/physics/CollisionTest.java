@@ -32,13 +32,23 @@ public class CollisionTest extends BasicGame {
 	
 	@Override
 	public void init(GameContainer container) throws SlickException {
-		Rigid rigid = new Rigid(new Polygon(new Convex(
+		Rigid r1 = new Rigid(new Polygon(new Convex(
 				new Vector2f(-1, -1),
 				new Vector2f(1, -1),
 				new Vector2f(0, 1)
 				)));
-		box.addRigid(rigid);
-		rigid.applyForce(new Vector2f(0.1F, 0), new Vector2f(-8, -8));
+		box.addRigid(r1);
+		r1.applyForce(new Vector2f(0.1F, 0), new Vector2f(-8, -8));
+		r1.setLocation(new Vector2f(-10, 0));
+		
+		Rigid r2 = new Rigid(new Polygon(new Convex(
+				new Vector2f(-1, -1),
+				new Vector2f(1, -1),
+				new Vector2f(0, 1)
+				)));
+		box.addRigid(r2);
+		r2.applyForce(new Vector2f(-0.1F, 0));
+		r2.setLocation(new Vector2f(10, 0));
 	}
 
 	@Override
@@ -52,7 +62,7 @@ public class CollisionTest extends BasicGame {
 			for (Convex convex : rigid.getShape().getConvexes()) {
 				g.fill(convex.toSlickShape());
 			}
-			g.rotate(0, 0, rigid.getAngle());
+			g.rotate(0, 0, -rigid.getAngle());
 			g.translate(-rigid.getLocation().x, -rigid.getLocation().y);
 		}
 	}

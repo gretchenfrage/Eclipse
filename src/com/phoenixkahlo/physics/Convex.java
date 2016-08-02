@@ -1,7 +1,6 @@
 package com.phoenixkahlo.physics;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.newdawn.slick.geom.Polygon;
@@ -73,6 +72,20 @@ public class Convex {
 	}
 	
 	/**
+	 * Caches a lack of transformation.
+	 */
+	public void cacheNoTransform() {
+		this.translation = new Vector2f(0, 0);
+		
+		transformVertices = vertices;
+		transformFaces = new Segment[vertices.length];
+		for (int i = 0; i < transformFaces.length; i++) {
+			transformFaces[i] = new Segment(transformVertices[i], 
+					transformVertices[(i + 1) % transformVertices.length]);
+		}
+	}
+	
+	/**
 	 * Caches a transformed version of all vertices and segments which will be used to 
 	 * increase performance for some calculations. 
 	 */
@@ -81,7 +94,7 @@ public class Convex {
 		
 		transformVertices = new Vector2f[vertices.length];
 		for (int i = 0; i < transformVertices.length; i++) {
-			transformVertices[i] = vertices[i].copy().rotate(rotation).add(translation);
+			transformVertices[i] = vertices[i].rotate(rotation).add(translation);
 		}
 		transformFaces = new Segment[vertices.length];
 		for (int i = 0; i < transformFaces.length; i++) {
@@ -152,7 +165,7 @@ public class Convex {
 			}
 		}
 		// Sort
-		Vector2f within = average(intersectionVertices);
+		Vector2f within = GeometryUtils.average(intersectionVertices);
 		intersectionVertices.sort(LambdaUtils.compare(
 				vector -> (double) vector.directionRelativeTo(within)
 				));
@@ -176,14 +189,14 @@ public class Convex {
 					connector
 					).centroid();
 		}
-		return average(subCentroids);
+		return GeometryUtils.average(subCentroids);
 	}
 	
 	/**
 	 * Translation cache dependent
 	 */
 	public Vector2f vertexAverage() {
-		return average(transformVertices);
+		return GeometryUtils.average(transformVertices);
 	}
 
 	public boolean containsVertex(Vector2f vertex) {
@@ -197,22 +210,6 @@ public class Convex {
 		return ArrayUtils.minProperty(ArrayUtils.map(transformFaces, 
 				segment -> segment.closestPointTo(point), Vector2f.class), 
 				item -> (double) item.distance(point));
-	}
-	
-	private static Vector2f average(Vector2f[] points) {
-		return average(Arrays.asList(points));
-	}
-	
-	private static Vector2f average(List<Vector2f> points) {
-		float x = 0;
-		float y = 0;
-		for (Vector2f vertex : points) {
-			x += vertex.x;
-			y += vertex.y;
-		}
-		x /= points.size();
-		y /= points.size();
-		return new Vector2f(x, y);
 	}
 	
 }
