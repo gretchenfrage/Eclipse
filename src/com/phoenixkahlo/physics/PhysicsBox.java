@@ -45,7 +45,6 @@ public class PhysicsBox {
 				
 				Polygon intersection = p1.intersection(p2);
 				if (intersection != null) {
-					System.out.println("detected intersection: " + intersection);
 					intersection.cacheNoTransform();
 					float area = intersection.area();
 					Vector2f centroid = intersection.centroid();

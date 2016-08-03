@@ -23,10 +23,11 @@ public class Rigid {
 	}
 	
 	public void applyForce(Vector2f force) {
-		velocity.add(force);
+		velocity.add(force.divide(mass));
 	}
 	
 	public void applyTorque(float torque) {
+		//TODO: integrate moment of rotation
 		angularVelocity += torque;
 	}
 

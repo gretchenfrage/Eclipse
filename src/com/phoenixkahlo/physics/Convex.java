@@ -94,7 +94,7 @@ public class Convex {
 		
 		transformVertices = new Vector2f[vertices.length];
 		for (int i = 0; i < transformVertices.length; i++) {
-			transformVertices[i] = vertices[i].rotate(rotation).add(translation);
+			transformVertices[i] = vertices[i].copy().rotate(rotation).add(translation);
 		}
 		transformFaces = new Segment[vertices.length];
 		for (int i = 0; i < transformFaces.length; i++) {
