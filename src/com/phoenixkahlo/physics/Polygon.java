@@ -1,6 +1,7 @@
 package com.phoenixkahlo.physics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -58,7 +59,10 @@ public class Polygon {
 				bestVertex = vertex;
 			}
 		}
-		return bestVertex;
+		if (bestVertex == null)
+			throw new RuntimeException("Perimiter tracing failure");
+		else
+			return bestVertex;
 	}
 	
 	/**
@@ -94,7 +98,10 @@ public class Polygon {
 				}
 			}
 		}
-		return furthest;
+		if (furthest == null)
+			throw new RuntimeException("Furthest vertex detection failure: " + Arrays.toString(convexes));
+		else
+			return furthest;
 	}
 	
 	private void cacheData() {

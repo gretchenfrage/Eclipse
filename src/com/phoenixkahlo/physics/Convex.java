@@ -1,6 +1,7 @@
 package com.phoenixkahlo.physics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.newdawn.slick.geom.Polygon;
@@ -169,7 +170,7 @@ public class Convex {
 		intersectionVertices.sort(LambdaUtils.compare(
 				vector -> (double) vector.directionRelativeTo(within)
 				));
-		
+				
 		if (intersectionVertices.isEmpty())
 			return null;
 		else

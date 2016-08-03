@@ -117,5 +117,10 @@ public class Vector2f {
 		result += Float.floatToIntBits(y);
 		return result;
 	}
+
+	public Vector2f opposite() {
+		multiply(-1);
+		return this;
+	}
 	
 }

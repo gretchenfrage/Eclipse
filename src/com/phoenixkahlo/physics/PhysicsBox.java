@@ -29,7 +29,7 @@ public class PhysicsBox {
 		// Movement
 		for (Rigid rigid : rigids) {
 			rigid.translate(rigid.getVelocity());
-			rigid.changeAngle(rigid.getAngularVelocity());
+			rigid.changeRotation(rigid.getAngularVelocity());
 		}
 		
 		// Collision
@@ -46,8 +46,13 @@ public class PhysicsBox {
 				Polygon intersection = p1.intersection(p2);
 				if (intersection != null) {
 					intersection.cacheNoTransform();
-					float area = intersection.area();
 					Vector2f centroid = intersection.centroid();
+					r1.applyForce(r2.getVelocity().multiply(r2.getMass()), centroid);
+					r1.applyForce(r1.getVelocity().multiply(r1.getMass()).opposite(), centroid);
+					r2.applyForce(r1.getVelocity().multiply(r1.getMass()), centroid);
+					r2.applyForce(r2.getVelocity().multiply(r2.getMass()).opposite(), centroid);
+					/*
+					float area = intersection.area();
 					Vector2f p1closest = p1.closestPerimiterPointTo(centroid);
 					Vector2f p2closest = p2.closestPerimiterPointTo(centroid);
 					Vector2f force1 = p1closest.subtract(centroid).multiply(area);
@@ -56,6 +61,7 @@ public class PhysicsBox {
 					r2.applyForce(force2, centroid);
 					r1.applyForce(force2.multiply(-1), centroid);
 					r2.applyForce(force1.multiply(-1), centroid);
+					*/
 				}
 			}
 			

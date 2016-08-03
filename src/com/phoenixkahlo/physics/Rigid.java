@@ -7,7 +7,7 @@ public class Rigid {
 	private Vector2f velocity;
 	private float angularVelocity;
 	private Vector2f location;
-	private float angle;
+	private float rotation;
 	
 	public Rigid(Polygon shape) {
 		this.shape = shape;
@@ -16,9 +16,19 @@ public class Rigid {
 		mass = shape.area();
 	}
 	
+	/**
+	 * @param force unmutated.
+	 * @param location unmutated.
+	 */
 	public void applyForce(Vector2f force, Vector2f location) {
-		applyTorque(force.magnitude() * worldToLocal(location).magnitude() * 
-				(float) Math.sin(force.shortestAngle(worldToLocal(location))));
+		if (force.x == 0 && force.y == 0)
+			return;
+		worldToLocal(location);
+		if (!(location.x == 0 && location.y == 0)) {
+			float torque = force.magnitude() * location.magnitude() * 
+					(float) Math.sin(force.shortestAngle(location));
+			applyTorque(torque);
+		}
 		applyForce(force);
 	}
 	
@@ -31,10 +41,16 @@ public class Rigid {
 		angularVelocity += torque;
 	}
 
+	/**
+	 * Mutates.
+	 */
 	public Vector2f localToWorld(Vector2f local) {
 		return local.add(location);
 	}
 	
+	/**
+	 * Mutates.
+	 */
 	public Vector2f worldToLocal(Vector2f world) {
 		return world.subtract(location);
 	}
@@ -43,8 +59,8 @@ public class Rigid {
 		location.add(translation);
 	}
 	
-	public void changeAngle(float theta) {
-		angle += theta;
+	public void changeRotation(float theta) {
+		rotation += theta;
 	}
 	
 	public Vector2f getVelocity() {
@@ -60,7 +76,7 @@ public class Rigid {
 	}
 
 	public float getRotation() {
-		return angle;
+		return rotation;
 	}
 
 	public void setVelocity(Vector2f velocity) {
@@ -75,8 +91,8 @@ public class Rigid {
 		this.location = location;
 	}
 
-	public void setAngle(float angle) {
-		this.angle = angle;
+	public void setRotation(float rotation) {
+		this.rotation = rotation;
 	}
 
 	public float getMass() {
