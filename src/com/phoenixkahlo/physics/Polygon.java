@@ -213,4 +213,17 @@ public class Polygon {
 				item -> (double) item.distance(point));
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("polygon[");
+		for (int i = 0; i < convexes.length; i++) {
+			builder.append(convexes[i]);
+			if (i < convexes.length - 1)
+				builder.append(", ");
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+	
 }

@@ -3,7 +3,9 @@ package com.phoenixkahlo.physics;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * A physics sandbox. Holds a list of rigids and handles updating them.
+ */
 public class PhysicsBox {
 
 	private List<Rigid> rigids = new ArrayList<Rigid>();
@@ -32,13 +34,15 @@ public class PhysicsBox {
 		
 		// Collision
 		for (int a = 0; a < rigids.size(); a++) {
+			Rigid r1 = rigids.get(a);
+			Polygon p1 = r1.getShape();
+			p1.cacheTransform(r1.getLocation(), r1.getRotation());
+			
 			for (int b = a + 1; b < rigids.size(); b++) {
-				Rigid r1 = rigids.get(a);
 				Rigid r2 = rigids.get(b);
-				Polygon p1 = r1.getShape();
 				Polygon p2 = r2.getShape();
-				p1.cacheTransform(r1.getLocation(), r1.getAngle());
-				p2.cacheTransform(r2.getLocation(), r2.getAngle());
+				p2.cacheTransform(r2.getLocation(), r2.getRotation());
+				
 				Polygon intersection = p1.intersection(p2);
 				if (intersection != null) {
 					System.out.println("detected intersection: " + intersection);
@@ -55,6 +59,8 @@ public class PhysicsBox {
 					r2.applyForce(force1.multiply(-1), centroid);
 				}
 			}
+			
+			p1.invalidateTransform();
 		}
 	}
 	

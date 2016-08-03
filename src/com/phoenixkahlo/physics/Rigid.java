@@ -58,7 +58,7 @@ public class Rigid {
 		return location;
 	}
 
-	public float getAngle() {
+	public float getRotation() {
 		return angle;
 	}
 

@@ -212,4 +212,17 @@ public class Convex {
 				item -> (double) item.distance(point));
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("convex[");
+		for (int i = 0; i < vertices.length; i++) {
+			builder.append(vertices[i]);
+			if (i < vertices.length - 1)
+				builder.append(", ");
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+	
 }
