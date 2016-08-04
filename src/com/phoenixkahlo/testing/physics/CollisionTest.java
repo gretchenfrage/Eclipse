@@ -18,8 +18,8 @@ public class CollisionTest extends BasicGame {
 
 	public static void main(String[] args) throws SlickException {
 		AppGameContainer container = new AppGameContainer(new CollisionTest(), 700, 700, false);
-		container.setShowFPS(false);
-		container.setTargetFrameRate(60);
+		//container.setShowFPS(false);
+		//container.setTargetFrameRate(60);
 		container.setMinimumLogicUpdateInterval(1000 / 60);
 		container.start();
 	}
