@@ -140,6 +140,8 @@ public class Polygon {
 	 * Translation cache dependent.
 	 */
 	public Vector2f centroid() {
+		assert transformCached();
+		
 		return GeometryUtils.average(ArrayUtils.map(convexes, Convex::centroid, Vector2f.class));
 	}
 	
@@ -189,10 +191,16 @@ public class Polygon {
 		transformFaces = null;
 	}
 	
+	public boolean transformCached() {
+		return transformFaces != null;
+	}
+	
 	/**
 	 * Translation cache dependent. Nullable.
 	 */
 	public Polygon intersection(Polygon other) {
+		assert transformCached();
+		
 		// Return null if no possibility of intersection
 		if (translation.distance(other.translation) > maxRadius + other.maxRadius)
 			return null;
@@ -215,6 +223,8 @@ public class Polygon {
 	 * Translation cache dependent
 	 */
 	public Vector2f closestPerimiterPointTo(Vector2f point) {
+		assert transformCached();
+		
 		return ArrayUtils.minProperty(ArrayUtils.map(transformFaces, 
 				segment -> segment.closestPointTo(point), Vector2f.class), 
 				item -> (double) item.distance(point));

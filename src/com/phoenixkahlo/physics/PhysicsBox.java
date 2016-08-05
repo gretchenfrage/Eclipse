@@ -7,7 +7,7 @@ import java.util.List;
  * A physics sandbox. Holds a list of rigids and handles updating them.
  */
 public class PhysicsBox {
-
+	
 	private List<Rigid> rigids = new ArrayList<Rigid>();
 	
 	public void addRigid(Rigid rigid) {
@@ -51,17 +51,6 @@ public class PhysicsBox {
 					r1.applyForce(r1.getVelocity().multiply(r1.getMass()).opposite(), centroid);
 					r2.applyForce(r1.getVelocity().multiply(r1.getMass()), centroid);
 					r2.applyForce(r2.getVelocity().multiply(r2.getMass()).opposite(), centroid);
-					/*
-					float area = intersection.area();
-					Vector2f p1closest = p1.closestPerimiterPointTo(centroid);
-					Vector2f p2closest = p2.closestPerimiterPointTo(centroid);
-					Vector2f force1 = p1closest.subtract(centroid).multiply(area);
-					Vector2f force2 = p2closest.subtract(centroid).multiply(area);
-					r1.applyForce(force1, centroid);
-					r2.applyForce(force2, centroid);
-					r1.applyForce(force2.multiply(-1), centroid);
-					r2.applyForce(force1.multiply(-1), centroid);
-					*/
 				}
 			}
 			

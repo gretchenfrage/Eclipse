@@ -15,7 +15,15 @@ public class Triangle {
 	public Vector2f centroid() {
 		Segment s1 = new Segment(p1, midPoint(p2, p3));
 		Segment s2 = new Segment(p3, midPoint(p1, p2));
-		return s1.intersection(s2);
+		Vector2f centroid = s1.intersection(s2);
+		if (centroid != null)
+			return centroid;
+		else
+			return p1; // Intersection may be null if points are extremely close to each other
+	}
+	
+	public float area() {
+		return (p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y)) / 2;
 	}
 	
 	private static Vector2f midPoint(Vector2f p1, Vector2f p2) {

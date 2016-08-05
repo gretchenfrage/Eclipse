@@ -64,7 +64,7 @@ public class Rigid {
 	}
 	
 	public Vector2f getVelocity() {
-		return velocity;
+		return velocity.copy();
 	}
 
 	public float getAngularVelocity() {

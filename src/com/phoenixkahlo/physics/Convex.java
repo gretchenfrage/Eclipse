@@ -1,7 +1,6 @@
 package com.phoenixkahlo.physics;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.newdawn.slick.geom.Polygon;
@@ -52,6 +51,8 @@ public class Convex {
 					vertices[i].y * vertices[(i + 1) % vertices.length].x;
 		}
 		area /= 2;
+		if (area < 0) // The formula sometimes produces negative but otherwise correct area?
+			area *= -1;
 		
 		// Max radius
 		maxRadius = MathUtils.max(vertices, Vector2f::magnitude);
@@ -114,10 +115,16 @@ public class Convex {
 		transformFaces = null;
 	}
 	
+	public boolean transformCached() {
+		return transformVertices != null;
+	}
+	
 	/**
 	 * Translation cache dependent.
 	 */
 	public boolean contains(Vector2f point) {
+		assert transformCached();
+		
 		// The random ray direction helps avoid a weird glitch
 		return perimiterIntersections(GeometryFactory.makeRay(
 				point, (float) (Math.random() * Math.PI * 2))) % 2 == 1;
@@ -127,6 +134,8 @@ public class Convex {
 	 * Translation cache dependent.
 	 */
 	private int perimiterIntersections(Segment segment) {
+		assert transformCached();
+		
 		int count = 0;
 		for (Segment face : transformFaces) {
 			if (face.intersects(segment))
@@ -139,6 +148,8 @@ public class Convex {
 	 * Translation cache dependent. Nullable.
 	 */
 	public Convex intersection(Convex other) {
+		assert transformCached();
+		
 		// Quickly return null if no possibility of intersection.
 		if (translation.distance(other.translation) > maxRadius + other.maxRadius)
 			return null;
@@ -181,6 +192,8 @@ public class Convex {
 	 * Translation cache dependent.
 	 */
 	public Vector2f centroid() {
+		assert transformCached();
+		
 		Vector2f connector = vertexAverage();
 		Vector2f[] subCentroids = new Vector2f[vertices.length];
 		for (int i = 0; i < vertices.length; i++) {
@@ -194,9 +207,28 @@ public class Convex {
 	}
 	
 	/**
+	 * Translation cache dependent.
+	 */
+	public Triangle[] triangularize() {
+		assert transformCached();
+		
+		Vector2f connector = vertexAverage();
+		Triangle[] triangles = new Triangle[vertices.length];
+		for (int i = 0; i < vertices.length; i++) {
+			triangles[i] = new Triangle(
+					transformVertices[i],
+					transformVertices[(i + 1) % vertices.length],
+					connector);
+		}
+		return triangles;
+	}
+	
+	/**
 	 * Translation cache dependent
 	 */
 	public Vector2f vertexAverage() {
+		assert transformCached();
+		
 		return GeometryUtils.average(transformVertices);
 	}
 
@@ -208,6 +240,8 @@ public class Convex {
 	 * Translation cache dependent
 	 */
 	public Vector2f closestPerimiterPointTo(Vector2f point) {
+		assert transformCached();
+		
 		return ArrayUtils.minProperty(ArrayUtils.map(transformFaces, 
 				segment -> segment.closestPointTo(point), Vector2f.class), 
 				item -> (double) item.distance(point));
