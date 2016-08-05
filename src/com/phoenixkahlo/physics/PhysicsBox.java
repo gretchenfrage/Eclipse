@@ -44,7 +44,7 @@ public class PhysicsBox {
 				p2.cacheTransform(r2.getLocation(), r2.getRotation());
 				
 				Polygon intersection = p1.intersection(p2);
-				if (intersection != null) {
+				if (intersection != null) {					
 					intersection.cacheNoTransform();
 					Vector2f centroid = intersection.centroid();
 					r1.applyForce(r2.getVelocity().multiply(r2.getMass()), centroid);

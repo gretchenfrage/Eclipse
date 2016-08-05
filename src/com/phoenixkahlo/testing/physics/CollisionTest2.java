@@ -58,11 +58,11 @@ public class CollisionTest2 extends BasicGame {
 		g.scale(20, 20);
 		for (Rigid rigid : box.getRigids()) {
 			g.translate(rigid.getLocation().x, rigid.getLocation().y);
-			g.rotate(0, 0, rigid.getRotation());
+			g.rotate(0, 0, (float) Math.toDegrees(rigid.getRotation()));
 			for (Convex convex : rigid.getShape().getConvexes()) {
 				g.fill(convex.toSlickShape());
 			}
-			g.rotate(0, 0, -rigid.getRotation());
+			g.rotate(0, 0, (float) -Math.toDegrees(rigid.getRotation()));
 			g.translate(-rigid.getLocation().x, -rigid.getLocation().y);
 		}
 	}

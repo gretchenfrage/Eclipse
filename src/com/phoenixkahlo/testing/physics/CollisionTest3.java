@@ -13,11 +13,12 @@ import com.phoenixkahlo.physics.PhysicsBox;
 import com.phoenixkahlo.physics.Polygon;
 import com.phoenixkahlo.physics.Rigid;
 import com.phoenixkahlo.physics.Vector2f;
+import com.phoenixkahlo.utils.MathUtils;
 
-public class CollisionTest extends BasicGame {
+public class CollisionTest3 extends BasicGame {
 
 	public static void main(String[] args) throws SlickException {
-		AppGameContainer container = new AppGameContainer(new CollisionTest(), 700, 700, false);
+		AppGameContainer container = new AppGameContainer(new CollisionTest3(), 700, 700, false);
 		container.setShowFPS(false);
 		container.setTargetFrameRate(60);
 		container.setMinimumLogicUpdateInterval(1000 / 60);
@@ -26,29 +27,31 @@ public class CollisionTest extends BasicGame {
 	
 	private PhysicsBox box = new PhysicsBox();
 	
-	public CollisionTest() {
+	public CollisionTest3() {
 		super("Physics Test");
 	}
 	
 	@Override
 	public void init(GameContainer container) throws SlickException {
 		Rigid r1 = new Rigid(new Polygon(new Convex(
-				new Vector2f(-1, -1),
-				new Vector2f(1, -1),
-				new Vector2f(0, 1)
+				0, -5,
+				0, 5,
+				1, 5,
+				1, -5
 				)));
 		box.addRigid(r1);
-		r1.applyForce(new Vector2f(0.1F, 0), new Vector2f(-8, -8));
-		r1.setLocation(new Vector2f(-10, 0));
+		r1.setLocation(new Vector2f(10, 0));
 		
 		Rigid r2 = new Rigid(new Polygon(new Convex(
-				new Vector2f(-1, -1),
-				new Vector2f(1, -1),
-				new Vector2f(0, 1)
+				0, -5,
+				0, 5,
+				1, 5,
+				1, -5
 				)));
 		box.addRigid(r2);
-		r2.applyForce(new Vector2f(-0.1F, 0));
-		r2.setLocation(new Vector2f(10, 0));
+		r2.setLocation(new Vector2f(-7, -3));
+		r2.setRotation(MathUtils.PI_F / 2);
+		r2.applyForce(new Vector2f(0.5F, 0));
 	}
 
 	@Override
