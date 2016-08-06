@@ -22,10 +22,6 @@ public class Triangle {
 			return p1; // Intersection may be null if points are extremely close to each other
 	}
 	
-	public float area() {
-		return (p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y)) / 2;
-	}
-	
 	private static Vector2f midPoint(Vector2f p1, Vector2f p2) {
 		return new Vector2f((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
 	}
