@@ -18,7 +18,9 @@ public class Server {
 	/**
 	 * @param args {port}
 	 */
-	public static void main(String[] args) {		
+	public static void main(String[] args) {
+		args = new String[] {"46812"};
+		
 		new Server(Integer.parseInt(args[0])).start();
 	}
 

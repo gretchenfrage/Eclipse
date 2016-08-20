@@ -14,6 +14,12 @@ public class Vector2f {
 		this.y = y;
 	}
 	
+	public static Vector2f magDir(float magnitude, float direction) {
+		return new Vector2f(
+				(float) Math.cos(direction) * magnitude, 
+				(float) Math.sin(direction) * magnitude);
+	}
+	
 	public Vector2f copy() {
 		return new Vector2f(x, y);
 	}

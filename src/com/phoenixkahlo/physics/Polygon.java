@@ -230,6 +230,11 @@ public class Polygon {
 				item -> (double) item.distance(point));
 	}
 	
+	public float momentOfInertia() {
+		// Trololololololololol
+		return 100;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

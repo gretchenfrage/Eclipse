@@ -1,9 +1,12 @@
 package com.phoenixkahlo.physics;
 
+import com.phoenixkahlo.utils.MathUtils;
+
 public class Rigid {
 
 	private Polygon shape;
 	private float mass;
+	private float momentOfInertia;
 	private Vector2f velocity;
 	private float angularVelocity;
 	private Vector2f location;
@@ -14,6 +17,7 @@ public class Rigid {
 		velocity = new Vector2f();
 		location = new Vector2f();
 		mass = shape.area();
+		momentOfInertia = shape.momentOfInertia();
 	}
 	
 	/**
@@ -37,8 +41,7 @@ public class Rigid {
 	}
 	
 	public void applyTorque(float torque) {
-		//TODO: integrate moment of rotation
-		angularVelocity += torque;
+		angularVelocity += torque / momentOfInertia;
 	}
 
 	/**
@@ -65,6 +68,17 @@ public class Rigid {
 	
 	public Vector2f getVelocity() {
 		return velocity.copy();
+	}
+	
+	/**
+	 * Doesn't mutate.
+	 */
+	public Vector2f getVelocity(Vector2f point) {
+		return velocity.copy().add(Vector2f.magDir(
+				2 * MathUtils.PI_F * point.distance(location) * angularVelocity,
+				point.copy().subtract(location).direction() + MathUtils.PI_F / 
+				(angularVelocity > 0 ? 2 : -2)
+				));
 	}
 
 	public float getAngularVelocity() {
